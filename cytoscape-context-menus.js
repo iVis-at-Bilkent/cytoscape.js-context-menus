@@ -3,23 +3,26 @@
   var register = function( cytoscape ){
     
     if( !cytoscape ){ return; } // can't register if cytoscape unspecified
+    var cy;
     
     var options = {
       menuItems: [
         {
           id: 'remove',
+          title: 'remove',
           selector: 'node, edge',
           onClickFunction: function () {
             console.log('remove element');
-          }
+          },
+          hasTrailingDivider: true
         },
         {
           id: 'hide',
+          title: 'hide',
           selector: 'node, edge',
           onClickFunction: function () {
             console.log('hide element');
           },
-          hasFollowingDivider: true,
           disabled: true
         }
       ],
@@ -29,9 +32,10 @@
       ]
     };
     
-    var $ctxMenu;
-    var menuItemCSSClass;
+    var $cxtMenu;
+    var menuItemCSSClass = 'cy-context-menus-cxt-menuitem';
 
+    // Merge default options with the ones coming from parameter
     function setOptions(from) {
       var tempOpts = {};
       for (var key in options)
@@ -43,32 +47,13 @@
       return tempOpts;
     }
     
-    function registerMenuItems(menuItems) {
-      for (var i = 0; i < menuItems.length; i++) {
-        registerMenuItem(menuItems[i]);
-      }
+    function preventDefaultContextTap() {
+      $("#cy-context-menus-cxt-menu").contextmenu( function() {
+          return false;
+      });
     }
     
-    function registerMenuItem(menuItem) {
-      
-    }
-    
-    // create ctxMenu and append it to body
-    function createAndAppendCtxMenuComponent() {
-      $ctxMenu = $('<div id="ctxMenu">');
-      $('body').append($ctxMenu);
-      
-      return $ctxMenu;
-    }
-    
-    function createMenuItemComponent(item) {
-      var classStr = getClassStr();
-      var itemStr = '<menu id="' + item.id + '"title="' + item.title + '" class="' + classStr + '"></menu>';
-      var $menuItemComponent = $(itemStr);
-      
-      return $menuItemComponent;
-    }
-    
+    // Get string representation of css classes
     function getClassStr() {
       var classes = options.classes;
       var str = '';
@@ -76,7 +61,7 @@
       for( var i = 0; i < classes.length; i++ ) {
         var className = classes[i];
         if(str !== menuItemCSSClass) {
-          str += className;
+          str += className + ' ';
         }
       }
       
@@ -85,14 +70,208 @@
       return str;
     }
     
+    function displayComponent($component) {
+      $component.css('display', 'block');
+    }
+    
+    function hideComponent($component) {
+      $component.css('display', 'none');
+    }
+    
+    function hideMenuItemComponents() {
+      $cxtMenu.children().css('display', 'none');
+    }
+    
+    function bindOnClickFunction($component, onClickFcn) {
+      $component.on('click', onClickFcn);
+    }
+    
+    function bindCyCxttap($component, selector) {
+      var cxtfcn;
+      
+      cy.elements(selector).on('cxttap', cxtfcn = function(event) {
+        adjustCxtMenu(event);
+        displayComponent($component);
+        
+        // If the component has a trailing divider make it visible too
+        if($component.next().is('.cy-context-menus-divider')) {
+          displayComponent($component.next());
+        }
+      });
+      
+      // Bind the event to menu item to be able to remove it back
+      $component.data('cy-context-menus-cxtfcn', cxtfcn);
+    }
+    
+    function bindCyEvents() {
+      cy.on('tap', function(){
+        hideComponent($cxtMenu);
+        cy.removeScratch('cxtMenuPosition');
+      });
+    }
+    
+    function performBindings($component, onClickFcn, selector) {
+      bindOnClickFunction($component, onClickFcn);
+      bindCyCxttap($component, selector);
+    }
+    
+    // Adjusts context menu if necessary
+    function adjustCxtMenu(event) {
+      var currentCxtMenuPosition = cy.scratch('cxtMenuPosition');
+      
+      if( currentCxtMenuPosition != event.cyPosition ) {
+        hideMenuItemComponents();
+        cy.scratch('cxtMenuPosition', event.cyPosition);
+        
+        var containerPos = $(cy.container()).position();
+
+        var left = containerPos.left + event.cyRenderedPosition.x;
+        var top = containerPos.top + event.cyRenderedPosition.y;
+        
+        displayComponent($cxtMenu);
+        $cxtMenu.css('left', left);
+        $cxtMenu.css('top', top);
+      }
+    }
+    
+    function createAndAppendMenuItemComponents(menuItems) {
+      for (var i = 0; i < menuItems.length; i++) {
+        createAndAppendMenuItemComponent(menuItems[i]);
+      }
+    }
+    
+    function createAndAppendMenuItemComponent(menuItem) {
+      // Create and append menu item
+      var $menuItemComponent = createMenuItemComponent(menuItem);
+      appendComponentToCxtMenu($menuItemComponent);
+      
+      // If menu item has a trailing divider create and append it
+      if( menuItem.hasTrailingDivider ) {
+        var $dividerComponent = createDividerComponent();
+        appendComponentToCxtMenu($dividerComponent);
+      }
+      
+      performBindings($menuItemComponent, menuItem.onClickFunction, menuItem.selector);
+    }//insertComponentBeforeExistingItem(component, existingItemID)
+    
+    function createAndInsertMenuItemComponentBeforeExistingComponent(menuItem, existingComponentID) {
+      // Create and insert menu item
+      var $menuItemComponent = createMenuItemComponent(menuItem);
+      insertComponentBeforeExistingItem($menuItemComponent, existingComponentID);
+      
+      // If menu item has a trailing divider create and insert it
+      if( menuItem.hasTrailingDivider ) {
+        var $dividerComponent = createDividerComponent();
+        insertComponentBeforeExistingItem($dividerComponent.next(), menuItem.id);
+      }
+      
+      performBindings($menuItemComponent, menuItem.onClickFunction, menuItem.selector);
+    }
+    
+    // create cxtMenu and append it to body
+    function createAndAppendCxtMenuComponent() {
+      $cxtMenu = $('<div id="cy-context-menus-cxt-menu">');
+      $('body').append($cxtMenu);
+      
+      return $cxtMenu;
+    }
+    
+    // Creates a menu item as an html component
+    function createMenuItemComponent(item) {
+      var classStr = getClassStr();
+      var itemStr = '<menu id="' + item.id + '" title="' + item.title + '" class="' + classStr + '"></menu>';
+      var $menuItemComponent = $(itemStr);
+      
+      return $menuItemComponent;
+    }
+    
+    // Creates a menu divider as an html component 
+    function createDividerComponent() {
+      var dividerStr = '<menu class="cy-context-menus-divider"></menu>';
+      var $dividerComponent = $(dividerStr);
+      
+      return $dividerComponent;
+    }
+    
+    // Appends the given component to cxtMenu
+    function appendComponentToCxtMenu(component) {
+      $cxtMenu.append(component);
+    }
+    
+    // Insert the given component to cxtMenu just before the existing item with given ID
+    function insertComponentBeforeExistingItem(component, existingItemID) {
+      var $existingItem = $('#' + existingItemID);
+      component.insertBefore($existingItem);
+    }
+    
+    function removeAndUnbindMenuItem(itemID) {
+      var menuItems = options.menuItems;
+      var menuItem;
+      
+      for(var i = 0; i < menuItems.length; i++) {
+        if(menuItems[i].id = itemID) {
+          menuItem = menuItems[i];
+          break;
+        }
+      }
+      
+      var $component = $('#' + itemID);
+      var cxtfcn = $component.data('cy-context-menus-cxtfcn');
+      var selector = menuItem.selector;
+      var onClickFcn = menuItem.onClickFunction;
+      
+      if(cxtfcn) {
+        cy.elements(selector).off('cxttap', cxtfcn);
+      }
+      
+      if(onClickFcn) {
+        $component.off('click', onClickFcn);
+      }
+      
+      $component.remove();
+    }
+    
     cytoscape('core', 'contextMenus', function (opts) {
-      var cy = this;
+      cy = this;
 
       // merge the options with default ones
       options = setOptions(opts);
       
+      // Clear context menu
+      if($cxtMenu) {
+        $cxtMenu.children().remove();
+        $cxtMenu.remove();
+      }
+      
+      $cxtMenu = createAndAppendCxtMenuComponent();
+      
       var menuItems = options.menuItems;
-      registerMenuItems(menuItems);
+      createAndAppendMenuItemComponents(menuItems);
+      
+      bindCyEvents();
+      preventDefaultContextTap();
+      
+      $(".cy-context-menus-cxt-menuitem").click( function() {
+          hideComponent($cxtMenu);
+          cy.removeScratch('cxtMenuPosition');
+      });
+      
+      return this; // chainability
+    });
+    
+    cytoscape('core', 'removeMenuItem', function (itemID) {
+      cy = this;
+
+      removeAndUnbindMenuItem(itemID);
+      
+      return this; // chainability
+    });
+    
+    // TODO test this method
+    cytoscape('core', 'insertBeforeMenuItem', function (item, existingItemID) {
+      cy = this;
+
+      createAndInsertMenuItemComponentBeforeExistingComponent(item, existingItemID);
       
       return this; // chainability
     });
