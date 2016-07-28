@@ -30,6 +30,10 @@
       // css classes that menu items will have
       menuItemClasses: [
         // add class names to this list
+      ],
+      // css classes that context menu will have
+      contextMenuClasses: [
+        // add class names to this list
       ]
     };
     
@@ -61,20 +65,28 @@
     }
     
     // Get string representation of css classes
-    function getClassStr(classes, hasTrailingDivider) {
+    function getMenuItemClassStr(classes, hasTrailingDivider) {
+      var str = getClassStr(classes);
+      
+      str += ' ' + menuItemCSSClass;
+      
+      if(hasTrailingDivider) {
+        str += ' ' + dividerCSSClass;
+      }
+      
+      return str;
+    }
+    
+    // Get string representation of css classes
+    function getClassStr(classes) {
       var str = '';
       
       for( var i = 0; i < classes.length; i++ ) {
         var className = classes[i];
-        if(str !== menuItemCSSClass && str !== dividerCSSClass) {
-          str += className + ' ';
+        str += className;
+        if(i !== classes.length - 1) {
+          str += ' ';
         }
-      }
-      
-      str += menuItemCSSClass;
-      
-      if(hasTrailingDivider) {
-        str += ' ' + dividerCSSClass;
       }
       
       return str;
@@ -178,7 +190,8 @@
     
     // create cxtMenu and append it to body
     function createAndAppendCxtMenuComponent() {
-      $cxtMenu = $('<div id="cy-context-menus-cxt-menu"></div>');
+      var classes = getClassStr(options.contextMenuClasses);
+      $cxtMenu = $('<div id="cy-context-menus-cxt-menu" class=' + classes + '></div>');
       $('body').append($cxtMenu);
       
       return $cxtMenu;
@@ -186,7 +199,7 @@
     
     // Creates a menu item as an html component
     function createMenuItemComponent(item) {
-      var classStr = getClassStr(options.menuItemClasses, item.hasTrailingDivider);
+      var classStr = getMenuItemClassStr(options.menuItemClasses, item.hasTrailingDivider);
       var itemStr = '<button id="' + item.id + '" title="' + item.title + '" class="' + classStr + '"';
       
       if(item.disabled) {

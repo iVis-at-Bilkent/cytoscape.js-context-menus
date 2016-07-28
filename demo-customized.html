@@ -39,7 +39,12 @@
 			}
                         
                         .red-menu-item {
-                            color: red;
+                            color: red !important;
+                            border-bottom-color: red !important;
+                        }
+                        
+                        .red-context-menu {
+                            border-color: red !important;
                         }
 		</style>
 
@@ -124,7 +129,8 @@
                                             }
                                           }
                                         ],
-                                        menuItemClasses: ['red-menu-item']
+                                        menuItemClasses: ['red-menu-item'],
+                                        contextMenuClasses: ['red-context-menu']
                                       });
 			});
 		</script>
