@@ -5,8 +5,9 @@
     if( !cytoscape ){ return; } // can't register if cytoscape unspecified
     var cy;
     
-    var options = {
+    var defaults = {
       menuItems: [
+        /*
         {
           id: 'remove',
           title: 'remove',
@@ -24,29 +25,34 @@
             console.log('hide element');
           },
           disabled: true
-        }
+        }*/
       ],
       // css classes that menu items will have
-      classes: [
+      menuItemClasses: [
         // add class names to this list
       ]
     };
     
+    var options;
     var $cxtMenu;
     var menuItemCSSClass = 'cy-context-menus-cxt-menuitem';
     var dividerCSSClass = 'cy-context-menus-divider';
+    var eventCyTapStart;
 
     // Merge default options with the ones coming from parameter
-    function setOptions(from) {
-      var tempOpts = {};
-      for (var key in options)
-        tempOpts[key] = options[key];
+    function extend(defaults, options) {
+      var obj = {};
 
-      for (var key in from)
-        if (tempOpts.hasOwnProperty(key))
-          tempOpts[key] = from[key];
-      return tempOpts;
-    }
+      for (var i in defaults) {
+        obj[i] = defaults[i];
+      }
+
+      for (var i in options) {
+        obj[i] = options[i];
+      }
+
+      return obj;
+    };
     
     function preventDefaultContextTap() {
       $("#cy-context-menus-cxt-menu").contextmenu( function() {
@@ -55,8 +61,7 @@
     }
     
     // Get string representation of css classes
-    function getClassStr(hasTrailingDivider) {
-      var classes = options.classes;
+    function getClassStr(classes, hasTrailingDivider) {
       var str = '';
       
       for( var i = 0; i < classes.length; i++ ) {
@@ -91,28 +96,43 @@
       $component.on('click', onClickFcn);
     }
     
-    function bindCyCxttap($component, selector) {
+    function bindCyCxttap($component, selector, coreAsWell) {
       var cxtfcn;
+      var cxtCoreFcn;
       
-      cy.elements(selector).on('cxttap', cxtfcn = function(event) {
-        adjustCxtMenu(event);
-        displayComponent($component);
-      });
+      if(coreAsWell) {
+        cy.on('cxttap', cxtCoreFcn = function(event) {
+          if( event.cyTarget != cy ) {
+            return;
+          }
+          
+          adjustCxtMenu(event);
+          displayComponent($component);
+        });
+      }
+      
+      if(selector) {
+        cy.filter(selector).on('cxttap', cxtfcn = function(event) {
+          adjustCxtMenu(event);
+          displayComponent($component);
+        });
+      }
       
       // Bind the event to menu item to be able to remove it back
       $component.data('cy-context-menus-cxtfcn', cxtfcn);
+      $component.data('cy-context-menus-cxtcorefcn', cxtCoreFcn);
     }
     
     function bindCyEvents() {
-      cy.on('tapstart', function(){
+      cy.on('tapstart', eventCyTapStart = function(){
         hideComponent($cxtMenu);
         cy.removeScratch('cxtMenuPosition');
       });
     }
     
-    function performBindings($component, onClickFcn, selector) {
+    function performBindings($component, onClickFcn, selector, coreAsWell) {
       bindOnClickFunction($component, onClickFcn);
-      bindCyCxttap($component, selector);
+      bindCyCxttap($component, selector, coreAsWell);
     }
     
     // Adjusts context menu if necessary
@@ -145,7 +165,7 @@
       var $menuItemComponent = createMenuItemComponent(menuItem);
       appendComponentToCxtMenu($menuItemComponent);
       
-      performBindings($menuItemComponent, menuItem.onClickFunction, menuItem.selector);
+      performBindings($menuItemComponent, menuItem.onClickFunction, menuItem.selector, menuItem.coreAsWell);
     }//insertComponentBeforeExistingItem(component, existingItemID)
     
     function createAndInsertMenuItemComponentBeforeExistingComponent(menuItem, existingComponentID) {
@@ -153,12 +173,12 @@
       var $menuItemComponent = createMenuItemComponent(menuItem);
       insertComponentBeforeExistingItem($menuItemComponent, existingComponentID);
       
-      performBindings($menuItemComponent, menuItem.onClickFunction, menuItem.selector);
+      performBindings($menuItemComponent, menuItem.onClickFunction, menuItem.selector, menuItem.coreAsWell);
     }
     
     // create cxtMenu and append it to body
     function createAndAppendCxtMenuComponent() {
-      $cxtMenu = $('<div id="cy-context-menus-cxt-menu">');
+      $cxtMenu = $('<div id="cy-context-menus-cxt-menu"></div>');
       $('body').append($cxtMenu);
       
       return $cxtMenu;
@@ -166,15 +186,18 @@
     
     // Creates a menu item as an html component
     function createMenuItemComponent(item) {
-      var classStr = getClassStr(item.hasTrailingDivider);
-      var itemStr = '<menu id="' + item.id + '" title="' + item.title + '" class="' + classStr;
+      var classStr = getClassStr(options.menuItemClasses, item.hasTrailingDivider);
+      var itemStr = '<button id="' + item.id + '" title="' + item.title + '" class="' + classStr + '"';
       
-//      if(item.disabled) {
-//        itemStr += 'disabled';
-//      }
+      if(item.disabled) {
+        itemStr += ' disabled';
+      }
       
-      itemStr += '"></menu>';
+      itemStr += '></button>';
       var $menuItemComponent = $(itemStr);
+      
+      $menuItemComponent.data('selector', item.selector); 
+      $menuItemComponent.data('on-click-function', item.onClickFunction); 
       
       return $menuItemComponent;
     }
@@ -182,6 +205,7 @@
     // Appends the given component to cxtMenu
     function appendComponentToCxtMenu(component) {
       $cxtMenu.append(component);
+      bindMenuItemClickFunction(component);
     }
     
     // Insert the given component to cxtMenu just before the existing item with given ID
@@ -190,24 +214,40 @@
       component.insertBefore($existingItem);
     }
     
-    function removeAndUnbindMenuItem(itemID) {
-      var menuItems = options.menuItems;
-      var menuItem;
-      
-      for(var i = 0; i < menuItems.length; i++) {
-        if(menuItems[i].id = itemID) {
-          menuItem = menuItems[i];
-          break;
-        }
+    function destroyCtxMenu() {
+      if(!$cxtMenu) {
+        return;
       }
       
-      var $component = $('#' + itemID);
+      removeAndUnbindMenuItems();
+      
+      cy.off('tapstart', eventCyTapStart);
+      
+      $cxtMenu.remove();
+      $cxtMenu = undefined;
+    }
+   
+    function removeAndUnbindMenuItems() {
+      var children = $cxtMenu.children();
+      
+      $(children).each(function() {
+        removeAndUnbindMenuItem($(this));
+      });
+    }
+    
+    function removeAndUnbindMenuItem(itemID) {
+      var $component = typeof itemID === 'string' ? $('#' + itemID) : itemID;
       var cxtfcn = $component.data('cy-context-menus-cxtfcn');
-      var selector = menuItem.selector;
-      var onClickFcn = menuItem.onClickFunction;
+      var selector = $component.data('selector');
+      var onClickFcn = $component.data('on-click-function');
+      var cxtCoreFcn = $component.data('cy-context-menus-cxtcorefcn');
       
       if(cxtfcn) {
-        cy.elements(selector).off('cxttap', cxtfcn);
+        cy.filter(selector).off('cxttap', cxtfcn);
+      }
+      
+      if(cxtCoreFcn) {
+        cy.off('cxttap', cxtCoreFcn);
       }
       
       if(onClickFcn) {
@@ -217,17 +257,50 @@
       $component.remove();
     }
     
+    function moveBeforeOtherMenuItemComponent(componentID, existingComponentID) {
+      if( componentID === existingComponentID ) {
+        return;
+      }
+      
+      var $component = $('#' + componentID).detach();
+      var $existingComponent = $('#' + existingComponentID);
+      
+      $component.insertBefore($existingComponent);
+    }
+    
+    function bindMenuItemClickFunction(component) {
+      component.click( function() {
+          hideComponent($cxtMenu);
+          cy.removeScratch('cxtMenuPosition');
+      });
+    }
+    
+    function disableComponent(componentID) {
+      $('#' + componentID).attr('disabled', true);
+    }
+    
+    function enableComponent(componentID) {
+      $('#' + componentID).attr('disabled', false);
+    }
+    
+    function setTrailingDivider(componentID, status) {
+      var $component = $('#' + componentID);
+      if(status) {
+        $component.addClass(dividerCSSClass);
+      }
+      else {
+        $component.removeClass(dividerCSSClass);
+      }
+    }
+    
     cytoscape('core', 'contextMenus', function (opts) {
       cy = this;
 
       // merge the options with default ones
-      options = setOptions(opts);
+      options = extend(defaults, opts);
       
-      // Clear context menu
-      if($cxtMenu) {
-        $cxtMenu.children().remove();
-        $cxtMenu.remove();
-      }
+      // Clear old context menu
+      destroyCtxMenu();
       
       $cxtMenu = createAndAppendCxtMenuComponent();
       
@@ -237,10 +310,13 @@
       bindCyEvents();
       preventDefaultContextTap();
       
-      $(".cy-context-menus-cxt-menuitem").click( function() {
-          hideComponent($cxtMenu);
-          cy.removeScratch('cxtMenuPosition');
-      });
+      return this; // chainability
+    });
+    
+    cytoscape('core', 'destroyContextMenus', function (opts) {
+      cy = this;
+
+      destroyCtxMenu();
       
       return this; // chainability
     });
@@ -273,6 +349,38 @@
       cy = this;
 
       createAndAppendMenuItemComponents(items);
+      
+      return this; // chainability
+    });
+    
+    cytoscape('core', 'disableMenuItem', function (itemID) {
+      cy = this;
+
+      disableComponent(itemID);
+      
+      return this; // chainability
+    });
+    
+    cytoscape('core', 'enableMenuItem', function (itemID) {
+      cy = this;
+
+      enableComponent(itemID);
+      
+      return this; // chainability
+    });
+    
+    cytoscape('core', 'setTrailingDivider', function (itemID, status) {
+      cy = this;
+
+      setTrailingDivider(itemID, status);
+      
+      return this; // chainability
+    });
+    
+    cytoscape('core', 'moveBeforeOtherMenuItem', function (itemID, existingItemID) {
+      cy = this;
+
+      moveBeforeOtherMenuItemComponent(itemID, existingItemID);
       
       return this; // chainability
     });

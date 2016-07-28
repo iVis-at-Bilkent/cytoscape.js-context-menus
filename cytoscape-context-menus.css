@@ -3,6 +3,8 @@
     z-index:1000;
     position:absolute;
     border:1px solid;
+    padding: 0;
+    margin: 0;
 }
 
 .cy-context-menus-cxt-menuitem{
@@ -16,6 +18,12 @@
     font-weight:normal;
     font-size: 12px;
     white-space:nowrap;
+    border: 0;
+    text-align: left;
+}
+
+.cy-context-menus-ctx-operation:focus{
+  outline: none;
 }
 
 .cy-context-menus-cxt-menuitem:hover{
@@ -35,5 +43,5 @@
 }
 
 .cy-context-menus-divider {
-  border-bottom:1px solid;
+  border-bottom:1px solid black;
 }
