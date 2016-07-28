@@ -9,8 +9,7 @@ A Cytoscape.js extension to provide context menu around elements and core instan
 
 ## Dependencies
 
- * Cytoscape.js ^x.y.z
- * <List your dependencies here please>
+ * Cytoscape.js ^2.7.0
 
 
 ## Usage instructions
