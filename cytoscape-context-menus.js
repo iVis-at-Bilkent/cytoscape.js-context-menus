@@ -6,6 +6,7 @@
     var cy;
     
     var defaults = {
+      // List of initial menu items
       menuItems: [
         /*
         {
@@ -306,6 +307,7 @@
       }
     }
     
+    // To initialize with options.
     cytoscape('core', 'contextMenus', function (opts) {
       cy = this;
 
@@ -326,30 +328,7 @@
       return this; // chainability
     });
     
-    cytoscape('core', 'destroyContextMenus', function (opts) {
-      cy = this;
-
-      destroyCtxMenu();
-      
-      return this; // chainability
-    });
-    
-    cytoscape('core', 'removeMenuItem', function (itemID) {
-      cy = this;
-
-      removeAndUnbindMenuItem(itemID);
-      
-      return this; // chainability
-    });
-    
-    cytoscape('core', 'insertBeforeMenuItem', function (item, existingItemID) {
-      cy = this;
-
-      createAndInsertMenuItemComponentBeforeExistingComponent(item, existingItemID);
-      
-      return this; // chainability
-    });
-    
+    // Appends given menu item to the menu items list.
     cytoscape('core', 'appendMenuItem', function (item) {
       cy = this;
 
@@ -358,6 +337,7 @@
       return this; // chainability
     });
     
+    // Appends menu items in the given list to the menu items list.
     cytoscape('core', 'appendMenuItems', function (items) {
       cy = this;
 
@@ -366,22 +346,16 @@
       return this; // chainability
     });
     
-    cytoscape('core', 'disableMenuItem', function (itemID) {
+    // Removes the menu item with given ID.
+    cytoscape('core', 'removeMenuItem', function (itemID) {
       cy = this;
 
-      disableComponent(itemID);
+      removeAndUnbindMenuItem(itemID);
       
       return this; // chainability
     });
     
-    cytoscape('core', 'enableMenuItem', function (itemID) {
-      cy = this;
-
-      enableComponent(itemID);
-      
-      return this; // chainability
-    });
-    
+    // Sets whether the menuItem with given ID will have a following divider.
     cytoscape('core', 'setTrailingDivider', function (itemID, status) {
       cy = this;
 
@@ -390,10 +364,47 @@
       return this; // chainability
     });
     
+    // Inserts given item before the existingitem.
+    cytoscape('core', 'insertBeforeMenuItem', function (item, existingItemID) {
+      cy = this;
+
+      createAndInsertMenuItemComponentBeforeExistingComponent(item, existingItemID);
+      
+      return this; // chainability
+    });
+    
+    // Moves the item with given ID before the existingitem.
     cytoscape('core', 'moveBeforeOtherMenuItem', function (itemID, existingItemID) {
       cy = this;
 
       moveBeforeOtherMenuItemComponent(itemID, existingItemID);
+      
+      return this; // chainability
+    });
+    
+    // Disables the menu item with given ID.
+    cytoscape('core', 'disableMenuItem', function (itemID) {
+      cy = this;
+
+      disableComponent(itemID);
+      
+      return this; // chainability
+    });
+    
+    // Enables the menu item with given ID.
+    cytoscape('core', 'enableMenuItem', function (itemID) {
+      cy = this;
+
+      enableComponent(itemID);
+      
+      return this; // chainability
+    });
+    
+    // Destroys the extension instance
+    cytoscape('core', 'destroyContextMenus', function () {
+      cy = this;
+
+      destroyCtxMenu();
       
       return this; // chainability
     });

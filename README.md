@@ -39,29 +39,83 @@ require(['cytoscape', 'cytoscape-context-menus'], function( cytoscape, context-m
 
 Plain HTML/JS has the extension registered for you automatically, because no `require()` is needed.
 
+## Default Options
+```js
+var options = {
+    // List of initial menu items
+    menuItems: [/*
+      {
+        id: 'remove', // ID of menu item
+        title: 'remove', // Title of menu item
+        selector: 'node, edge', // Filters the elements to have this menu item on cxttap
+        onClickFunction: function () { // The function to be executed on click
+          console.log('remove element');
+        },
+        disabled: false, // Whether the item will be created as disabled
+        hasTrailingDivider: true, // Whether the item will have a trailing divider
+        coreAsWell: false // Whether core instance have this item on cxttap
+      },
+      {
+        id: 'hide',
+        title: 'hide',
+        selector: 'node, edge',
+        onClickFunction: function () {
+          console.log('hide element');
+        },
+        disabled: true
+      },
+      {
+        id: 'add-node',
+        title: 'add node',
+        selector: 'node',
+        coreAsWell: true,
+        onClickFunction: function () {
+          console.log('add node');
+        }
+      }*/
+    ],
+    // css classes that menu items will have
+    menuItemClasses: [
+      // add class names to this list
+    ],
+    // css classes that context menu will have
+    contextMenuClasses: [
+      // add class names to this list
+    ]
+};
+```
 
 ## API
 
-Please briefly describe your API here:
+`cy.contextMenus(options)`
+To initialize with options.
 
-```js
-cy.context-menus({
-  foo: 'bar', // some option that does this
-  baz: 'bat' // some options that does that
-  // ... and so on
-});
-```
+`cy.appendMenuItem(item)`
+Appends given menu item to the menu items list.
 
-Or maybe if you have a collection extension:
+`cy.appendMenuItems(items)`
+Appends menu items in the given list to the menu items list.
 
-```js
-cy.elements().test({
-  foo: 'bar', // some option that does this
-  baz: 'bat' // some options that does that
-  // ... and so on
-});
-```
+`cy.removeMenuItem(itemID)`
+Removes the menu item with given ID.
 
+`cy.setTrailingDivider(itemID, status)`
+Sets whether the menuItem with given ID will have a following divider.
+
+`cy.insertBeforeMenuItem(item, existingItemID)`
+Inserts given item before the existingitem.
+
+`cy.moveBeforeOtherMenuItem(itemID, existingItemID)`
+Moves the item with given ID before the existingitem.
+
+`cy.disableMenuItem(itemID)`
+Disables the menu item with given ID.
+
+`cy.enableMenuItem(itemID)`
+Enables the menu item with given ID.
+
+`cy.destroyContextMenus()`
+Destroys the extension instance
 
 ## Publishing instructions
 
