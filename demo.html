@@ -92,6 +92,43 @@
 				// demo your core ext
 				cy.contextMenus( /* args... */ );
 //                                cy.removeMenuItem('hide');
+                                cy.insertBeforeMenuItem({
+                                    id: 'insert',
+                                    title: 'insert',
+                                    selector: 'node, edge',
+                                    onClickFunction: function () {
+                                      console.log('insert element');
+                                    },
+                                    hasTrailingDivider: true
+                                  }, 'hide');
+                                  
+                                cy.appendMenuItem({
+                                    id: 'append',
+                                    title: 'append',
+                                    selector: 'node, edge',
+                                    onClickFunction: function () {
+                                      console.log('append element');
+                                    },
+                                    hasTrailingDivider: false
+                                  });
+                                
+                                cy.appendMenuItems([{
+                                    id: 'append-list-1',
+                                    title: 'append list 1',
+                                    selector: 'node, edge',
+                                    onClickFunction: function () {
+                                      console.log('append list 1');
+                                    },
+                                    hasTrailingDivider: true
+                                },{
+                                    id: 'append-list-2',
+                                    title: 'append list 2',
+                                    selector: 'node, edge',
+                                    onClickFunction: function () {
+                                      console.log('append list 2');
+                                    },
+                                    hasTrailingDivider: false
+                                }]);
 			});
 		</script>
 	</head>

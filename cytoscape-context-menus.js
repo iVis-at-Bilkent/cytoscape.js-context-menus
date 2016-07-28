@@ -34,6 +34,7 @@
     
     var $cxtMenu;
     var menuItemCSSClass = 'cy-context-menus-cxt-menuitem';
+    var dividerCSSClass = 'cy-context-menus-divider';
 
     // Merge default options with the ones coming from parameter
     function setOptions(from) {
@@ -54,18 +55,22 @@
     }
     
     // Get string representation of css classes
-    function getClassStr() {
+    function getClassStr(hasTrailingDivider) {
       var classes = options.classes;
       var str = '';
       
       for( var i = 0; i < classes.length; i++ ) {
         var className = classes[i];
-        if(str !== menuItemCSSClass) {
+        if(str !== menuItemCSSClass && str !== dividerCSSClass) {
           str += className + ' ';
         }
       }
       
       str += menuItemCSSClass;
+      
+      if(hasTrailingDivider) {
+        str += ' ' + dividerCSSClass;
+      }
       
       return str;
     }
@@ -92,11 +97,6 @@
       cy.elements(selector).on('cxttap', cxtfcn = function(event) {
         adjustCxtMenu(event);
         displayComponent($component);
-        
-        // If the component has a trailing divider make it visible too
-        if($component.next().is('.cy-context-menus-divider')) {
-          displayComponent($component.next());
-        }
       });
       
       // Bind the event to menu item to be able to remove it back
@@ -104,7 +104,7 @@
     }
     
     function bindCyEvents() {
-      cy.on('tap', function(){
+      cy.on('tapstart', function(){
         hideComponent($cxtMenu);
         cy.removeScratch('cxtMenuPosition');
       });
@@ -145,12 +145,6 @@
       var $menuItemComponent = createMenuItemComponent(menuItem);
       appendComponentToCxtMenu($menuItemComponent);
       
-      // If menu item has a trailing divider create and append it
-      if( menuItem.hasTrailingDivider ) {
-        var $dividerComponent = createDividerComponent();
-        appendComponentToCxtMenu($dividerComponent);
-      }
-      
       performBindings($menuItemComponent, menuItem.onClickFunction, menuItem.selector);
     }//insertComponentBeforeExistingItem(component, existingItemID)
     
@@ -158,12 +152,6 @@
       // Create and insert menu item
       var $menuItemComponent = createMenuItemComponent(menuItem);
       insertComponentBeforeExistingItem($menuItemComponent, existingComponentID);
-      
-      // If menu item has a trailing divider create and insert it
-      if( menuItem.hasTrailingDivider ) {
-        var $dividerComponent = createDividerComponent();
-        insertComponentBeforeExistingItem($dividerComponent.next(), menuItem.id);
-      }
       
       performBindings($menuItemComponent, menuItem.onClickFunction, menuItem.selector);
     }
@@ -178,19 +166,17 @@
     
     // Creates a menu item as an html component
     function createMenuItemComponent(item) {
-      var classStr = getClassStr();
-      var itemStr = '<menu id="' + item.id + '" title="' + item.title + '" class="' + classStr + '"></menu>';
+      var classStr = getClassStr(item.hasTrailingDivider);
+      var itemStr = '<menu id="' + item.id + '" title="' + item.title + '" class="' + classStr;
+      
+//      if(item.disabled) {
+//        itemStr += 'disabled';
+//      }
+      
+      itemStr += '"></menu>';
       var $menuItemComponent = $(itemStr);
       
       return $menuItemComponent;
-    }
-    
-    // Creates a menu divider as an html component 
-    function createDividerComponent() {
-      var dividerStr = '<menu class="cy-context-menus-divider"></menu>';
-      var $dividerComponent = $(dividerStr);
-      
-      return $dividerComponent;
     }
     
     // Appends the given component to cxtMenu
@@ -267,11 +253,26 @@
       return this; // chainability
     });
     
-    // TODO test this method
     cytoscape('core', 'insertBeforeMenuItem', function (item, existingItemID) {
       cy = this;
 
       createAndInsertMenuItemComponentBeforeExistingComponent(item, existingItemID);
+      
+      return this; // chainability
+    });
+    
+    cytoscape('core', 'appendMenuItem', function (item) {
+      cy = this;
+
+      createAndAppendMenuItemComponent(item);
+      
+      return this; // chainability
+    });
+    
+    cytoscape('core', 'appendMenuItems', function (items) {
+      cy = this;
+
+      createAndAppendMenuItemComponents(items);
       
       return this; // chainability
     });
