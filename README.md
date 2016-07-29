@@ -47,7 +47,9 @@ var options = {
       {
         id: 'remove', // ID of menu item
         title: 'remove', // Title of menu item
-        selector: 'node, edge', // Filters the elements to have this menu item on cxttap
+        // Filters the elements to have this menu item on cxttap
+        // If the selector is not truthy no elements will have this menu item on cxttap
+        selector: 'node, edge', 
         onClickFunction: function () { // The function to be executed on click
           console.log('remove element');
         },

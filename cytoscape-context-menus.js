@@ -106,7 +106,13 @@
     }
     
     function bindOnClickFunction($component, onClickFcn) {
-      $component.on('click', onClickFcn);
+      var callOnClickFcn;
+      
+      $component.on('click', callOnClickFcn = function() {
+        onClickFcn(cy.scratch('currentCyEvent'));
+      });
+      
+      $component.data('call-on-click-function', callOnClickFcn); 
     }
     
     function bindCyCxttap($component, selector, coreAsWell) {
@@ -119,13 +125,15 @@
             return;
           }
           
+          cy.scratch('currentCyEvent', event);
           adjustCxtMenu(event);
           displayComponent($component);
         });
       }
       
       if(selector) {
-        cy.filter(selector).on('cxttap', cxtfcn = function(event) {
+        cy.on('cxttap', selector, cxtfcn = function(event) {
+          cy.scratch('currentCyEvent', event);
           adjustCxtMenu(event);
           displayComponent($component);
         });
@@ -140,6 +148,7 @@
       cy.on('tapstart', eventCyTapStart = function(){
         hideComponent($cxtMenu);
         cy.removeScratch('cxtMenuPosition');
+        cy.removeScratch('currentCyEvent');
       });
     }
     
@@ -228,7 +237,7 @@
       component.insertBefore($existingItem);
     }
     
-    function destroyCtxMenu() {
+    function destroyCxtMenu() {
       if(!$cxtMenu) {
         return;
       }
@@ -253,19 +262,19 @@
       var $component = typeof itemID === 'string' ? $('#' + itemID) : itemID;
       var cxtfcn = $component.data('cy-context-menus-cxtfcn');
       var selector = $component.data('selector');
-      var onClickFcn = $component.data('on-click-function');
+      var callOnClickFcn = $component.data('call-on-click-function');
       var cxtCoreFcn = $component.data('cy-context-menus-cxtcorefcn');
       
       if(cxtfcn) {
-        cy.filter(selector).off('cxttap', cxtfcn);
+        cy.off('cxttap', selector, cxtfcn);
       }
       
       if(cxtCoreFcn) {
         cy.off('cxttap', cxtCoreFcn);
       }
       
-      if(onClickFcn) {
-        $component.off('click', onClickFcn);
+      if(callOnClickFcn) {
+        $component.off('click', callOnClickFcn);
       }
       
       $component.remove();
@@ -315,7 +324,7 @@
       options = extend(defaults, opts);
       
       // Clear old context menu
-      destroyCtxMenu();
+      destroyCxtMenu();
       
       $cxtMenu = createAndAppendCxtMenuComponent();
       
@@ -404,7 +413,7 @@
     cytoscape('core', 'destroyContextMenus', function () {
       cy = this;
 
-      destroyCtxMenu();
+      destroyCxtMenu();
       
       return this; // chainability
     });
