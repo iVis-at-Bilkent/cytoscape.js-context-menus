@@ -92,6 +92,9 @@ var options = {
 `cy.contextMenus(options)`
 To initialize with options.
 
+`cy.isContextMenusActive()`
+Returns whether the extension is active.
+
 `cy.appendMenuItem(item)`
 Appends given menu item to the menu items list.
 

@@ -43,6 +43,7 @@
     var menuItemCSSClass = 'cy-context-menus-cxt-menuitem';
     var dividerCSSClass = 'cy-context-menus-divider';
     var eventCyTapStart;
+    var active = false;
 
     // Merge default options with the ones coming from parameter
     function extend(defaults, options) {
@@ -238,7 +239,7 @@
     }
     
     function destroyCxtMenu() {
-      if(!$cxtMenu) {
+      if(!active) {
         return;
       }
       
@@ -248,6 +249,7 @@
       
       $cxtMenu.remove();
       $cxtMenu = undefined;
+      active = false;
     }
    
     function removeAndUnbindMenuItems() {
@@ -323,8 +325,12 @@
       // merge the options with default ones
       options = extend(defaults, opts);
       
-      // Clear old context menu
-      destroyCxtMenu();
+      // Clear old context menu if needed
+      if(active) {
+        destroyCxtMenu();
+      }
+      
+      active = true;
       
       $cxtMenu = createAndAppendCxtMenuComponent();
       
@@ -335,6 +341,13 @@
       preventDefaultContextTap();
       
       return this; // chainability
+    });
+    
+    // Returns whether the extension is active
+    cytoscape('core', 'isContextMenusActive', function () {
+      cy = this;
+      
+      return active;
     });
     
     // Appends given menu item to the menu items list.
