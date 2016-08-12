@@ -89,38 +89,39 @@ var options = {
 
 ## API
 
-`cy.contextMenus(options)`
-To initialize with options.
+```js
+var instance = cy.contextMenus( options );
+```
 
-`cy.isContextMenusActive()`
-Returns whether the extension is active.
+An instance has a number of functions available:
 
-`cy.appendMenuItem(item)`
-Appends given menu item to the menu items list.
+```js
+instance.isActive(); // Returns whether the extension is active.
 
-`cy.appendMenuItems(items)`
-Appends menu items in the given list to the menu items list.
+instance.appendMenuItem(item); // Appends given menu item to the menu items list.
 
-`cy.removeMenuItem(itemID)`
-Removes the menu item with given ID.
+instance.appendMenuItems(items); // Appends menu items in the given list to the menu items list.
 
-`cy.setTrailingDivider(itemID, status)`
-Sets whether the menuItem with given ID will have a following divider.
+instance.removeMenuItem(itemID); // Removes the menu item with given ID.
 
-`cy.insertBeforeMenuItem(item, existingItemID)`
-Inserts given item before the existingitem.
+instance.setTrailingDivider(itemID, status); // Sets whether the menuItem with given ID will have a following divider.
 
-`cy.moveBeforeOtherMenuItem(itemID, existingItemID)`
-Moves the item with given ID before the existingitem.
+instance.insertBeforeMenuItem(item, existingItemID); // Inserts given item before the existingitem.
 
-`cy.disableMenuItem(itemID)`
-Disables the menu item with given ID.
+instance.moveBeforeOtherMenuItem(itemID, existingItemID); // Moves the item with given ID before the existingitem.
 
-`cy.enableMenuItem(itemID)`
-Enables the menu item with given ID.
+instance.disableMenuItem(itemID); // Disables the menu item with given ID.
 
-`cy.destroyContextMenus()`
-Destroys the extension instance
+instance.enableMenuItem(itemID); // Enables the menu item with given ID.
+
+instance.destroy(); // Destroys the extension instance
+```
+
+You can also get an existing instance:
+
+```js
+cy.contextMenus('get');
+```
 
 ## Publishing instructions
 

@@ -318,117 +318,88 @@
       }
     }
     
+    // Get an extension instance to enable users to access extension methods
+    function getInstance(cy) {
+      var instance = {
+        // Returns whether the extension is active
+       isActive: function() {
+         return active;
+       },
+       // Appends given menu item to the menu items list.
+       appendMenuItem: function(item) {
+         createAndAppendMenuItemComponent(item);
+         return cy;
+       },
+       // Appends menu items in the given list to the menu items list.
+       appendMenuItems: function(items) {
+         createAndAppendMenuItemComponents(items);
+         return cy;
+       },
+       // Removes the menu item with given ID.
+       removeMenuItem: function(itemID) {
+         removeAndUnbindMenuItem(itemID);
+         return cy;
+       },
+       // Sets whether the menuItem with given ID will have a following divider.
+       setTrailingDivider: function(itemID, status) {
+         setTrailingDivider(itemID, status);
+         return cy;
+       },
+       // Inserts given item before the existingitem.
+       insertBeforeMenuItem: function(item, existingItemID) {
+         createAndInsertMenuItemComponentBeforeExistingComponent(item, existingItemID);
+         return cy;
+       },
+       // Moves the item with given ID before the existingitem.
+       moveBeforeOtherMenuItem: function(itemID, existingItemID) {
+         moveBeforeOtherMenuItemComponent(itemID, existingItemID);
+         return cy;
+       },
+       // Disables the menu item with given ID.
+       disableMenuItem: function(itemID) {
+         disableComponent(itemID);
+         return cy;
+       },
+       // Enables the menu item with given ID.
+       enableMenuItem: function(itemID) {
+         enableComponent(itemID);
+         return cy;
+       },
+       // Destroys the extension instance
+       destroy: function() {
+         destroyCxtMenu();
+         return cy;
+       }
+      };
+      
+      return instance;
+    }
+    
     // To initialize with options.
     cytoscape('core', 'contextMenus', function (opts) {
       cy = this;
 
-      // merge the options with default ones
-      options = extend(defaults, opts);
-      
-      // Clear old context menu if needed
-      if(active) {
-        destroyCxtMenu();
+      if ( opts !== 'get' ) {
+        // merge the options with default ones
+        options = extend(defaults, opts);
+
+        // Clear old context menu if needed
+        if(active) {
+          destroyCxtMenu();
+        }
+
+        active = true;
+
+        $cxtMenu = createAndAppendCxtMenuComponent();
+
+        var menuItems = options.menuItems;
+        createAndAppendMenuItemComponents(menuItems);
+
+        bindCyEvents();
+        preventDefaultContextTap();
       }
       
-      active = true;
-      
-      $cxtMenu = createAndAppendCxtMenuComponent();
-      
-      var menuItems = options.menuItems;
-      createAndAppendMenuItemComponents(menuItems);
-      
-      bindCyEvents();
-      preventDefaultContextTap();
-      
-      return this; // chainability
-    });
-    
-    // Returns whether the extension is active
-    cytoscape('core', 'isContextMenusActive', function () {
-      cy = this;
-      
-      return active;
-    });
-    
-    // Appends given menu item to the menu items list.
-    cytoscape('core', 'appendMenuItem', function (item) {
-      cy = this;
-
-      createAndAppendMenuItemComponent(item);
-      
-      return this; // chainability
-    });
-    
-    // Appends menu items in the given list to the menu items list.
-    cytoscape('core', 'appendMenuItems', function (items) {
-      cy = this;
-
-      createAndAppendMenuItemComponents(items);
-      
-      return this; // chainability
-    });
-    
-    // Removes the menu item with given ID.
-    cytoscape('core', 'removeMenuItem', function (itemID) {
-      cy = this;
-
-      removeAndUnbindMenuItem(itemID);
-      
-      return this; // chainability
-    });
-    
-    // Sets whether the menuItem with given ID will have a following divider.
-    cytoscape('core', 'setTrailingDivider', function (itemID, status) {
-      cy = this;
-
-      setTrailingDivider(itemID, status);
-      
-      return this; // chainability
-    });
-    
-    // Inserts given item before the existingitem.
-    cytoscape('core', 'insertBeforeMenuItem', function (item, existingItemID) {
-      cy = this;
-
-      createAndInsertMenuItemComponentBeforeExistingComponent(item, existingItemID);
-      
-      return this; // chainability
-    });
-    
-    // Moves the item with given ID before the existingitem.
-    cytoscape('core', 'moveBeforeOtherMenuItem', function (itemID, existingItemID) {
-      cy = this;
-
-      moveBeforeOtherMenuItemComponent(itemID, existingItemID);
-      
-      return this; // chainability
-    });
-    
-    // Disables the menu item with given ID.
-    cytoscape('core', 'disableMenuItem', function (itemID) {
-      cy = this;
-
-      disableComponent(itemID);
-      
-      return this; // chainability
-    });
-    
-    // Enables the menu item with given ID.
-    cytoscape('core', 'enableMenuItem', function (itemID) {
-      cy = this;
-
-      enableComponent(itemID);
-      
-      return this; // chainability
-    });
-    
-    // Destroys the extension instance
-    cytoscape('core', 'destroyContextMenus', function () {
-      cy = this;
-
-      destroyCxtMenu();
-      
-      return this; // chainability
+      return getInstance(this);
     });
   };
 
