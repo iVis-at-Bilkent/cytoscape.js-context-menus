@@ -11,6 +11,7 @@ A Cytoscape.js extension to provide context menu around elements and core instan
 ## Dependencies
 
  * Cytoscape.js ^2.7.0
+ * jQuery ^2.0.3
 
 
 ## Usage instructions
@@ -25,15 +26,16 @@ Download the library:
 CommonJS:
 ```js
 var cytoscape = require('cytoscape');
-var context-menus = require('cytoscape-context-menus');
+var jquery = require('jquery');
+var contextMenus = require('cytoscape-context-menus');
 
-context-menus( cytoscape ); // register extension
+contextMenus( cytoscape, jquery ); // register extension
 ```
 
 AMD:
 ```js
-require(['cytoscape', 'cytoscape-context-menus'], function( cytoscape, context-menus ){
-  context-menus( cytoscape ); // register extension
+require(['cytoscape', 'cytoscape-context-menus', 'jquery'], function( cytoscape, context-menus, jquery ){
+  context-menus( cytoscape, jquery ); // register extension
 });
 ```
 

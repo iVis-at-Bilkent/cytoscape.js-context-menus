@@ -1,6 +1,8 @@
-;(function($$, $){ 'use strict';
+;(function(){ 'use strict';
 
-  var register = function( cytoscape ){
+  var $ = typeof jQuery === typeof undefined ? null : jQuery;
+
+  var register = function( cytoscape, $ ){
     
     if( !cytoscape ){ return; } // can't register if cytoscape unspecified
     var cy;
@@ -413,8 +415,8 @@
     });
   }
 
-  if( typeof cytoscape !== 'undefined' ){ // expose to global cytoscape (i.e. window.cytoscape)
-    register( cytoscape );
+  if( typeof cytoscape !== 'undefined' && $ ){ // expose to global cytoscape (i.e. window.cytoscape)
+    register( cytoscape, $ );
   }
 
-})(cytoscape, jQuery);
+})();
