@@ -11,7 +11,7 @@ A Cytoscape.js extension to provide context menu around elements and core instan
 ## Dependencies
 
  * Cytoscape.js ^2.7.0
- * jQuery ^2.0.3
+ * jQuery ^1.7.0
 
 
 ## Usage instructions

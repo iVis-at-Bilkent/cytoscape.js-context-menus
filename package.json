@@ -33,6 +33,6 @@
   },
   "peerDependencies": {
     "cytoscape": "^2.7.0",
-    "jquery": "^2.0.3"
+    "jquery": "^1.7.0 || ^2.0.0"
   }
 }
