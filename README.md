@@ -85,7 +85,10 @@ var options = {
     // css classes that context menu will have
     contextMenuClasses: [
       // add class names to this list
-    ]
+    ],
+    // if needed, provide an alternate css selector of
+    // the element to which the menu's DOM element should be appended
+    componentParentSelector: 'body'
 };
 ```
 

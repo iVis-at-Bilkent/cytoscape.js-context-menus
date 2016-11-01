@@ -37,7 +37,10 @@
       // css classes that context menu will have
       contextMenuClasses: [
         // add class names to this list
-      ]
+      ],
+      // if needed, provide an alternate css selector of
+      // the element to which the menu's DOM element should be appended
+      componentParentSelector: 'body'
     };
     
     var options;
@@ -205,8 +208,8 @@
     function createAndAppendCxtMenuComponent() {
       var classes = getClassStr(options.contextMenuClasses);
       $cxtMenu = $('<div id="cy-context-menus-cxt-menu" class=' + classes + '></div>');
-      $('body').append($cxtMenu);
       
+      $(options.componentParentSelector).append($cxtMenu);
       return $cxtMenu;
     }
     
