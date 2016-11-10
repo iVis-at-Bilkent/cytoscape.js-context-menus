@@ -37,12 +37,9 @@
       // css classes that context menu will have
       contextMenuClasses: [
         // add class names to this list
-      ],
-      // if needed, provide an alternate css selector of
-      // the element to which the menu's DOM element should be appended
-      componentParentSelector: 'body'
+      ]
     };
-    
+
     var options;
     var $cxtMenu;
     var menuItemCSSClass = 'cy-context-menus-cxt-menuitem';
@@ -171,7 +168,7 @@
         hideMenuItemComponents();
         cy.scratch('cxtMenuPosition', event.cyPosition);
         
-        var containerPos = $(cy.container()).position();
+        var containerPos = $(cy.container()).offset();
 
         var left = containerPos.left + event.cyRenderedPosition.x;
         var top = containerPos.top + event.cyRenderedPosition.y;
@@ -209,7 +206,7 @@
       var classes = getClassStr(options.contextMenuClasses);
       $cxtMenu = $('<div id="cy-context-menus-cxt-menu" class=' + classes + '></div>');
       
-      $(options.componentParentSelector).append($cxtMenu);
+      $('body').append($cxtMenu);
       return $cxtMenu;
     }
     
