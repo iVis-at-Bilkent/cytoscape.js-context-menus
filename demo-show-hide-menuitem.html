@@ -1,0 +1,257 @@
+<!DOCTYPE>
+
+<html>
+
+	<head>
+		<title>cytoscape-context-menus.js demo</title>
+
+		<meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+		<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1, maximum-scale=1">
+
+                 <link href="cytoscape-context-menus.css" rel="stylesheet" type="text/css" />
+                
+                <script src="http://code.jquery.com/jquery-2.0.3.min.js"></script>
+		<script src="http://cytoscape.github.io/cytoscape.js/api/cytoscape.js-latest/cytoscape.min.js"></script>
+
+		<!-- for testing with local version of cytoscape.js -->
+		<!--<script src="../cytoscape.js/build/cytoscape.js"></script>-->
+
+		<script src="cytoscape-context-menus.js"></script>
+
+		<style>
+			body {
+				font-family: helvetica neue, helvetica, liberation sans, arial, sans-serif;
+				font-size: 14px;
+			}
+
+			#cy {
+				position: absolute;
+				left: 0;
+				top: 0;
+				bottom: 0;
+				right: 0;
+				z-index: 999;
+			}
+
+			h1 {
+				opacity: 0.5;
+				font-size: 1em;
+				font-weight: bold;
+			}
+		</style>
+
+		<script>
+			document.addEventListener('DOMContentLoaded', function(){
+
+				var cy = window.cy = cytoscape({
+					container: document.getElementById('cy'),
+
+					style: [
+						{
+							selector: 'node',
+							style: {
+								'content': 'data(name)'
+							}
+						},
+
+						{
+							selector: 'edge',
+							style: {
+								'target-arrow-shape': 'triangle'
+							}
+						},
+
+						{
+							selector: ':selected',
+							style: {
+
+							}
+						}
+					],
+					layout: {
+						name: 'breadthfirst'
+					},
+
+					elements: {
+						nodes: [
+							{ data: { id: 'j', name: 'Jerry' } },
+							{ data: { id: 'e', name: 'Elaine' } },
+							{ data: { id: 'k', name: 'Kramer' } },
+							{ data: { id: 'g', name: 'George' } }
+						],
+						edges: [
+							{ data: { source: 'j', target: 'e' } },
+							{ data: { source: 'j', target: 'k' } },
+							{ data: { source: 'j', target: 'g' } },
+							{ data: { source: 'e', target: 'j' } },
+							{ data: { source: 'e', target: 'k' } },
+							{ data: { source: 'k', target: 'j' } },
+							{ data: { source: 'k', target: 'e' } },
+							{ data: { source: 'k', target: 'g' } },
+							{ data: { source: 'g', target: 'j' } }
+						]
+					},
+				});
+                                
+                                var selectAllOfTheSameType = function(ele) {
+                                    cy.elements().unselect();
+                                    if(ele.isNode()) {
+                                        cy.nodes().select();
+                                    }
+                                    else if(ele.isEdge()) {
+                                        cy.edges().select();
+                                    }
+                                };
+                                var unselectAllOfTheSameType = function(ele) {
+                                    if(ele.isNode()) {
+                                        cy.nodes().unselect();
+                                    }
+                                    else if(ele.isEdge()) {
+                                        cy.edges().unselect();
+                                    }
+                                };				
+								var removed;
+								var removedSelected;
+
+				// demo your core ext
+				var contextMenu = cy.contextMenus({
+                                    menuItems: [
+                                        {
+                                            id: 'remove',
+                                            title: 'remove',
+                                            selector: 'node, edge',
+                                            onClickFunction: function (event) {
+                                              removed = event.cyTarget.remove();
+											  
+                                              contextMenu.showMenuItem('undo-last-remove');
+                                            },
+                                            hasTrailingDivider: true
+                                          },
+                                          {
+                                            id: 'undo-last-remove',
+                                            title: 'undo last remove',
+                                            selector: 'node, edge',
+											show: false,
+											coreAsWell: true,
+                                            onClickFunction: function (event) {
+                                              if (removed) {
+                                                removed.restore();
+                                              }
+                                              contextMenu.hideMenuItem('undo-last-remove');
+                                            },
+                                            hasTrailingDivider: true
+                                          },										  
+                                          {
+                                            id: 'hide',
+                                            title: 'hide',
+                                            selector: '*',
+                                            onClickFunction: function (event) {
+                                              event.cyTarget.hide();
+                                            },
+                                            disabled: false
+                                          },
+                                          {
+                                            id: 'add-node',
+                                            title: 'add node',
+                                            coreAsWell: true,
+                                            onClickFunction: function (event) {
+                                              var data = {
+                                                  group: 'nodes'
+                                              };
+                                              
+                                              cy.add({
+                                                  data: data,
+                                                  position: {
+                                                      x: event.cyPosition.x,
+                                                      y: event.cyPosition.y
+                                                  }
+                                              });
+                                            }
+                                          },
+                                          {
+                                            id: 'remove-selected',
+                                            title: 'remove selected',
+                                            coreAsWell: true,
+											show: true,
+                                            onClickFunction: function (event) {
+                                              removedSelected = cy.$(':selected').remove();
+											  
+                                              contextMenu.hideMenuItem('remove-selected');
+                                              contextMenu.showMenuItem('restore-selected');
+                                            }
+                                          },
+                                          {
+                                            id: 'restore-selected',
+                                            title: 'restore selected',
+                                            coreAsWell: true,
+											show: false,
+                                            onClickFunction: function (event) {
+                                              if (removedSelected) {
+												removedSelected.restore();
+											  }
+                                              contextMenu.showMenuItem('remove-selected');
+                                              contextMenu.hideMenuItem('restore-selected');
+									        }
+                                          },										  
+                                          {
+                                            id: 'select-all-nodes',
+                                            title: 'select all nodes',
+                                            selector: 'node',
+											show: true,
+                                            onClickFunction: function (event) {
+                                              selectAllOfTheSameType(event.cyTarget);
+											  
+                                              contextMenu.hideMenuItem('select-all-nodes');
+                                              contextMenu.showMenuItem('unselect-all-nodes');
+                                            }
+                                          },
+                                          {
+                                            id: 'unselect-all-nodes',
+                                            title: 'unselect all nodes',
+                                            selector: 'node',
+											show: false,
+                                            onClickFunction: function (event) {
+                                              unselectAllOfTheSameType(event.cyTarget);
+											  
+                                              contextMenu.showMenuItem('select-all-nodes');
+                                              contextMenu.hideMenuItem('unselect-all-nodes');
+                                            }
+                                          },										  
+                                          {
+                                            id: 'select-all-edges',
+                                            title: 'select all edges',
+                                            selector: 'edge',
+											show: true,
+                                            onClickFunction: function (event) {
+                                              selectAllOfTheSameType(event.cyTarget);
+											  
+                                              contextMenu.hideMenuItem('select-all-edges');
+                                              contextMenu.showMenuItem('unselect-all-edges');	
+                                            }
+                                          },
+                                          {
+                                            id: 'unselect-all-edges',
+                                            title: 'unselect all edges',
+                                            selector: 'edge',
+											show: false,
+                                            onClickFunction: function (event) {
+                                              unselectAllOfTheSameType(event.cyTarget);
+
+                                              contextMenu.showMenuItem('select-all-edges');
+                                              contextMenu.hideMenuItem('unselect-all-edges');
+                                            }
+                                          }
+                                        ]
+                                      });
+			});
+		</script>
+	</head>
+
+	<body>
+		<h1>cytoscape-context-menus demo + show-hide-menuitem demo</h1>
+
+		<div id="cy"></div>
+
+	</body>
+
+</html>
