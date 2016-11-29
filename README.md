@@ -9,8 +9,8 @@ A Cytoscape.js extension to provide context menu around elements and core instan
 ![Image of extension](example.png)
 
 ## Branch 
-2.0.3.1-show-hide-menuitem 
-Added options and methods to show and hide menu items, allowing menu items to conditionally be shown or hidden.
+2.0.3.1-show-hide-menuitem   
+Added options and methods to show and hide menu items, allowing menu items to conditionally be shown or hidden.  
 This also allows the perceived label and functionality of a menu item to change, such as from Select Edges to Unselect Edges.
 
 ## Dependencies
