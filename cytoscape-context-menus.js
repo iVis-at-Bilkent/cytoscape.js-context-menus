@@ -130,9 +130,9 @@
           
           cy.scratch('currentCyEvent', event);
           adjustCxtMenu(event);
-		  if ($component.data('show')) {
-			displayComponent($component);
-		  }
+          if ($component.data('show')) {
+            displayComponent($component);
+          }
         });
       }
       
@@ -140,9 +140,9 @@
         cy.on('cxttap', selector, cxtfcn = function(event) {
           cy.scratch('currentCyEvent', event);
           adjustCxtMenu(event);
-		  if ($component.data('show')) {
-			displayComponent($component);
-		  }
+          if ($component.data('show')) {
+            displayComponent($component);
+          }
         });
       }
       
@@ -228,7 +228,7 @@
       
       $menuItemComponent.data('selector', item.selector); 
       $menuItemComponent.data('on-click-function', item.onClickFunction);
-	  $menuItemComponent.data('show', (typeof(item.show) === 'undefined' || item.show));  
+      $menuItemComponent.data('show', (typeof(item.show) === 'undefined' || item.show));  
       return $menuItemComponent;
     }
     
@@ -373,13 +373,13 @@
        },
        // Disables the menu item with given ID.
        hideMenuItem: function(itemID) {
-		 $('#'+itemID).data('show', false);
+         $('#'+itemID).data('show', false);
          hideComponent($('#'+itemID));
          return cy;
        },
        // Enables the menu item with given ID.
        showMenuItem: function(itemID) {
-		 $('#'+itemID).data('show', true);
+         $('#'+itemID).data('show', true);
          displayComponent($('#'+itemID));
          return cy;
        },

@@ -61,7 +61,7 @@ var options = {
           console.log('remove element');
         },
         disabled: false, // Whether the item will be created as disabled
-		show: false, // Whether the item will be shown or not
+        show: false, // Whether the item will be shown or not
         hasTrailingDivider: true, // Whether the item will have a trailing divider
         coreAsWell: false // Whether core instance have this item on cxttap
       },
