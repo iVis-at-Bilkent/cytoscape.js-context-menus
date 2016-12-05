@@ -130,7 +130,9 @@
           
           cy.scratch('currentCyEvent', event);
           adjustCxtMenu(event);
-          displayComponent($component);
+          if ($component.data('show')) {
+            displayComponent($component);
+          }
         });
       }
       
@@ -138,7 +140,9 @@
         cy.on('cxttap', selector, cxtfcn = function(event) {
           cy.scratch('currentCyEvent', event);
           adjustCxtMenu(event);
-          displayComponent($component);
+          if ($component.data('show')) {
+            displayComponent($component);
+          }
         });
       }
       
@@ -223,8 +227,8 @@
       var $menuItemComponent = $(itemStr);
       
       $menuItemComponent.data('selector', item.selector); 
-      $menuItemComponent.data('on-click-function', item.onClickFunction); 
-      
+      $menuItemComponent.data('on-click-function', item.onClickFunction);
+      $menuItemComponent.data('show', (typeof(item.show) === 'undefined' || item.show));  
       return $menuItemComponent;
     }
     
@@ -365,6 +369,18 @@
        // Enables the menu item with given ID.
        enableMenuItem: function(itemID) {
          enableComponent(itemID);
+         return cy;
+       },
+       // Disables the menu item with given ID.
+       hideMenuItem: function(itemID) {
+         $('#'+itemID).data('show', false);
+         hideComponent($('#'+itemID));
+         return cy;
+       },
+       // Enables the menu item with given ID.
+       showMenuItem: function(itemID) {
+         $('#'+itemID).data('show', true);
+         displayComponent($('#'+itemID));
          return cy;
        },
        // Destroys the extension instance

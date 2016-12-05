@@ -5,12 +5,13 @@
     border:1px solid #A0A0A0;
     padding: 0;
     margin: 0;
+    width:auto;
 }
 
-.cy-context-menus-cxt-menuitem{
+.cy-context-menus-cxt-menuitem {
     display:block;
     z-index:1000;
-    width:110px;
+    width: 100%;
     padding: 3px 20px;
     position:relative;
     margin:0;
@@ -26,11 +27,11 @@
     color: #000000;
 }
 
-.cy-context-menus-ctx-operation:focus{
+.cy-context-menus-ctx-operation:focus {
   outline: none;
 }
 
-.cy-context-menus-cxt-menuitem:hover{
+.cy-context-menus-cxt-menuitem:hover {
     color: #ffffff;
     text-decoration: none;
     background-color: #0B9BCD;
@@ -38,11 +39,11 @@
     cursor: pointer;
 }
 
-.cy-context-menus-cxt-menuitem[title]:before{
+.cy-context-menus-cxt-menuitem[title]:before {
     content:attr(title);
 }
 
-.cy-context-menus-cxt-menuitem:not([title]):before{
+.cy-context-menus-cxt-menuitem:not([title]):before {
     content:"\2630";
 }
 

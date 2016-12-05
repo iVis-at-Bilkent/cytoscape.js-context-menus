@@ -56,6 +56,7 @@ var options = {
           console.log('remove element');
         },
         disabled: false, // Whether the item will be created as disabled
+        show: false, // Whether the item will be shown or not
         hasTrailingDivider: true, // Whether the item will have a trailing divider
         coreAsWell: false // Whether core instance have this item on cxttap
       },
@@ -115,6 +116,10 @@ instance.moveBeforeOtherMenuItem(itemID, existingItemID); // Moves the item with
 instance.disableMenuItem(itemID); // Disables the menu item with given ID.
 
 instance.enableMenuItem(itemID); // Enables the menu item with given ID.
+
+instance.showMenuItem(itemID); // Shows the menu item with given ID.
+
+instance.hideMenuItem(itemID); // Hides the menu item with given ID.
 
 instance.destroy(); // Destroys the extension instance
 ```
