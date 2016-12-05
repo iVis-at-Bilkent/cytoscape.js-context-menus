@@ -109,9 +109,10 @@
                                     else if(ele.isEdge()) {
                                         cy.edges().unselect();
                                     }
-                                };				
-								var removed;
-								var removedSelected;
+                                };		
+                                
+                                var removed;
+                                var removedSelected;
 
 				// demo your core ext
 				var contextMenu = cy.contextMenus({
@@ -131,8 +132,8 @@
                                             id: 'undo-last-remove',
                                             title: 'undo last remove',
                                             selector: 'node, edge',
-											show: false,
-											coreAsWell: true,
+                                            show: false,
+                                            coreAsWell: true,
                                             onClickFunction: function (event) {
                                               if (removed) {
                                                 removed.restore();
@@ -184,20 +185,20 @@
                                             id: 'restore-selected',
                                             title: 'restore selected',
                                             coreAsWell: true,
-											show: false,
+                                            show: false,
                                             onClickFunction: function (event) {
                                               if (removedSelected) {
-												removedSelected.restore();
-											  }
+                                                removedSelected.restore();
+                                              }
                                               contextMenu.showMenuItem('remove-selected');
                                               contextMenu.hideMenuItem('restore-selected');
-									        }
+                                            }
                                           },										  
                                           {
                                             id: 'select-all-nodes',
                                             title: 'select all nodes',
                                             selector: 'node',
-											show: true,
+                                            show: true,
                                             onClickFunction: function (event) {
                                               selectAllOfTheSameType(event.cyTarget);
 											  
@@ -209,7 +210,7 @@
                                             id: 'unselect-all-nodes',
                                             title: 'unselect all nodes',
                                             selector: 'node',
-											show: false,
+                                            show: false,
                                             onClickFunction: function (event) {
                                               unselectAllOfTheSameType(event.cyTarget);
 											  
@@ -221,7 +222,7 @@
                                             id: 'select-all-edges',
                                             title: 'select all edges',
                                             selector: 'edge',
-											show: true,
+                                            show: true,
                                             onClickFunction: function (event) {
                                               selectAllOfTheSameType(event.cyTarget);
 											  
@@ -233,7 +234,7 @@
                                             id: 'unselect-all-edges',
                                             title: 'unselect all edges',
                                             selector: 'edge',
-											show: false,
+                                            show: false,
                                             onClickFunction: function (event) {
                                               unselectAllOfTheSameType(event.cyTarget);
 
