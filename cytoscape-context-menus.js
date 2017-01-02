@@ -46,6 +46,7 @@
     var dividerCSSClass = 'cy-context-menus-divider';
     var eventCyTapStart;
     var active = false;
+    var anyVisibleChild = false; // Indicates if there is any visible child of context menu if not do not show the context menu
 
     // Merge default options with the ones coming from parameter
     function extend(defaults, options) {
@@ -119,6 +120,24 @@
     }
     
     function bindCyCxttap($component, selector, coreAsWell) {
+      function _cxtfcn(event) {
+        cy.scratch('currentCyEvent', event);
+        adjustCxtMenu(event); // adjust the position of context menu
+        if ($component.data('show')) {
+          // Now we have a visible element display context menu if it is not visible
+          if (!$cxtMenu.is(':visible')) {
+            displayComponent($cxtMenu);
+          }
+          anyVisibleChild = true; // there is visible child
+          displayComponent($component); // display the component
+        }
+
+        // If there is no visible element hide the context menu as well(If it is visible)
+        if (!anyVisibleChild && $cxtMenu.is(':visible')) {
+          hideComponent($cxtMenu);
+        }
+      }
+      
       var cxtfcn;
       var cxtCoreFcn;
       
@@ -128,21 +147,13 @@
             return;
           }
           
-          cy.scratch('currentCyEvent', event);
-          adjustCxtMenu(event);
-          if ($component.data('show')) {
-            displayComponent($component);
-          }
+          _cxtfcn(event);
         });
       }
       
       if(selector) {
         cy.on('cxttap', selector, cxtfcn = function(event) {
-          cy.scratch('currentCyEvent', event);
-          adjustCxtMenu(event);
-          if ($component.data('show')) {
-            displayComponent($component);
-          }
+          _cxtfcn(event);
         });
       }
       
@@ -170,6 +181,7 @@
       
       if( currentCxtMenuPosition != event.cyPosition ) {
         hideMenuItemComponents();
+        anyVisibleChild = false; // we hide all children there is no visible child remaining
         cy.scratch('cxtMenuPosition', event.cyPosition);
         
         var containerPos = $(cy.container()).offset();
@@ -177,7 +189,6 @@
         var left = containerPos.left + event.cyRenderedPosition.x;
         var top = containerPos.top + event.cyRenderedPosition.y;
         
-        displayComponent($cxtMenu);
         $cxtMenu.css('left', left);
         $cxtMenu.css('top', top);
       }
@@ -256,6 +267,7 @@
       $cxtMenu.remove();
       $cxtMenu = undefined;
       active = false;
+      anyVisibleChild = false;
     }
    
     function removeAndUnbindMenuItems() {
