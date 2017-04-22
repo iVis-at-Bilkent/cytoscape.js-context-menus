@@ -143,7 +143,8 @@
       
       if(coreAsWell) {
         cy.on('cxttap', cxtCoreFcn = function(event) {
-          if( event.cyTarget != cy ) {
+          var target = event.target || event.cyTarget;
+          if( target != cy ) {
             return;
           }
           
@@ -178,16 +179,18 @@
     // Adjusts context menu if necessary
     function adjustCxtMenu(event) {
       var currentCxtMenuPosition = cy.scratch('cxtMenuPosition');
+      var cyPos = event.position || event.cyPosition;
       
-      if( currentCxtMenuPosition != event.cyPosition ) {
+      if( currentCxtMenuPosition != cyPos ) {
         hideMenuItemComponents();
         anyVisibleChild = false; // we hide all children there is no visible child remaining
-        cy.scratch('cxtMenuPosition', event.cyPosition);
+        cy.scratch('cxtMenuPosition', cyPos);
         
         var containerPos = $(cy.container()).offset();
+        var renderedPos = event.renderedPosition || event.cyRenderedPosition;
 
-        var left = containerPos.left + event.cyRenderedPosition.x;
-        var top = containerPos.top + event.cyRenderedPosition.y;
+        var left = containerPos.left + renderedPos.x;
+        var top = containerPos.top + renderedPos.y;
         
         $cxtMenu.css('left', left);
         $cxtMenu.css('top', top);

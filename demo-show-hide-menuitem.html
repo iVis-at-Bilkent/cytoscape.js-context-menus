@@ -122,7 +122,8 @@
                                             title: 'remove',
                                             selector: 'node, edge',
                                             onClickFunction: function (event) {
-                                              removed = event.cyTarget.remove();
+                                              var target = event.target || event.cyTarget;
+                                              removed = target.remove();
 											  
                                               contextMenu.showMenuItem('undo-last-remove');
                                             },
@@ -147,7 +148,8 @@
                                             title: 'hide',
                                             selector: '*',
                                             onClickFunction: function (event) {
-                                              event.cyTarget.hide();
+                                              var target = event.target || event.cyTarget;
+                                              target.hide();
                                             },
                                             disabled: false
                                           },
@@ -160,11 +162,13 @@
                                                   group: 'nodes'
                                               };
                                               
+                                              var pos = event.position || event.cyPosition;
+                                              
                                               cy.add({
                                                   data: data,
                                                   position: {
-                                                      x: event.cyPosition.x,
-                                                      y: event.cyPosition.y
+                                                      x: pos.x,
+                                                      y: pos.y
                                                   }
                                               });
                                             }
@@ -200,7 +204,7 @@
                                             selector: 'node',
                                             show: true,
                                             onClickFunction: function (event) {
-                                              selectAllOfTheSameType(event.cyTarget);
+                                              selectAllOfTheSameType(event.target || event.cyTarget);
 											  
                                               contextMenu.hideMenuItem('select-all-nodes');
                                               contextMenu.showMenuItem('unselect-all-nodes');
@@ -212,7 +216,7 @@
                                             selector: 'node',
                                             show: false,
                                             onClickFunction: function (event) {
-                                              unselectAllOfTheSameType(event.cyTarget);
+                                              unselectAllOfTheSameType(event.target || event.cyTarget);
 											  
                                               contextMenu.showMenuItem('select-all-nodes');
                                               contextMenu.hideMenuItem('unselect-all-nodes');
@@ -224,7 +228,7 @@
                                             selector: 'edge',
                                             show: true,
                                             onClickFunction: function (event) {
-                                              selectAllOfTheSameType(event.cyTarget);
+                                              selectAllOfTheSameType(event.target || event.cyTarget);
 											  
                                               contextMenu.hideMenuItem('select-all-edges');
                                               contextMenu.showMenuItem('unselect-all-edges');	
@@ -236,7 +240,7 @@
                                             selector: 'edge',
                                             show: false,
                                             onClickFunction: function (event) {
-                                              unselectAllOfTheSameType(event.cyTarget);
+                                              unselectAllOfTheSameType(event.target || event.cyTarget);
 
                                               contextMenu.showMenuItem('select-all-edges');
                                               contextMenu.hideMenuItem('unselect-all-edges');

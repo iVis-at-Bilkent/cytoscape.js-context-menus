@@ -126,7 +126,8 @@
                                             title: 'remove',
                                             selector: 'node, edge',
                                             onClickFunction: function (event) {
-                                              event.cyTarget.remove();
+                                              var target = event.target || event.cyTarget;
+                                              target.remove();
                                             },
                                             hasTrailingDivider: true
                                           },
@@ -135,7 +136,8 @@
                                             title: 'hide',
                                             selector: '*',
                                             onClickFunction: function (event) {
-                                              event.cyTarget.hide();
+                                              var target = event.target || event.cyTarget;
+                                              target.hide();
                                             },
                                             disabled: false
                                           },
@@ -148,11 +150,13 @@
                                                   group: 'nodes'
                                               };
                                               
+                                              var pos = event.position || event.cyPosition;
+                                              
                                               cy.add({
                                                   data: data,
                                                   position: {
-                                                      x: event.cyPosition.x,
-                                                      y: event.cyPosition.y
+                                                      x: pos.x,
+                                                      y: pos.y
                                                   }
                                               });
                                             }
@@ -170,7 +174,7 @@
                                             title: 'select all nodes',
                                             selector: 'node',
                                             onClickFunction: function (event) {
-                                              selectAllOfTheSameType(event.cyTarget);
+                                              selectAllOfTheSameType(event.target || event.cyTarget);
                                             }
                                           },
                                           {
@@ -178,7 +182,7 @@
                                             title: 'select all edges',
                                             selector: 'edge',
                                             onClickFunction: function (event) {
-                                              selectAllOfTheSameType(event.cyTarget);
+                                              selectAllOfTheSameType(event.target || event.cyTarget);
                                             }
                                           }
                                         ],
