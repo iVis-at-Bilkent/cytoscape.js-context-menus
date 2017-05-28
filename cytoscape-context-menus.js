@@ -231,7 +231,7 @@
     // Creates a menu item as an html component
     function createMenuItemComponent(item) {
       var classStr = getMenuItemClassStr(options.menuItemClasses, item.hasTrailingDivider);
-      var itemStr = '<button id="' + item.id + '" data-title="' + item.title + '" class="' + classStr + '"';
+      var itemStr = '<button id="' + item.id + '" title="' + item.title + '" class="' + classStr + '"';
       
       if(item.disabled) {
         itemStr += ' disabled';
