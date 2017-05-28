@@ -123,7 +123,8 @@
                                     menuItems: [
                                         {
                                             id: 'remove',
-                                            title: 'remove',
+                                            content: 'remove',
+                                            tooltipText: 'remove',
                                             selector: 'node, edge',
                                             onClickFunction: function (event) {
                                               var target = event.target || event.cyTarget;
@@ -133,7 +134,8 @@
                                           },
                                           {
                                             id: 'hide',
-                                            title: 'hide',
+                                            content: 'hide',
+                                            tooltipText: 'hide',
                                             selector: '*',
                                             onClickFunction: function (event) {
                                               var target = event.target || event.cyTarget;
@@ -143,7 +145,8 @@
                                           },
                                           {
                                             id: 'add-node',
-                                            title: 'add node',
+                                            content: 'add node',
+                                            tooltipText: 'add node',
                                             coreAsWell: true,
                                             onClickFunction: function (event) {
                                               var data = {
@@ -163,7 +166,8 @@
                                           },
                                           {
                                             id: 'remove-selected',
-                                            title: 'remove selected',
+                                            content: 'remove selected',
+                                            tooltipText: 'remove selected',
                                             coreAsWell: true,
                                             onClickFunction: function (event) {
                                               cy.$(':selected').remove();
@@ -171,7 +175,8 @@
                                           },
                                           {
                                             id: 'select-all-nodes',
-                                            title: 'select all nodes',
+                                            content: 'select all nodes',
+                                            tooltipText: 'select all nodes',
                                             selector: 'node',
                                             onClickFunction: function (event) {
                                               selectAllOfTheSameType(event.target || event.cyTarget);
@@ -179,7 +184,8 @@
                                           },
                                           {
                                             id: 'select-all-edges',
-                                            title: 'select all edges',
+                                            content: 'select all edges',
+                                            tooltipText: 'select all edges',
                                             selector: 'edge',
                                             onClickFunction: function (event) {
                                               selectAllOfTheSameType(event.target || event.cyTarget);

@@ -13,7 +13,8 @@
         /*
         {
           id: 'remove',
-          title: 'remove',
+          content: 'remove',
+          tooltipText: 'remove',
           selector: 'node, edge',
           onClickFunction: function () {
             console.log('remove element');
@@ -22,7 +23,8 @@
         },
         {
           id: 'hide',
-          title: 'hide',
+          content: 'hide',
+          tooltipText: 'remove',
           selector: 'node, edge',
           onClickFunction: function () {
             console.log('hide element');
@@ -231,7 +233,11 @@
     // Creates a menu item as an html component
     function createMenuItemComponent(item) {
       var classStr = getMenuItemClassStr(options.menuItemClasses, item.hasTrailingDivider);
-      var itemStr = '<button id="' + item.id + '" title="' + item.title + '" class="' + classStr + '"';
+      var itemStr = '<button id="' + item.id + '" content="' + item.content + '" class="' + classStr + '"';
+      
+      if(item.tooltipText) {
+        itemStr += ' title="' + item.tooltipText + '"';
+      }
       
       if(item.disabled) {
         itemStr += ' disabled';

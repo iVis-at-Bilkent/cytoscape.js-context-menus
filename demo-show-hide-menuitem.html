@@ -119,7 +119,7 @@
                                     menuItems: [
                                         {
                                             id: 'remove',
-                                            title: 'remove',
+                                            content: 'remove',
                                             selector: 'node, edge',
                                             onClickFunction: function (event) {
                                               var target = event.target || event.cyTarget;
@@ -131,7 +131,7 @@
                                           },
                                           {
                                             id: 'undo-last-remove',
-                                            title: 'undo last remove',
+                                            content: 'undo last remove',
                                             selector: 'node, edge',
                                             show: false,
                                             coreAsWell: true,
@@ -145,7 +145,7 @@
                                           },										  
                                           {
                                             id: 'hide',
-                                            title: 'hide',
+                                            content: 'hide',
                                             selector: '*',
                                             onClickFunction: function (event) {
                                               var target = event.target || event.cyTarget;
@@ -155,7 +155,7 @@
                                           },
                                           {
                                             id: 'add-node',
-                                            title: 'add node',
+                                            content: 'add node',
                                             coreAsWell: true,
                                             onClickFunction: function (event) {
                                               var data = {
@@ -175,7 +175,7 @@
                                           },
                                           {
                                             id: 'remove-selected',
-                                            title: 'remove selected',
+                                            content: 'remove selected',
                                             coreAsWell: true,
 											show: true,
                                             onClickFunction: function (event) {
@@ -187,7 +187,7 @@
                                           },
                                           {
                                             id: 'restore-selected',
-                                            title: 'restore selected',
+                                            content: 'restore selected',
                                             coreAsWell: true,
                                             show: false,
                                             onClickFunction: function (event) {
@@ -200,7 +200,7 @@
                                           },										  
                                           {
                                             id: 'select-all-nodes',
-                                            title: 'select all nodes',
+                                            content: 'select all nodes',
                                             selector: 'node',
                                             show: true,
                                             onClickFunction: function (event) {
@@ -212,7 +212,7 @@
                                           },
                                           {
                                             id: 'unselect-all-nodes',
-                                            title: 'unselect all nodes',
+                                            content: 'unselect all nodes',
                                             selector: 'node',
                                             show: false,
                                             onClickFunction: function (event) {
@@ -224,7 +224,7 @@
                                           },										  
                                           {
                                             id: 'select-all-edges',
-                                            title: 'select all edges',
+                                            content: 'select all edges',
                                             selector: 'edge',
                                             show: true,
                                             onClickFunction: function (event) {
@@ -236,7 +236,7 @@
                                           },
                                           {
                                             id: 'unselect-all-edges',
-                                            title: 'unselect all edges',
+                                            content: 'unselect all edges',
                                             selector: 'edge',
                                             show: false,
                                             onClickFunction: function (event) {

@@ -39,11 +39,11 @@
     cursor: pointer;
 }
 
-.cy-context-menus-cxt-menuitem[title]:before {
-    content:attr(title);
+.cy-context-menus-cxt-menuitem[content]:before {
+    content:attr(content);
 }
 
-.cy-context-menus-cxt-menuitem:not([title]):before {
+.cy-context-menus-cxt-menuitem:not([content]):before {
     content:"\2630";
 }
 

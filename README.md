@@ -48,7 +48,8 @@ var options = {
     menuItems: [/*
       {
         id: 'remove', // ID of menu item
-        title: 'remove', // Title of menu item
+        content: 'remove', // Display content of menu item
+        tooltipText: 'remove', // Tooltip text for menu item
         // Filters the elements to have this menu item on cxttap
         // If the selector is not truthy no elements will have this menu item on cxttap
         selector: 'node, edge', 
@@ -62,7 +63,8 @@ var options = {
       },
       {
         id: 'hide',
-        title: 'hide',
+        content: 'hide',
+        tooltipText: 'hide',
         selector: 'node, edge',
         onClickFunction: function () {
           console.log('hide element');
@@ -71,7 +73,8 @@ var options = {
       },
       {
         id: 'add-node',
-        title: 'add node',
+        content: 'add node',
+        tooltipText: 'add node',
         selector: 'node',
         coreAsWell: true,
         onClickFunction: function () {
