@@ -1,4 +1,4 @@
-#cy-context-menus-cxt-menu {
+.cy-context-menus-cxt-menu {
     display:none;
     z-index:1000;
     position:absolute;
