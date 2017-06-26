@@ -38,7 +38,8 @@
       // css classes that context menu will have
       contextMenuClasses: [
         // add class names to this list
-      ]
+      ],
+      container: 'body' // string selector or element to which context menu should be appended
     };
     
     var eventCyTapStart; // The event to be binded on tap start
@@ -245,8 +246,7 @@
         $cxtMenu.addClass('cy-context-menus-cxt-menu');
         setScratchProp('cxtMenu', $cxtMenu);
 
-        $('body').append($cxtMenu);
-        return $cxtMenu;
+        return $cxtMenu.appendTo(options.container);
       }
 
       // Creates a menu item as an html component
