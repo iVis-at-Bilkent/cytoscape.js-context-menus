@@ -206,8 +206,18 @@
           setScratchProp('anyVisibleChild', false);// we hide all children there is no visible child remaining
           setScratchProp('cxtMenuPosition', cyPos);
 
+          renderedPos = event.renderedPosition || event.cyRenderedPosition;
 		  
+          if(opts.container) {
+            // append inside container
             left = renderedPos.x;
+            top = renderedPos.y;
+          } else {
+            // append to body, thus adding container offset
+            containerPos = $(cy.container()).offset();
+            left = containerPos.left + renderedPos.x;
+            top = containerPos.top + renderedPos.y;
+          }
 
           $cxtMenu.css('left', left);
           $cxtMenu.css('top', top);
