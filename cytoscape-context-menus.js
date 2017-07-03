@@ -199,17 +199,15 @@
       function adjustCxtMenu(event) {
         var currentCxtMenuPosition = getScratchProp('cxtMenuPosition');
         var cyPos = event.position || event.cyPosition;
+        var left, top, containerPos, renderedPos;
 
         if( currentCxtMenuPosition != cyPos ) {
           hideMenuItemComponents();
           setScratchProp('anyVisibleChild', false);// we hide all children there is no visible child remaining
           setScratchProp('cxtMenuPosition', cyPos);
 
-          var containerPos = $(cy.container()).offset();
-          var renderedPos = event.renderedPosition || event.cyRenderedPosition;
-
-          var left = containerPos.left + renderedPos.x;
-          var top = containerPos.top + renderedPos.y;
+		  
+            left = renderedPos.x;
 
           $cxtMenu.css('left', left);
           $cxtMenu.css('top', top);
