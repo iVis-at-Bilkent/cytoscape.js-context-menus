@@ -38,7 +38,8 @@
       // css classes that context menu will have
       contextMenuClasses: [
         // add class names to this list
-      ]
+      ],
+      container: 'body' // string selector or element to which context menu should be appended
     };
     
     var eventCyTapStart; // The event to be binded on tap start
@@ -198,17 +199,25 @@
       function adjustCxtMenu(event) {
         var currentCxtMenuPosition = getScratchProp('cxtMenuPosition');
         var cyPos = event.position || event.cyPosition;
+        var left, top, containerPos, renderedPos;
 
         if( currentCxtMenuPosition != cyPos ) {
           hideMenuItemComponents();
           setScratchProp('anyVisibleChild', false);// we hide all children there is no visible child remaining
           setScratchProp('cxtMenuPosition', cyPos);
 
-          var containerPos = $(cy.container()).offset();
-          var renderedPos = event.renderedPosition || event.cyRenderedPosition;
-
-          var left = containerPos.left + renderedPos.x;
-          var top = containerPos.top + renderedPos.y;
+          renderedPos = event.renderedPosition || event.cyRenderedPosition;
+		  
+          if(opts.container) {
+            // append inside container
+            left = renderedPos.x;
+            top = renderedPos.y;
+          } else {
+            // append to body, thus adding container offset
+            containerPos = $(cy.container()).offset();
+            left = containerPos.left + renderedPos.x;
+            top = containerPos.top + renderedPos.y;
+          }
 
           $cxtMenu.css('left', left);
           $cxtMenu.css('top', top);
@@ -245,8 +254,7 @@
         $cxtMenu.addClass('cy-context-menus-cxt-menu');
         setScratchProp('cxtMenu', $cxtMenu);
 
-        $('body').append($cxtMenu);
-        return $cxtMenu;
+        return $cxtMenu.appendTo(options.container);
       }
 
       // Creates a menu item as an html component
