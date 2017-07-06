@@ -43,10 +43,6 @@
     content:attr(content);
 }
 
-.cy-context-menus-cxt-menuitem:not([content]):before {
-    content:"\2630";
-}
-
 .cy-context-menus-divider {
   border-bottom:1px solid #A0A0A0;
 }

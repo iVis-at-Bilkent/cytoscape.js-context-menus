@@ -252,7 +252,7 @@
       // Creates a menu item as an html component
       function createMenuItemComponent(item) {
         var classStr = getMenuItemClassStr(options.menuItemClasses, item.hasTrailingDivider);
-        var itemStr = '<button id="' + item.id + '" content="' + item.content + '" class="' + classStr + '"';
+        var itemStr = '<button id="' + item.id + '" class="' + classStr + '"';
 
         if(item.tooltipText) {
           itemStr += ' title="' + item.tooltipText + '"';
@@ -261,8 +261,15 @@
         if(item.disabled) {
           itemStr += ' disabled';
         }
+        if (!item.image){
+            itemStr += '>' + item.content + '</button>';
+        }
+        else{
+            itemStr += '>' + '<img src="' + item.image.src + '" width="' + item.image.width + 'px"; height="'
+                + item.image.height + 'px"; style="position:absolute; top: ' + item.image.y + 'px; left: '
+                + item.image.x + 'px;">' + item.content + '</button>';
+        };
 
-        itemStr += '></button>';
         var $menuItemComponent = $(itemStr);
 
         $menuItemComponent.data('selector', item.selector); 
