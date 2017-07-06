@@ -50,6 +50,7 @@ var options = {
         id: 'remove', // ID of menu item
         content: 'remove', // Display content of menu item
         tooltipText: 'remove', // Tooltip text for menu item
+        image: {src : "remove.svg", width : 12, height : 12, x : 6, y : 4}, // menu icon
         // Filters the elements to have this menu item on cxttap
         // If the selector is not truthy no elements will have this menu item on cxttap
         selector: 'node, edge', 
@@ -75,6 +76,7 @@ var options = {
         id: 'add-node',
         content: 'add node',
         tooltipText: 'add node',
+        image: {src : "add.svg", width : 12, height : 12, x : 6, y : 4},
         selector: 'node',
         coreAsWell: true,
         onClickFunction: function () {
