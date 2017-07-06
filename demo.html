@@ -10,7 +10,7 @@
                  <link href="cytoscape-context-menus.css" rel="stylesheet" type="text/css" />
                 
                 <script src="http://code.jquery.com/jquery-2.0.3.min.js"></script>
-		<script src="http://cytoscape.github.io/cytoscape.js/api/cytoscape.js-latest/cytoscape.min.js"></script>
+		<script src="https://unpkg.com/cytoscape/dist/cytoscape.min.js"></script>
 
 		<!-- for testing with local version of cytoscape.js -->
 		<!--<script src="../cytoscape.js/build/cytoscape.js"></script>-->
@@ -106,6 +106,7 @@
                                             id: 'remove',
                                             content: 'remove',
                                             tooltipText: 'remove',
+                                            image: {src : "remove.svg", width : 12, height : 12, x : 6, y : 4},
                                             selector: 'node, edge',
                                             onClickFunction: function (event) {
                                               var target = event.target || event.cyTarget;
@@ -128,6 +129,7 @@
                                             id: 'add-node',
                                             content: 'add node',
                                             tooltipText: 'add node',
+                                            image: {src : "add.svg", width : 12, height : 12, x : 6, y : 4},
                                             coreAsWell: true,
                                             onClickFunction: function (event) {
                                               var data = {
@@ -149,6 +151,7 @@
                                             id: 'remove-selected',
                                             content: 'remove selected',
                                             tooltipText: 'remove selected',
+                                            image: {src : "remove.svg", width : 12, height : 12, x : 6, y : 6},
                                             coreAsWell: true,
                                             onClickFunction: function (event) {
                                               cy.$(':selected').remove();
