@@ -199,7 +199,9 @@
         var currentCxtMenuPosition = getScratchProp('cxtMenuPosition');
         var cyPos = event.position || event.cyPosition;
 
-        if( currentCxtMenuPosition != cyPos ) {
+        if (currentCxtMenuPosition != cyPos) {
+          var cxtMenuWidth = $cxtMenu.width();
+          var cxtMenuHeight = $cxtMenu.height();
           hideMenuItemComponents();
           setScratchProp('anyVisibleChild', false);// we hide all children there is no visible child remaining
           setScratchProp('cxtMenuPosition', cyPos);
@@ -209,6 +211,16 @@
 
           var left = containerPos.left + renderedPos.x;
           var top = containerPos.top + renderedPos.y;
+          
+          var windowHeight = window.innerHeight;
+          var windowWidth = window.innerWidth;
+          if (left + cxtMenuWidth > windowWidth) {
+            left = left - cxtMenuWidth;
+          }
+
+          if (top + cxtMenuHeight > windowHeight) {
+            top = top - cxtMenuHeight
+          }
 
           $cxtMenu.css('left', left);
           $cxtMenu.css('top', top);
