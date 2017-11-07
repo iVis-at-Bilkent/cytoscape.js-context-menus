@@ -1,6 +1,6 @@
 {
   "name": "cytoscape-context-menus",
-  "version": "3.0.3",
+  "version": "3.0.4",
   "description": "A Cytoscape.js extension to provide context menu around elements and core instance.",
   "main": "cytoscape-context-menus.js",
   "style": "cytoscape-context-menus.css",
