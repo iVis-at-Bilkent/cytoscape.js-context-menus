@@ -15,6 +15,9 @@
           content: 'remove',
           tooltipText: 'remove',
           selector: 'node, edge',
+          onDisplayFunction: function () {
+            console.log('remove element');
+          },
           onClickFunction: function () {
             console.log('remove element');
           },
@@ -136,10 +139,25 @@
         $component.data('call-on-click-function', callOnClickFcn); 
       }
 
+      function bindOnDisplayFunction($component, onDisplayFcn) {
+
+          $component.data('call-on-display-function', onDisplayFcn);
+      }
+
       function bindCyCxttap($component, selector, coreAsWell) {
+
         function _cxtfcn(event) {
+
+          var onDisplayFcn = $component.data('call-on-display-function') || null;
+
+          if( onDisplayFcn) {
+
+              onDisplayFcn(event, $component, selector);
+          }
+
           setScratchProp('currentCyEvent', event);
           adjustCxtMenu(event); // adjust the position of context menu
+
           if ($component.data('show')) {
             // Now we have a visible element display context menu if it is not visible
             if (!$cxtMenu.is(':visible')) {
@@ -172,6 +190,7 @@
 
         if(selector) {
           cy.on('cxttap', selector, cxtfcn = function(event) {
+
             _cxtfcn(event);
           });
         }
@@ -189,8 +208,12 @@
         });
       }
 
-      function performBindings($component, onClickFcn, selector, coreAsWell) {
+      function performBindings($component, onClickFcn, onDisplayFcn, selector, coreAsWell) {
+
         bindOnClickFunction($component, onClickFcn);
+
+        bindOnDisplayFunction($component, onDisplayFcn);
+
         bindCyCxttap($component, selector, coreAsWell);
       }
 
@@ -226,7 +249,7 @@
         var $menuItemComponent = createMenuItemComponent(menuItem);
         appendComponentToCxtMenu($menuItemComponent);
 
-        performBindings($menuItemComponent, menuItem.onClickFunction, menuItem.selector, menuItem.coreAsWell);
+        performBindings($menuItemComponent, menuItem.onClickFunction, menuItem.onDisplayFunction, menuItem.selector, menuItem.coreAsWell);
       }//insertComponentBeforeExistingItem(component, existingItemID)
 
       function createAndInsertMenuItemComponentBeforeExistingComponent(menuItem, existingComponentID) {
@@ -234,7 +257,7 @@
         var $menuItemComponent = createMenuItemComponent(menuItem);
         insertComponentBeforeExistingItem($menuItemComponent, existingComponentID);
 
-        performBindings($menuItemComponent, menuItem.onClickFunction, menuItem.selector, menuItem.coreAsWell);
+        performBindings($menuItemComponent, menuItem.onClickFunction, menuItem.onDisplayFunction, menuItem.selector, menuItem.coreAsWell);
       }
 
       // create cxtMenu and append it to body
@@ -251,6 +274,7 @@
 
       // Creates a menu item as an html component
       function createMenuItemComponent(item) {
+
         var classStr = getMenuItemClassStr(options.menuItemClasses, item.hasTrailingDivider);
         var itemStr = '<button id="' + item.id + '" class="' + classStr + '"';
 
@@ -269,6 +293,8 @@
                 + item.image.height + 'px"; style="position:absolute; top: ' + item.image.y + 'px; left: '
                 + item.image.x + 'px;">' + item.content + '</button>';
         };
+
+        console.log(itemStr);
 
         var $menuItemComponent = $(itemStr);
 
@@ -319,6 +345,7 @@
         var cxtfcn = $component.data('cy-context-menus-cxtfcn');
         var selector = $component.data('selector');
         var callOnClickFcn = $component.data('call-on-click-function');
+        var callOnDisplayFcn = $component.data('call-on-display-function');
         var cxtCoreFcn = $component.data('cy-context-menus-cxtcorefcn');
 
         if(cxtfcn) {
@@ -331,6 +358,10 @@
 
         if(callOnClickFcn) {
           $component.off('click', callOnClickFcn);
+        }
+
+        if(callOnDisplayFcn) {
+          $component.off('show', callOnDisplayFcn);
         }
 
         $component.remove();
