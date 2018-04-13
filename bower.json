@@ -3,7 +3,7 @@
   "description": "A Cytoscape.js extension to provide context menu around elements and core instance.",
   "main": "cytoscape-context-menus.js",
   "dependencies": {
-    "cytoscape": "^3.0.0"
+    "cytoscape": "^2.7.0 || ^3.0.0"
   },
   "repository": {
     "type": "git",
