@@ -168,10 +168,21 @@
 
             _cxtfcn(event);
           });
+          cy.on('taphold', cxtCoreFcn = function(event) {
+            var target = event.target || event.cyTarget;
+            if( target != cy ) {
+              return;
+            }
+
+            _cxtfcn(event);
+          });
         }
 
         if(selector) {
           cy.on('cxttap', selector, cxtfcn = function(event) {
+            _cxtfcn(event);
+          });
+          cy.on('taphold', selector, cxtfcn = function(event) {
             _cxtfcn(event);
           });
         }
