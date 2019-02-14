@@ -25,7 +25,21 @@ Download the library:
  * via bower: `bower install cytoscape-context-menus`, or
  * via direct download in the repository (probably from a tag).
 
-`require()` the library as appropriate for your project:
+Import the library as appropriate for your project:
+
+ES import:
+
+```js
+import cytoscape from 'cytoscape';
+import $ from 'jquery';
+import contextMenus from 'cytoscape-context-menus';
+
+// register extension
+cytoscape.use(contextMenus, $);
+
+// import CSS as well
+import 'cytoscape-context-menus/cytoscape-context-menus.css';
+```
 
 CommonJS:
 ```js
