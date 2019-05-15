@@ -52,8 +52,8 @@ contextMenus( cytoscape, jquery ); // register extension
 
 AMD:
 ```js
-require(['cytoscape', 'cytoscape-context-menus', 'jquery'], function( cytoscape, context-menus, jquery ){
-  context-menus( cytoscape, jquery ); // register extension
+require(['cytoscape', 'cytoscape-context-menus', 'jquery'], function( cytoscape, contextMenus, jquery ){
+  contextMenus( cytoscape, jquery ); // register extension
 });
 ```
 
