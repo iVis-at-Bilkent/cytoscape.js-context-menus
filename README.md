@@ -10,7 +10,7 @@ A Cytoscape.js extension to provide context menu around elements and core instan
 
 ## Demo
 
-Click [here](https://rawgit.com/iVis-at-Bilkent/cytoscape.js-context-menus/master/demo.html) (simple) or [here](https://rawgit.com/iVis-at-Bilkent/cytoscape.js-context-menus/master/demo-customized.html) (customized) or [here](https://rawgit.com/iVis-at-Bilkent/cytoscape.js-context-menus/master/demo-show-hide-menuitem.html) (with different menu items) for demos
+Click [here](https://raw.githack.com/iVis-at-Bilkent/cytoscape.js-context-menus/unstable/demo.html) (simple) or [here](https://raw.githack.com/iVis-at-Bilkent/cytoscape.js-context-menus/unstable/demo-customized.html) (customized) or [here](https://raw.githack.com/iVis-at-Bilkent/cytoscape.js-context-menus/unstable/demo-show-hide-menuitem.html) (with different menu items) for demos
 
 ## Dependencies
 
@@ -52,8 +52,8 @@ contextMenus( cytoscape, jquery ); // register extension
 
 AMD:
 ```js
-require(['cytoscape', 'cytoscape-context-menus', 'jquery'], function( cytoscape, context-menus, jquery ){
-  context-menus( cytoscape, jquery ); // register extension
+require(['cytoscape', 'cytoscape-context-menus', 'jquery'], function( cytoscape, contextMenus, jquery ){
+  contextMenus( cytoscape, jquery ); // register extension
 });
 ```
 

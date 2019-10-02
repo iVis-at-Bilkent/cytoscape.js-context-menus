@@ -207,11 +207,52 @@
           var containerPos = $(cy.container()).offset();
           var renderedPos = event.renderedPosition || event.cyRenderedPosition;
 
-          var left = containerPos.left + renderedPos.x;
-          var top = containerPos.top + renderedPos.y;
+          var borderThickness = parseInt($(cy.container()).css("border-width").replace("px",""));
+          if(borderThickness > 0){
+            containerPos.top += borderThickness;
+            containerPos.left += borderThickness;
+          }
+          
+          // var left = containerPos.left + renderedPos.x;
+          // var top = containerPos.top + renderedPos.y;
+          //$cxtMenu.css('left', left);
+          //$cxtMenu.css('top', top);
 
-          $cxtMenu.css('left', left);
-          $cxtMenu.css('top', top);
+
+          var containerHeight = $(cy.container()).innerHeight();
+          var containerWidth =  $(cy.container()).innerWidth();       
+
+          var horizontalSplit = containerHeight/2 ;
+          var verticalSplit = containerWidth/2 ;
+          var windowHeight = $(window).height();
+          var windowWidth = $(window).width();          
+          
+                    
+              //When user click on bottom-left part of window
+              if(renderedPos.y > horizontalSplit && renderedPos.x <= verticalSplit) {
+                $cxtMenu.css("left", renderedPos.x + containerPos.left);
+                $cxtMenu.css("bottom", windowHeight - (containerPos.top + renderedPos.y));
+                $cxtMenu.css("right", "auto");
+                $cxtMenu.css("top", "auto");
+              } else if(renderedPos.y > horizontalSplit && renderedPos.x > verticalSplit) {
+                //When user click on bottom-right part of window
+               $cxtMenu.css("right", windowWidth - (containerPos.left+ renderedPos.x));
+               $cxtMenu.css("bottom", windowHeight - (containerPos.top + renderedPos.y));
+               $cxtMenu.css("left", "auto");
+               $cxtMenu.css("top", "auto");
+              } else if(renderedPos.y <= horizontalSplit && renderedPos.x <= verticalSplit) {
+                //When user click on top-left part of window
+               $cxtMenu.css("left", renderedPos.x + containerPos.left);
+               $cxtMenu.css("top", renderedPos.y + containerPos.top);
+               $cxtMenu.css("right", "auto");
+               $cxtMenu.css("bottom", "auto");
+              } else {
+                 //When user click on top-right part of window
+               $cxtMenu.css("right", windowWidth - (renderedPos.x + containerPos.left));
+               $cxtMenu.css("top", renderedPos.y + containerPos.top);
+               $cxtMenu.css("left", "auto");
+               $cxtMenu.css("bottom", "auto");
+              }
         }
       }
 
