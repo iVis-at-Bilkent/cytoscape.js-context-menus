@@ -7,6 +7,8 @@
     if( !cytoscape ){ return; } // can't register if cytoscape unspecified
     
     var defaults = {
+      // Use taphold to bring up the context menu
+      taphold: false,
       // List of initial menu items
       menuItems: [
         /*
@@ -168,10 +170,23 @@
 
             _cxtfcn(event);
           });
+          cy.on('taphold', cxtCoreFcn = function(event) {
+            if (!options.taphold) return
+            var target = event.target || event.cyTarget;
+            if( target != cy ) {
+              return;
+            }
+
+            _cxtfcn(event);
+          });
         }
 
         if(selector) {
           cy.on('cxttap', selector, cxtfcn = function(event) {
+            _cxtfcn(event);
+          });
+          cy.on('taphold', selector, cxtfcn = function(event) {
+            if (!options.taphold) return
             _cxtfcn(event);
           });
         }
@@ -419,6 +434,9 @@
           // Returns whether the extension is active
          isActive: function() {
            return getScratchProp('active');
+         },
+         setTaphold: function(value) {
+          options.taphold=value
          },
          // Appends given menu item to the menu items list.
          appendMenuItem: function(item) {

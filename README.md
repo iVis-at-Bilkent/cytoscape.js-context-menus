@@ -62,6 +62,8 @@ Plain HTML/JS has the extension registered for you automatically, because no `re
 ## Default Options
 ```js
 var options = {
+    // Show menu on taphold
+    taphold: false,
     // List of initial menu items
     menuItems: [/*
       {
@@ -123,6 +125,8 @@ An instance has a number of functions available:
 
 ```js
 instance.isActive(); // Returns whether the extension is active.
+
+instance.setTaphold(boolean); // Show menu on taphold (true), or ignore taphold (false) 
 
 instance.appendMenuItem(item); // Appends given menu item to the menu items list.
 
