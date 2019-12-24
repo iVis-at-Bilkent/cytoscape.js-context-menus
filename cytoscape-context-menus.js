@@ -160,18 +160,10 @@
 
         var cxtfcn;
         var cxtCoreFcn;
-
+        var evtType=options.taphold?'taphold':'cxttap'
         if(coreAsWell) {
-          cy.on('cxttap', cxtCoreFcn = function(event) {
-            var target = event.target || event.cyTarget;
-            if( target != cy ) {
-              return;
-            }
-
-            _cxtfcn(event);
-          });
-          cy.on('taphold', cxtCoreFcn = function(event) {
-            if (!options.taphold) return
+          
+          cy.on(evtType, cxtCoreFcn = function(event) {
             var target = event.target || event.cyTarget;
             if( target != cy ) {
               return;
@@ -182,11 +174,7 @@
         }
 
         if(selector) {
-          cy.on('cxttap', selector, cxtfcn = function(event) {
-            _cxtfcn(event);
-          });
-          cy.on('taphold', selector, cxtfcn = function(event) {
-            if (!options.taphold) return
+          cy.on(evtType, selector, cxtfcn = function(event) {
             _cxtfcn(event);
           });
         }
@@ -376,12 +364,14 @@
         var selector = $component.data('selector');
         var callOnClickFcn = $component.data('call-on-click-function');
         var cxtCoreFcn = $component.data('cy-context-menus-cxtcorefcn');
-
+       
         if(cxtfcn) {
+          cy.off('taphold', selector, cxtfcn);
           cy.off('cxttap', selector, cxtfcn);
         }
 
         if(cxtCoreFcn) {
+          cy.off('taphold', cxtCoreFcn);
           cy.off('cxttap', cxtCoreFcn);
         }
 
@@ -434,9 +424,6 @@
           // Returns whether the extension is active
          isActive: function() {
            return getScratchProp('active');
-         },
-         setTaphold: function(value) {
-          options.taphold=value
          },
          // Appends given menu item to the menu items list.
          appendMenuItem: function(item) {
