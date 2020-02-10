@@ -38,7 +38,8 @@
       // css classes that context menu will have
       contextMenuClasses: [
         // add class names to this list
-      ]
+      ],
+      eventListener: 'cxttap'
     };
     
     var eventCyTapStart; // The event to be binded on tap start
@@ -160,7 +161,7 @@
         var cxtCoreFcn;
 
         if(coreAsWell) {
-          cy.on('cxttap', cxtCoreFcn = function(event) {
+          cy.on(options.eventListener, cxtCoreFcn = function(event) {
             var target = event.target || event.cyTarget;
             if( target != cy ) {
               return;
@@ -171,7 +172,7 @@
         }
 
         if(selector) {
-          cy.on('cxttap', selector, cxtfcn = function(event) {
+          cy.on(options.eventListener, selector, cxtfcn = function(event) {
             _cxtfcn(event);
           });
         }
@@ -363,11 +364,11 @@
         var cxtCoreFcn = $component.data('cy-context-menus-cxtcorefcn');
 
         if(cxtfcn) {
-          cy.off('cxttap', selector, cxtfcn);
+          cy.off(options.eventListener, selector, cxtfcn);
         }
 
         if(cxtCoreFcn) {
-          cy.off('cxttap', cxtCoreFcn);
+          cy.off(options.eventListener, cxtCoreFcn);
         }
 
         if(callOnClickFcn) {
