@@ -66,8 +66,9 @@ Plain HTML/JS has the extension registered for you automatically, because no `re
 ## Default Options
 ```js
 var options = {
-    // Show menu on taphold in stead of right-mouse click
-    taphold: false,
+    // Customize event to bring up the context menu
+    // Possible options https://js.cytoscape.org/#events/user-input-device-events
+    evtType: 'cxttap',
     // List of initial menu items
     menuItems: [/*
       {
