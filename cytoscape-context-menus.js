@@ -7,8 +7,9 @@
     if( !cytoscape ){ return; } // can't register if cytoscape unspecified
     
     var defaults = {
-      // Use taphold to bring up the context menu
-      taphold: false,
+      // Customize event to bring up the context menu
+      // Possible options https://js.cytoscape.org/#events/user-input-device-events
+      evtType: 'cxttap',
       // List of initial menu items
       menuItems: [
         /*
@@ -160,10 +161,9 @@
 
         var cxtfcn;
         var cxtCoreFcn;
-        var evtType=options.taphold?'taphold':'cxttap'
         if(coreAsWell) {
           
-          cy.on(evtType, cxtCoreFcn = function(event) {
+          cy.on(options.evtType, cxtCoreFcn = function(event) {
             var target = event.target || event.cyTarget;
             if( target != cy ) {
               return;
@@ -174,7 +174,7 @@
         }
 
         if(selector) {
-          cy.on(evtType, selector, cxtfcn = function(event) {
+          cy.on(options.evtType, selector, cxtfcn = function(event) {
             _cxtfcn(event);
           });
         }
@@ -366,13 +366,11 @@
         var cxtCoreFcn = $component.data('cy-context-menus-cxtcorefcn');
        
         if(cxtfcn) {
-          cy.off('taphold', selector, cxtfcn);
-          cy.off('cxttap', selector, cxtfcn);
+          cy.off(options.evtType, selector, cxtfcn);
         }
 
         if(cxtCoreFcn) {
-          cy.off('taphold', cxtCoreFcn);
-          cy.off('cxttap', cxtCoreFcn);
+          cy.off(options.evtType, cxtCoreFcn);
         }
 
         if(callOnClickFcn) {
