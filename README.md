@@ -8,9 +8,13 @@ A Cytoscape.js extension to provide context menu around elements and core instan
 
 ![Image of extension](example.png)
 
+Please cite the following paper when using this extension:
+
+U. Dogrusoz , A. Karacelik, I. Safarli, H. Balci, L. Dervishi, and M.C. Siper, "[Efficient methods and readily customizable libraries for managing complexity of large networks](https://doi.org/10.1371/journal.pone.0197238)", PLoS ONE, 13(5): e0197238, 2018.
+
 ## Demo
 
-Click [here](https://ivis-at-bilkent.github.io/cytoscape.js-context-menus/demo.html) (simple) or [here](https://ivis-at-bilkent.github.io/cytoscape.js-context-menus/demo-customized.html) (customized) or [here](https://ivis-at-bilkent.github.io/cytoscape.js-context-menus/demo-show-hide-menuitem.html) (with different menu items) for demos
+Click [here](https://raw.githack.com/iVis-at-Bilkent/cytoscape.js-context-menus/unstable/demo.html) (simple) or [here](https://raw.githack.com/iVis-at-Bilkent/cytoscape.js-context-menus/unstable/demo-customized.html) (customized) or [here](https://raw.githack.com/iVis-at-Bilkent/cytoscape.js-context-menus/unstable/demo-show-hide-menuitem.html) (with different menu items) for demos
 
 ## Dependencies
 
@@ -62,6 +66,9 @@ Plain HTML/JS has the extension registered for you automatically, because no `re
 ## Default Options
 ```js
 var options = {
+    // Customize event to bring up the context menu
+    // Possible options https://js.cytoscape.org/#events/user-input-device-events
+    evtType: 'cxttap',
     // List of initial menu items
     menuItems: [/*
       {
