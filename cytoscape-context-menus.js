@@ -285,7 +285,7 @@
       function createAndAppendCxtMenuComponent() {
         var classes = getClassStr(options.contextMenuClasses);
 //        classes += ' cy-context-menus-cxt-menu';
-        $cxtMenu = $('<div class=' + classes + '></div>');
+        $cxtMenu = $('<div />', {class: classes});
         $cxtMenu.addClass('cy-context-menus-cxt-menu');
         setScratchProp('cxtMenu', $cxtMenu);
 
