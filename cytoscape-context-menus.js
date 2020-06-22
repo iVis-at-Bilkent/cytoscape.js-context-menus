@@ -157,7 +157,7 @@ import utils from './utils.js';
         $component.data('call-on-click-function', callOnClickFcn); */
         
         let callOnClickFn = () => { onClickFcn(getScratchProp('currentCyEvent')); };
-        console.log($component);
+        // console.log($component);
         $component.onclick = callOnClickFn;
 
         $component.data['call-on-click-function'] = callOnClickFn;
@@ -268,7 +268,7 @@ import utils from './utils.js';
                     
           //When user click on bottom-left part of window
           if(renderedPos.y > horizontalSplit && renderedPos.x <= verticalSplit) {
-            console.log('down left');
+            // console.log('down left');
             /* $cxtMenu.css("left", renderedPos.x + containerPos.left);
             $cxtMenu.css("bottom", windowHeight - (containerPos.top + renderedPos.y));
             $cxtMenu.css("right", "auto");
@@ -279,7 +279,7 @@ import utils from './utils.js';
             $cxtMenu.style.right = "auto";
             $cxtMenu.style.top = "auto";
           } else if(renderedPos.y > horizontalSplit && renderedPos.x > verticalSplit) {
-            console.log('down right');
+            // console.log('down right');
             //When user click on bottom-right part of window
             /* $cxtMenu.css("right", windowWidth - (containerPos.left+ renderedPos.x));
             $cxtMenu.css("bottom", windowHeight - (containerPos.top + renderedPos.y));
@@ -291,21 +291,21 @@ import utils from './utils.js';
             $cxtMenu.style.left = "auto";
             $cxtMenu.style.top = "auto";
           } else if(renderedPos.y <= horizontalSplit && renderedPos.x <= verticalSplit) {
-            console.log('up left');
+            // console.log('up left');
             //When user click on top-left part of window
             /* $cxtMenu.css("left", renderedPos.x + containerPos.left);
             $cxtMenu.css("top", renderedPos.y + containerPos.top);
             $cxtMenu.css("right", "auto");
             $cxtMenu.css("bottom", "auto"); */
 
-            console.log(renderedPos.x + containerPos.left);
+            // console.log(renderedPos.x + containerPos.left);
 
             $cxtMenu.style.left = (renderedPos.x + containerPos.left) + 'px';
             $cxtMenu.style.top = (renderedPos.y + containerPos.top) + 'px';
             $cxtMenu.style.right = "auto";
             $cxtMenu.style.bottom = "auto";
           } else {
-            console.log('up right');
+            // console.log('up right');
               //When user click on top-right part of window
             /* $cxtMenu.css("right", windowWidth - (renderedPos.x + containerPos.left));
             $cxtMenu.css("top", renderedPos.y + containerPos.top);
