@@ -6,7 +6,7 @@ cytoscape-context-menus
 
 A Cytoscape.js extension to provide context menu around elements and core instance distributed under [The MIT License](https://opensource.org/licenses/MIT).
 
-![Image of extension](example.png)
+![Image of extension](assets/example.png)
 
 Please cite the following paper when using this extension:
 
