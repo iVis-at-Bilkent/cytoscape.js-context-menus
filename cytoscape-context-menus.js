@@ -2,11 +2,12 @@ import utils from './utils.js';
 
 ;(function(){ 'use strict';
 
-  var $ = typeof jQuery === typeof undefined ? null : jQuery;
-
-  var register = function( cytoscape, $ ){
+  var register = function(cytoscape) {
     
-    if( !cytoscape ){ return; } // can't register if cytoscape unspecified
+    if (!cytoscape) { 
+      console.error('cytoscape is not found');
+      return; 
+    } // can't register if cytoscape unspecified
     
     var defaults = {
       // Customize event to bring up the context menu
@@ -158,7 +159,8 @@ import utils from './utils.js';
         
         let callOnClickFn = () => { onClickFcn(getScratchProp('currentCyEvent')); };
         // console.log($component);
-        $component.onclick = callOnClickFn;
+        // use addEventListener because there is also click to hide function
+        $component.addEventListener('click', callOnClickFn);
 
         $component.data['call-on-click-function'] = callOnClickFn;
       }
@@ -179,18 +181,17 @@ import utils from './utils.js';
           }
 
           // If there is no visible element hide the context menu as well(If it is visible)
-          if (!getScratchProp('anyVisibleChild') && $cxtMenu.is(':visible')) {
+          if (!getScratchProp('anyVisibleChild') && utils.isElementVisible($cxtMenu)) {
             hideComponent($cxtMenu);
           }
         }
 
         var cxtfcn;
         var cxtCoreFcn;
-        if(coreAsWell) {
-          
+        if (coreAsWell) {
           cy.on(options.evtType, cxtCoreFcn = function(event) {
             var target = event.target || event.cyTarget;
-            if( target != cy ) {
+            if (target != cy) {
               return;
             }
 
@@ -198,7 +199,7 @@ import utils from './utils.js';
           });
         }
 
-        if(selector) {
+        if (selector) {
           cy.on(options.evtType, selector, cxtfcn = function(event) {
             _cxtfcn(event);
           });
@@ -212,7 +213,7 @@ import utils from './utils.js';
       }
 
       function bindCyEvents() {
-        cy.on('tapstart', eventCyTapStart = function(){
+        cy.on('tapstart', eventCyTapStart = function() {
           hideComponent($cxtMenu);
           setScratchProp('cxtMenuPosition', undefined);
           setScratchProp('currentCyEvent', undefined);
@@ -258,8 +259,8 @@ import utils from './utils.js';
           let containerHeight = container.clientHeight;
           let containerWidth = container.clientWidth; 
 
-          var horizontalSplit = containerHeight/2 ;
-          var verticalSplit = containerWidth/2 ;
+          var horizontalSplit = containerHeight / 2;
+          var verticalSplit = containerWidth / 2;
           // var windowHeight = $(window).height();
           // var windowWidth = $(window).width();       
           let windowHeight = window.innerHeight;
@@ -346,7 +347,6 @@ import utils from './utils.js';
       function createAndAppendCxtMenuComponent() {
         var classes = getClassStr(options.contextMenuClasses);
 //        classes += ' cy-context-menus-cxt-menu';
-        // TODO: remove jquery from this
         /* $cxtMenu = $('<div />', {class: classes});
         $cxtMenu.addClass('cy-context-menus-cxt-menu');
         setScratchProp('cxtMenu', $cxtMenu);
@@ -408,8 +408,8 @@ import utils from './utils.js';
         if (item.image) {
           let img = document.createElement('img');
           img.src = item.image.src;
-          img.width = item.image.width + 'px';
-          img.height = item.image.height + 'px';
+          img.width = item.image.width;
+          img.height = item.image.height;
           img.style.position = 'absolute';
           img.style.top = item.image.y + 'px';
           img.style.left = item.image.x + 'px';
@@ -430,16 +430,18 @@ import utils from './utils.js';
 
       // Appends the given component to cxtMenu
       function appendComponentToCxtMenu(component) {
-        console.warn('call to jQuery including function');
-        $cxtMenu.append(component);
+        $cxtMenu.appendChild(component);
         bindMenuItemClickFunction(component);
       }
 
       // Insert the given component to cxtMenu just before the existing item with given ID
       function insertComponentBeforeExistingItem(component, existingItemID) {
-        console.warn('call to jQuery including function');
-        var $existingItem = $('#' + existingItemID);
-        component.insertBefore($existingItem);
+        console.log('insertComponentBeforeExistingItem');
+        /* var $existingItem = $('#' + existingItemID);
+        component.insertBefore($existingItem); */
+
+        let existingItem = document.getElementById(existingItemID);
+        existingItem.parentNode.insertBefore(component, existingItem);
       }
 
       function destroyCxtMenu() {
@@ -451,7 +453,7 @@ import utils from './utils.js';
 
         cy.off('tapstart', eventCyTapStart);
 
-        $cxtMenu.remove();
+        $cxtMenu.parentNode.removeChild($cxtMenu);
         $cxtMenu = undefined;
         setScratchProp($cxtMenu, undefined);
         setScratchProp('active', false);
@@ -459,46 +461,58 @@ import utils from './utils.js';
       }
 
       function removeAndUnbindMenuItems() {
-        console.warn('call to jQuery including function');
-        var children = $cxtMenu.children();
+        /* var children = $cxtMenu.children();
 
         $(children).each(function() {
           removeAndUnbindMenuItem($(this));
-        });
+        }); */
+
+        for (let child of $cxtMenu.children) {
+          removeAndUnbindMenuItem(child.getAttribute('id'));
+        }        
       }
 
       function removeAndUnbindMenuItem(itemID) {
-        var $component = typeof itemID === 'string' ? $('#' + itemID) : itemID;
-        var cxtfcn = $component.data('cy-context-menus-cxtfcn');
-        var selector = $component.data('selector');
-        var callOnClickFcn = $component.data('call-on-click-function');
-        var cxtCoreFcn = $component.data('cy-context-menus-cxtcorefcn');
+        var $component = typeof itemID === 'string' ? document.getElementById(itemID) : itemID;
+        var cxtfcn = $component.data['cy-context-menus-cxtfcn'];
+        var selector = $component.data['selector'];
+        var callOnClickFcn = $component.data['call-on-click-function'];
+        let hideCxtMenuFn = $component.data['hide-cxt-menu-fn'];
+        var cxtCoreFcn = $component.data['cy-context-menus-cxtcorefcn'];
        
-        if(cxtfcn) {
+        if (cxtfcn) {
           cy.off(options.evtType, selector, cxtfcn);
         }
 
-        if(cxtCoreFcn) {
+        if (cxtCoreFcn) {
           cy.off(options.evtType, cxtCoreFcn);
         }
 
         if(callOnClickFcn) {
-          $component.off('click', callOnClickFcn);
+          // $component.off('click', callOnClickFcn);
+          $component.removeEventListener('click', callOnClickFcn);
+          $component.removeEventListener('click', hideCxtMenuFn);
         }
 
-        $component.remove();
+        // $component.remove();
+
+        $component.parentNode.removeChild($component);
       }
 
       function moveBeforeOtherMenuItemComponent(componentID, existingComponentID) {
-        console.warn('call to jQuery including function');
-        if( componentID === existingComponentID ) {
+        if (componentID === existingComponentID) {
           return;
         }
 
-        var $component = $('#' + componentID).detach();
+        /* var $component = $('#' + componentID).detach();
         var $existingComponent = $('#' + existingComponentID);
 
-        $component.insertBefore($existingComponent);
+        $component.insertBefore($existingComponent); */
+        let component = document.getElementById(componentID);
+        component.parentNode.removeChild(component);
+        let existingComponent = document.getElementById(existingComponentID);
+
+        existingComponent.parentNode.insertBefore(component, existingComponent);
       }
 
       function bindMenuItemClickFunction(component) {
@@ -506,31 +520,34 @@ import utils from './utils.js';
             hideComponent($cxtMenu);
             setScratchProp('cxtMenuPosition', undefined);
         }); */
-
-        component.onclick = () => {
+        let hideCxtMenu = () => {
           hideComponent($cxtMenu);
           setScratchProp('cxtMenuPosition', undefined);
         };
+        component.data['hide-cxt-menu-fn'] = hideCxtMenu;
+
+        component.addEventListener('click', hideCxtMenu); 
       }
 
       function disableComponent(componentID) {
-        console.warn('call to jQuery including function');
-        $('#' + componentID).attr('disabled', true);
+        document.getElementById(componentID)
+          .setAttribute('disabled', true);
+        // $('#' + componentID).attr('disabled', true);
       }
 
       function enableComponent(componentID) {
-        console.warn('call to jQuery including function');
-        $('#' + componentID).attr('disabled', false);
+        document.getElementById(componentID)
+          .setAttribute('disabled', false);
+        // $('#' + componentID).attr('disabled', false);
       }
 
       function setTrailingDivider(componentID, status) {
-        console.warn('call to jQuery including function');
-        var $component = $('#' + componentID);
-        if(status) {
-          $component.addClass(dividerCSSClass);
-        }
-        else {
-          $component.removeClass(dividerCSSClass);
+        let component = document.getElementById(componentID);
+
+        if (status) {
+          component.classList.add(dividerCSSClass);
+        } else {
+          component.classList.remove(dividerCSSClass);
         }
       }
 
@@ -583,14 +600,20 @@ import utils from './utils.js';
          },
          // Disables the menu item with given ID.
          hideMenuItem: function(itemID) {
-           $('#'+itemID).data('show', false);
-           hideComponent($('#'+itemID));
+           let item = document.getElementById(itemID);
+           if (item) {
+             item.data['show'] = false;
+             hideComponent(item);
+           }
            return cy;
          },
          // Enables the menu item with given ID.
          showMenuItem: function(itemID) {
-           $('#'+itemID).data('show', true);
-           displayComponent($('#'+itemID));
+           let item = document.getElementById(itemID);
+           if (item) {
+             item.data['show'] = true;
+             displayComponent(item);
+           }
            return cy;
          },
          // Destroys the extension instance
@@ -628,18 +651,20 @@ import utils from './utils.js';
     });
   };
 
-  if( typeof module !== 'undefined' && module.exports ){ // expose as a commonjs module
+  if (typeof module !== 'undefined' && module.exports) { // expose as a commonjs module
     module.exports = register;
   }
 
-  if( typeof define !== 'undefined' && define.amd ){ // expose as an amd/requirejs module
-    define('cytoscape-context-menus', function(){
+  if (typeof define !== 'undefined' && define.amd) { // expose as an amd/requirejs module
+    define('cytoscape-context-menus', function() {
       return register;
     });
   }
 
-  if( typeof cytoscape !== 'undefined' && $ ){ // expose to global cytoscape (i.e. window.cytoscape)
+  /* if( typeof cytoscape !== 'undefined' && $ ){ // expose to global cytoscape (i.e. window.cytoscape)
     register( cytoscape, $ );
-  }
+  } */
+
+  register(cytoscape);
 
 })();
