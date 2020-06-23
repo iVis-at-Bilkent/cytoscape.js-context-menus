@@ -35,11 +35,10 @@ ES import:
 
 ```js
 import cytoscape from 'cytoscape';
-import $ from 'jquery';
 import contextMenus from 'cytoscape-context-menus';
 
 // register extension
-cytoscape.use(contextMenus, $);
+cytoscape.use(contextMenus);
 
 // import CSS as well
 import 'cytoscape-context-menus/cytoscape-context-menus.css';
@@ -48,16 +47,15 @@ import 'cytoscape-context-menus/cytoscape-context-menus.css';
 CommonJS:
 ```js
 var cytoscape = require('cytoscape');
-var jquery = require('jquery');
 var contextMenus = require('cytoscape-context-menus');
 
-contextMenus( cytoscape, jquery ); // register extension
+contextMenus(cytoscape); // register extension
 ```
 
 AMD:
 ```js
-require(['cytoscape', 'cytoscape-context-menus', 'jquery'], function( cytoscape, contextMenus, jquery ){
-  contextMenus( cytoscape, jquery ); // register extension
+require(['cytoscape', 'cytoscape-context-menus'], function(cytoscape, contextMenus) {
+  contextMenus(cytoscape); // register extension
 });
 ```
 
