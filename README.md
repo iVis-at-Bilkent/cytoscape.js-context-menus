@@ -33,6 +33,8 @@ Import the library as appropriate for your project:
 
 ES import:
 
+Note: es import doesn't work for plain javascript applications because webpack doesn't support es module output at the moment.
+
 ```js
 import cytoscape from 'cytoscape';
 import contextMenus from 'cytoscape-context-menus';
