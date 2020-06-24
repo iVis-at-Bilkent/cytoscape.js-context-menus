@@ -22,7 +22,7 @@
     // based on jQuery.expr.filters.hidden in http://code.jquery.com/jquery-latest.js
     isElementHidden(elem) {
         return elem.offsetWidth <= 0 && elem.offsetHeight <= 0 ||
-            ((elem.style && elem.style.display) || getComputedStylet(elem)['display']);
+            ((elem.style && elem.style.display) || getComputedStyle(elem)['display']);
     },
     isElementVisible(elem) {
         return !this.isElementHidden(elem);
