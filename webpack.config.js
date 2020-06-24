@@ -17,7 +17,10 @@ module.exports = {
         libraryTarget: 'umd',
     },
     mode: PROD ? 'production' : 'development',
-    devtool: PROD ? false : 'inline-source-map',
+    // devtool: PROD ? false : 'inline-source-map',
+    optimization: {
+        minimize: false,
+    },
     module: {
         rules: [
             {
