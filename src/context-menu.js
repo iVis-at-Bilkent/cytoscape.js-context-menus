@@ -53,6 +53,8 @@ export class MenuItem extends HTMLButtonElement {
         this.clickFns = [];
         this.selector = params.selector;
         this.show = params.show || true;
+
+        console.log(this);
     }
 
     bindOnClickFunction(onClickFn) {

@@ -331,16 +331,12 @@ var context_menu_MenuItem = /*#__PURE__*/function (_HTMLButtonElement) {
     }
 
     _set((_thisSuper6 = _assertThisInitialized(_this), _getPrototypeOf(MenuItem.prototype)), "innerHTML", _get((_thisSuper5 = _assertThisInitialized(_this), _getPrototypeOf(MenuItem.prototype)), "innerHTML", _thisSuper5) + params.content, _thisSuper6, true);
-    /* this.selector = params.selector;
-    this.onClickFunction = params.onClickFunction;
-    this.show = params.show || true;
-    */
-
 
     _this.data = {};
     _this.clickFns = [];
     _this.selector = params.selector;
     _this.show = params.show || true;
+    console.log(_assertThisInitialized(_this));
     return _this;
   }
 
@@ -612,9 +608,9 @@ function contextMenus(opts) {
   }; // Creates a menu item as an html component
 
 
-  var createMenuItemComponent = function createMenuItemComponent(item) {
-    item.className = getMenuItemClassStr(options.menuItemClasses, item.hasTrailingDivider);
-    return new context_menu_MenuItem(item);
+  var createMenuItemComponent = function createMenuItemComponent(opts) {
+    opts.className = getMenuItemClassStr(options.menuItemClasses, opts.hasTrailingDivider);
+    return new context_menu_MenuItem(opts);
   }; // Appends the given component to cxtMenu
 
 
@@ -661,8 +657,8 @@ function contextMenus(opts) {
 
   var removeAndUnbindMenuItem = function removeAndUnbindMenuItem(itemID) {
     var component = typeof itemID === 'string' ? document.getElementById(itemID) : itemID;
-    var cxtfcn = component.data['cy-context-menus-cxtfcn'];
     var selector = component.selector;
+    var cxtfcn = component.data['cy-context-menus-cxtfcn'];
     var cxtCoreFcn = component.data['cy-context-menus-cxtcorefcn'];
 
     if (cxtfcn) {
@@ -688,7 +684,6 @@ function contextMenus(opts) {
     existingComponent.parentNode.insertBefore(component, existingComponent);
   };
   /**
-   * 
    * @param {MenuItem} component 
    */
 
@@ -775,10 +770,10 @@ function contextMenus(opts) {
       // Disables the menu item with given ID.
       hideMenuItem: function hideMenuItem(itemID) {
         var menuItem = document.getElementById(itemID);
-        console.log(menuItem['show']);
 
         if (menuItem) {
-          menuItem['show'] = false;
+          // @ts-ignore
+          menuItem.show = false;
           hideComponent(menuItem);
         }
 
@@ -787,10 +782,10 @@ function contextMenus(opts) {
       // Enables the menu item with given ID.
       showMenuItem: function showMenuItem(itemID) {
         var menuItem = document.getElementById(itemID);
-        console.log(menuItem['show']);
 
         if (menuItem) {
-          menuItem['show'] = true;
+          // @ts-ignore
+          menuItem.show = true;
           displayComponent(menuItem);
         }
 

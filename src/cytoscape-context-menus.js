@@ -209,9 +209,9 @@ export function contextMenus(opts) {
   };
 
   // Creates a menu item as an html component
-  let createMenuItemComponent = (options) => {
-    options.className = getMenuItemClassStr(options.menuItemClasses, options.hasTrailingDivider);
-    return new MenuItem(options);
+  let createMenuItemComponent = (opts) => {
+    opts.className = getMenuItemClassStr(options.menuItemClasses, opts.hasTrailingDivider);
+    return new MenuItem(opts);
   };
 
   // Appends the given component to cxtMenu
