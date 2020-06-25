@@ -25,3 +25,40 @@ export function isElementHidden(elem) {
 export function isElementVisible(elem) {
     return !isElementHidden(elem);
 }
+// Merge default options with the ones coming from parameter
+export function extend(defaults, options) {
+    let obj = {};
+
+    for (let i in defaults) {
+      obj[i] = defaults[i];
+    }
+
+    for (let i in options) {
+      obj[i] = options[i];
+    }
+
+    return obj;
+}
+
+// Get string representation of css classes
+export function getClassStr(classes) {
+    let str = '';
+
+    for (let i = 0; i < classes.length; i++) {
+      let className = classes[i];
+      str += className;
+      if (i !== classes.length - 1) {
+        str += ' ';
+      }
+    }
+
+    return str;
+}
+
+export function preventDefaultContextTap() {
+    let contextMenuAreas = document.getElementsByClassName('cy-context-menus-cxt-menu');
+
+    for (const cxtMenuArea of contextMenuAreas) {
+      cxtMenuArea.addEventListener('contextmenu', e => e.preventDefault());
+    }
+}

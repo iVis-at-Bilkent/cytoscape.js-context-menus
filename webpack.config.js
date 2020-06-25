@@ -9,7 +9,7 @@ const PROD = NODE_ENV === 'production';
 const SRC_DIR = "./src";
 
 module.exports = {
-    entry: path.join(__dirname, SRC_DIR, pkg.name + '.js'),
+    entry: path.join(__dirname, SRC_DIR, 'index.js'),
     output: {
         path: path.join(__dirname),
         filename: pkg.name + '.js',
