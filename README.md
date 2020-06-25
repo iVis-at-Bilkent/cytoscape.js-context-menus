@@ -19,7 +19,6 @@ Click [here](https://raw.githack.com/iVis-at-Bilkent/cytoscape.js-context-menus/
 ## Dependencies
 
  * Cytoscape.js ^2.7.0 || ^3.0.0
- * jQuery ^1.7.0 || ^2.0.0 || ^3.0.0
 
 
 ## Usage instructions
