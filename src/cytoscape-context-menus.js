@@ -215,7 +215,7 @@ export function contextMenus(opts) {
     }
 
     if (item.disabled) {
-      itemEl.setAttribute('disabled', 'true');
+      utils.setBooleanAttribute(itemEl, 'disabled', true);
     }
 
     if (item.image) {
@@ -323,16 +323,14 @@ export function contextMenus(opts) {
 
   // this sets disabled to true
   let disableComponent = (componentID) => {
-    document.getElementById(componentID)
-      // https://stackoverflow.com/a/38057647/12045421
-      .setAttribute('disabled', '');
+    let elem = document.getElementById(componentID);
+    utils.setBooleanAttribute(elem, 'disabled', true);
   };
 
   // this sets disabled to false by removing
   let enableComponent = (componentID) => {
-    document.getElementById(componentID)
-      // https://stackoverflow.com/a/38057647/12045421
-      .removeAttribute('disabled');
+    let elem = document.getElementById(componentID);
+    utils.setBooleanAttribute(elem, 'disabled', false);
   };
 
   let setTrailingDivider = (componentID, status) => {

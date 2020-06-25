@@ -62,3 +62,18 @@ export function preventDefaultContextTap() {
       cxtMenuArea.addEventListener('contextmenu', e => e.preventDefault());
     }
 }
+
+/**
+ * https://stackoverflow.com/a/38057647/12045421
+ * 
+ * @param { Element } element 
+ * @param { string } attribute
+ * @param { boolean } boolValue 
+ */
+export function setBooleanAttribute(element, attribute, boolValue) {
+  if (boolValue) {
+    element.setAttribute(attribute, '');
+  } else {
+    element.removeAttribute(attribute);
+  }
+}
