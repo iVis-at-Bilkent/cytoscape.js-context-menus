@@ -1,5 +1,6 @@
 import * as utils from './utils.js';
 import { DEFAULT_OPTS, MENUITEM_CSS_CLASS, DIVIDER_CSS_CLASS } from './constants.js';
+import { MenuItem } from './context-menu.js';
 
 export function contextMenus(opts) {
   let cy = this;
@@ -46,20 +47,24 @@ export function contextMenus(opts) {
     }
   };
 
+  /**
+   * 
+   * @param { MenuItem } component 
+   * @param {*} onClickFcn 
+   */
   let bindOnClickFunction = (component, onClickFcn) => {        
     let callOnClickFn = () => { 
       onClickFcn(getScratchProp('currentCyEvent')); 
     };
-    component.addEventListener('click', callOnClickFn);
-
-    component.data['call-on-click-function'] = callOnClickFn;
+    
+    component.bindOnClickFunction(callOnClickFn);
   }
 
   let bindCyCxttap = (component, selector, coreAsWell) => {
     let _cxtfcn = (event) => {
       setScratchProp('currentCyEvent', event);
       adjustCxtMenu(event); // adjust the position of context menu
-      if (component.data['show']) {
+      if (component.show) {
         if (!utils.isElementVisible(cxtMenu)) {
           displayComponent(cxtMenu);
         }
@@ -167,26 +172,26 @@ export function contextMenus(opts) {
     }
   };
 
-  let createAndAppendMenuItemComponents = (menuItems) => {
-    for (let i = 0; i < menuItems.length; i++) {
-      createAndAppendMenuItemComponent(menuItems[i]);
+  let createAndAppendMenuItemComponent = (options) => {
+    // Create and append menu item
+    let menuItemComponent = createMenuItemComponent(options);
+    appendComponentToCxtMenu(menuItemComponent);
+
+    performBindings(menuItemComponent, options.onClickFunction, options.selector, options.coreAsWell);
+  };//insertComponentBeforeExistingItem(component, existingItemID)
+
+  let createAndAppendMenuItemComponents = (optionsArr) => {
+    for (let i = 0; i < optionsArr.length; i++) {
+      createAndAppendMenuItemComponent(optionsArr[i]);
     }
   };
 
-  let createAndAppendMenuItemComponent = (menuItem) => {
-    // Create and append menu item
-    let menuItemComponent = createMenuItemComponent(menuItem);
-    appendComponentToCxtMenu(menuItemComponent);
-
-    performBindings(menuItemComponent, menuItem.onClickFunction, menuItem.selector, menuItem.coreAsWell);
-  };//insertComponentBeforeExistingItem(component, existingItemID)
-
-  let createAndInsertMenuItemComponentBeforeExistingComponent = (menuItem, existingComponentID) => {
+  let createAndInsertMenuItemComponentBeforeExistingComponent = (options, existingComponentID) => {
     // Create and insert menu item
-    let menuItemComponent = createMenuItemComponent(menuItem);
+    let menuItemComponent = createMenuItemComponent(options);
     insertComponentBeforeExistingItem(menuItemComponent, existingComponentID);
 
-    performBindings(menuItemComponent, menuItem.onClickFunction, menuItem.selector, menuItem.coreAsWell);
+    performBindings(menuItemComponent, options.onClickFunction, options.selector, options.coreAsWell);
   };
 
   // create cxtMenu and append it to body
@@ -204,41 +209,9 @@ export function contextMenus(opts) {
   };
 
   // Creates a menu item as an html component
-  let createMenuItemComponent = (item) => {
-    let classStr = getMenuItemClassStr(options.menuItemClasses, item.hasTrailingDivider);
-    let itemEl = document.createElement('button');
-    itemEl.setAttribute('id', item.id);
-    itemEl.setAttribute('class', classStr);
-
-    if (item.tooltipText) {
-      itemEl.setAttribute('title', item.tooltipText);
-    }
-
-    if (item.disabled) {
-      utils.setBooleanAttribute(itemEl, 'disabled', true);
-    }
-
-    if (item.image) {
-      let img = document.createElement('img');
-      img.src = item.image.src;
-      img.width = item.image.width;
-      img.height = item.image.height;
-      img.style.position = 'absolute';
-      img.style.top = item.image.y + 'px';
-      img.style.left = item.image.x + 'px';
-      
-      itemEl.appendChild(img);
-    }
-
-    itemEl.innerHTML += item.content;
-
-    itemEl['data'] = {
-      selector: item.selector,
-      'on-click-function': item.onClickFunction,
-      show: item.show || true,
-    };
-
-    return itemEl;
+  let createMenuItemComponent = (options) => {
+    options.className = getMenuItemClassStr(options.menuItemClasses, options.hasTrailingDivider);
+    return new MenuItem(options);
   };
 
   // Appends the given component to cxtMenu
@@ -277,10 +250,8 @@ export function contextMenus(opts) {
 
   let removeAndUnbindMenuItem = (itemID) => {
     let component = typeof itemID === 'string' ? document.getElementById(itemID) : itemID;
+    let selector = component.selector;
     let cxtfcn = component.data['cy-context-menus-cxtfcn'];
-    let selector = component.data['selector'];
-    let callOnClickFcn = component.data['call-on-click-function'];
-    let hideCxtMenuFn = component.data['hide-cxt-menu-fn'];
     let cxtCoreFcn = component.data['cy-context-menus-cxtcorefcn'];
     
     if (cxtfcn) {
@@ -291,10 +262,7 @@ export function contextMenus(opts) {
       cy.off(options.evtType, cxtCoreFcn);
     }
 
-    if (callOnClickFcn) {
-      component.removeEventListener('click', callOnClickFcn);
-      component.removeEventListener('click', hideCxtMenuFn);
-    }
+    component.unbindOnClickFunctions();
 
     component.parentNode.removeChild(component);
   };
@@ -311,14 +279,15 @@ export function contextMenus(opts) {
     existingComponent.parentNode.insertBefore(component, existingComponent);
   };
 
+  /**
+   * @param {MenuItem} component 
+   */
   let bindMenuItemClickFunction = (component) => {
     let hideCxtMenu = () => {
       hideComponent(cxtMenu);
       setScratchProp('cxtMenuPosition', undefined);
     };
-    component.data['hide-cxt-menu-fn'] = hideCxtMenu;
-
-    component.addEventListener('click', hideCxtMenu); 
+    component.bindOnClickFunction(hideCxtMenu);
   };
 
   // this sets disabled to true
@@ -392,19 +361,21 @@ export function contextMenus(opts) {
       },
       // Disables the menu item with given ID.
       hideMenuItem: function(itemID) {
-        let item = document.getElementById(itemID);
-        if (item) {
-          item['data']['show'] = false;
-          hideComponent(item);
+        let menuItem = document.getElementById(itemID);
+        if (menuItem) {
+          // @ts-ignore
+          menuItem.show = false;
+          hideComponent(menuItem);
         }
         return cy;
       },
       // Enables the menu item with given ID.
       showMenuItem: function(itemID) {
-        let item = document.getElementById(itemID);
-        if (item) {
-          item['data']['show'] = true;
-          displayComponent(item);
+        let menuItem = document.getElementById(itemID);
+        if (menuItem) {
+          // @ts-ignore
+          menuItem.show = true;
+          displayComponent(menuItem);
         }
         return cy;
       },
@@ -419,6 +390,9 @@ export function contextMenus(opts) {
   };
 
   if ( opts !== 'get' ) {
+    // Not mandatory since we always create components dynamically
+    MenuItem.define();
+
     // merge the options with default ones
     options = utils.extend(DEFAULT_OPTS, opts);
     setScratchProp('options', options);

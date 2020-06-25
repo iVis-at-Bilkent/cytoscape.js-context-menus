@@ -177,6 +177,21 @@ function preventDefaultContextTap() {
     _iterator.f();
   }
 }
+/**
+ * https://stackoverflow.com/a/38057647/12045421
+ * 
+ * @param { Element } element 
+ * @param { string } attribute
+ * @param { boolean } boolValue 
+ */
+
+function setBooleanAttribute(element, attribute, boolValue) {
+  if (boolValue) {
+    element.setAttribute(attribute, '');
+  } else {
+    element.removeAttribute(attribute);
+  }
+}
 // CONCATENATED MODULE: ./src/constants.js
 var DEFAULT_OPTS = {
   // Customize event to bring up the context menu
@@ -215,12 +230,165 @@ var DEFAULT_OPTS = {
 };
 var MENUITEM_CSS_CLASS = 'cy-context-menus-cxt-menuitem';
 var DIVIDER_CSS_CLASS = 'cy-context-menus-divider';
+// CONCATENATED MODULE: ./src/context-menu.js
+function context_menu_createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = context_menu_unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
+
+function context_menu_unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return context_menu_arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return context_menu_arrayLikeToArray(o, minLen); }
+
+function context_menu_arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function set(target, property, value, receiver) { if (typeof Reflect !== "undefined" && Reflect.set) { set = Reflect.set; } else { set = function set(target, property, value, receiver) { var base = _superPropBase(target, property); var desc; if (base) { desc = Object.getOwnPropertyDescriptor(base, property); if (desc.set) { desc.set.call(receiver, value); return true; } else if (!desc.writable) { return false; } } desc = Object.getOwnPropertyDescriptor(receiver, property); if (desc) { if (!desc.writable) { return false; } desc.value = value; Object.defineProperty(receiver, property, desc); } else { _defineProperty(receiver, property, value); } return true; }; } return set(target, property, value, receiver); }
+
+function _set(target, property, value, receiver, isStrict) { var s = set(target, property, value, receiver || target); if (!s && isStrict) { throw new Error('failed to set property'); } return value; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+function _get(target, property, receiver) { if (typeof Reflect !== "undefined" && Reflect.get) { _get = Reflect.get; } else { _get = function _get(target, property, receiver) { var base = _superPropBase(target, property); if (!base) return; var desc = Object.getOwnPropertyDescriptor(base, property); if (desc.get) { return desc.get.call(receiver); } return desc.value; }; } return _get(target, property, receiver || target); }
+
+function _superPropBase(object, property) { while (!Object.prototype.hasOwnProperty.call(object, property)) { object = _getPrototypeOf(object); if (object === null) break; } return object; }
+
+function _wrapNativeSuper(Class) { var _cache = typeof Map === "function" ? new Map() : undefined; _wrapNativeSuper = function _wrapNativeSuper(Class) { if (Class === null || !_isNativeFunction(Class)) return Class; if (typeof Class !== "function") { throw new TypeError("Super expression must either be null or a function"); } if (typeof _cache !== "undefined") { if (_cache.has(Class)) return _cache.get(Class); _cache.set(Class, Wrapper); } function Wrapper() { return _construct(Class, arguments, _getPrototypeOf(this).constructor); } Wrapper.prototype = Object.create(Class.prototype, { constructor: { value: Wrapper, enumerable: false, writable: true, configurable: true } }); return _setPrototypeOf(Wrapper, Class); }; return _wrapNativeSuper(Class); }
+
+function _construct(Parent, args, Class) { if (_isNativeReflectConstruct()) { _construct = Reflect.construct; } else { _construct = function _construct(Parent, args, Class) { var a = [null]; a.push.apply(a, args); var Constructor = Function.bind.apply(Parent, a); var instance = new Constructor(); if (Class) _setPrototypeOf(instance, Class.prototype); return instance; }; } return _construct.apply(null, arguments); }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+function _isNativeFunction(fn) { return Function.toString.call(fn).indexOf("[native code]") !== -1; }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+
+var context_menu_MenuItem = /*#__PURE__*/function (_HTMLButtonElement) {
+  _inherits(MenuItem, _HTMLButtonElement);
+
+  var _super = _createSuper(MenuItem);
+
+  /**
+   * @param {{ 
+   *      id: string; 
+   *      className: string; 
+   *      tooltipText: string?;
+   *      disabled: any?; 
+   *      image: { 
+   *          src: string; 
+   *          width: number; 
+   *          height: number; 
+   *          y: string; 
+   *          x: string; 
+   *      }?; 
+   *      content: string; 
+   *      selector: any; 
+   *      show: any; 
+   * }} params
+   */
+  function MenuItem(params) {
+    var _thisSuper, _thisSuper2, _thisSuper3, _thisSuper4, _thisSuper5, _thisSuper6, _this;
+
+    _classCallCheck(this, MenuItem);
+
+    _this = _super.call(this);
+
+    _get((_thisSuper = _assertThisInitialized(_this), _getPrototypeOf(MenuItem.prototype)), "setAttribute", _thisSuper).call(_thisSuper, 'id', params.id);
+
+    _get((_thisSuper2 = _assertThisInitialized(_this), _getPrototypeOf(MenuItem.prototype)), "setAttribute", _thisSuper2).call(_thisSuper2, 'class', params.className);
+
+    if (_typeof(params.tooltipText) !== undefined) {
+      _get((_thisSuper3 = _assertThisInitialized(_this), _getPrototypeOf(MenuItem.prototype)), "setAttribute", _thisSuper3).call(_thisSuper3, 'title', params.tooltipText);
+    }
+
+    if (params.disabled) {
+      setBooleanAttribute(_assertThisInitialized(_this), 'disabled', true);
+    }
+
+    if (params.image) {
+      var img = document.createElement('img');
+      img.src = params.image.src;
+      img.width = params.image.width;
+      img.height = params.image.height;
+      img.style.position = 'absolute';
+      img.style.top = params.image.y + 'px';
+      img.style.left = params.image.x + 'px';
+
+      _get((_thisSuper4 = _assertThisInitialized(_this), _getPrototypeOf(MenuItem.prototype)), "appendChild", _thisSuper4).call(_thisSuper4, img);
+    }
+
+    _set((_thisSuper6 = _assertThisInitialized(_this), _getPrototypeOf(MenuItem.prototype)), "innerHTML", _get((_thisSuper5 = _assertThisInitialized(_this), _getPrototypeOf(MenuItem.prototype)), "innerHTML", _thisSuper5) + params.content, _thisSuper6, true);
+    /* this.selector = params.selector;
+    this.onClickFunction = params.onClickFunction;
+    this.show = params.show || true;
+    */
+
+
+    _this.data = {};
+    _this.clickFns = [];
+    _this.selector = params.selector;
+    _this.show = params.show || true;
+    return _this;
+  }
+
+  _createClass(MenuItem, [{
+    key: "bindOnClickFunction",
+    value: function bindOnClickFunction(onClickFn) {
+      this.clickFns.push(onClickFn);
+
+      _get(_getPrototypeOf(MenuItem.prototype), "addEventListener", this).call(this, 'click', onClickFn);
+    }
+  }, {
+    key: "unbindOnClickFunctions",
+    value: function unbindOnClickFunctions() {
+      var _iterator = context_menu_createForOfIteratorHelper(this.clickFns),
+          _step;
+
+      try {
+        for (_iterator.s(); !(_step = _iterator.n()).done;) {
+          var onClickFn = _step.value;
+
+          _get(_getPrototypeOf(MenuItem.prototype), "removeEventListener", this).call(this, 'click', onClickFn);
+        }
+      } catch (err) {
+        _iterator.e(err);
+      } finally {
+        _iterator.f();
+      }
+
+      this.clickFns = [];
+    }
+  }], [{
+    key: "define",
+    value: function define() {
+      customElements.define('ctx-menu-item', MenuItem, {
+        "extends": 'button'
+      });
+    }
+  }]);
+
+  return MenuItem;
+}( /*#__PURE__*/_wrapNativeSuper(HTMLButtonElement));
 // CONCATENATED MODULE: ./src/cytoscape-context-menus.js
 function cytoscape_context_menus_createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = cytoscape_context_menus_unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
 
 function cytoscape_context_menus_unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return cytoscape_context_menus_arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return cytoscape_context_menus_arrayLikeToArray(o, minLen); }
 
 function cytoscape_context_menus_arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
 
 
 
@@ -278,14 +446,19 @@ function contextMenus(opts) {
       _iterator.f();
     }
   };
+  /**
+   * 
+   * @param { MenuItem } component 
+   * @param {*} onClickFcn 
+   */
+
 
   var bindOnClickFunction = function bindOnClickFunction(component, onClickFcn) {
     var callOnClickFn = function callOnClickFn() {
       onClickFcn(getScratchProp('currentCyEvent'));
     };
 
-    component.addEventListener('click', callOnClickFn);
-    component.data['call-on-click-function'] = callOnClickFn;
+    component.bindOnClickFunction(callOnClickFn);
   };
 
   var bindCyCxttap = function bindCyCxttap(component, selector, coreAsWell) {
@@ -293,7 +466,7 @@ function contextMenus(opts) {
       setScratchProp('currentCyEvent', event);
       adjustCxtMenu(event); // adjust the position of context menu
 
-      if (component.data['show']) {
+      if (component.show) {
         if (!isElementVisible(cxtMenu)) {
           displayComponent(cxtMenu);
         } // anyVisibleChild indicates if there is any visible child of context menu if not do not show the context menu
@@ -404,25 +577,25 @@ function contextMenus(opts) {
     }
   };
 
-  var createAndAppendMenuItemComponents = function createAndAppendMenuItemComponents(menuItems) {
-    for (var i = 0; i < menuItems.length; i++) {
-      createAndAppendMenuItemComponent(menuItems[i]);
-    }
-  };
-
-  var createAndAppendMenuItemComponent = function createAndAppendMenuItemComponent(menuItem) {
+  var createAndAppendMenuItemComponent = function createAndAppendMenuItemComponent(options) {
     // Create and append menu item
-    var menuItemComponent = createMenuItemComponent(menuItem);
+    var menuItemComponent = createMenuItemComponent(options);
     appendComponentToCxtMenu(menuItemComponent);
-    performBindings(menuItemComponent, menuItem.onClickFunction, menuItem.selector, menuItem.coreAsWell);
+    performBindings(menuItemComponent, options.onClickFunction, options.selector, options.coreAsWell);
   }; //insertComponentBeforeExistingItem(component, existingItemID)
 
 
-  var createAndInsertMenuItemComponentBeforeExistingComponent = function createAndInsertMenuItemComponentBeforeExistingComponent(menuItem, existingComponentID) {
+  var createAndAppendMenuItemComponents = function createAndAppendMenuItemComponents(optionsArr) {
+    for (var i = 0; i < optionsArr.length; i++) {
+      createAndAppendMenuItemComponent(optionsArr[i]);
+    }
+  };
+
+  var createAndInsertMenuItemComponentBeforeExistingComponent = function createAndInsertMenuItemComponentBeforeExistingComponent(options, existingComponentID) {
     // Create and insert menu item
-    var menuItemComponent = createMenuItemComponent(menuItem);
+    var menuItemComponent = createMenuItemComponent(options);
     insertComponentBeforeExistingItem(menuItemComponent, existingComponentID);
-    performBindings(menuItemComponent, menuItem.onClickFunction, menuItem.selector, menuItem.coreAsWell);
+    performBindings(menuItemComponent, options.onClickFunction, options.selector, options.coreAsWell);
   }; // create cxtMenu and append it to body
 
 
@@ -440,37 +613,8 @@ function contextMenus(opts) {
 
 
   var createMenuItemComponent = function createMenuItemComponent(item) {
-    var classStr = getMenuItemClassStr(options.menuItemClasses, item.hasTrailingDivider);
-    var itemEl = document.createElement('button');
-    itemEl.setAttribute('id', item.id);
-    itemEl.setAttribute('class', classStr);
-
-    if (item.tooltipText) {
-      itemEl.setAttribute('title', item.tooltipText);
-    }
-
-    if (item.disabled) {
-      itemEl.setAttribute('disabled', 'true');
-    }
-
-    if (item.image) {
-      var img = document.createElement('img');
-      img.src = item.image.src;
-      img.width = item.image.width;
-      img.height = item.image.height;
-      img.style.position = 'absolute';
-      img.style.top = item.image.y + 'px';
-      img.style.left = item.image.x + 'px';
-      itemEl.appendChild(img);
-    }
-
-    itemEl.innerHTML += item.content;
-    itemEl['data'] = {
-      selector: item.selector,
-      'on-click-function': item.onClickFunction,
-      show: item.show || true
-    };
-    return itemEl;
+    item.className = getMenuItemClassStr(options.menuItemClasses, item.hasTrailingDivider);
+    return new context_menu_MenuItem(item);
   }; // Appends the given component to cxtMenu
 
 
@@ -518,9 +662,7 @@ function contextMenus(opts) {
   var removeAndUnbindMenuItem = function removeAndUnbindMenuItem(itemID) {
     var component = typeof itemID === 'string' ? document.getElementById(itemID) : itemID;
     var cxtfcn = component.data['cy-context-menus-cxtfcn'];
-    var selector = component.data['selector'];
-    var callOnClickFcn = component.data['call-on-click-function'];
-    var hideCxtMenuFn = component.data['hide-cxt-menu-fn'];
+    var selector = component.selector;
     var cxtCoreFcn = component.data['cy-context-menus-cxtcorefcn'];
 
     if (cxtfcn) {
@@ -531,11 +673,7 @@ function contextMenus(opts) {
       cy.off(options.evtType, cxtCoreFcn);
     }
 
-    if (callOnClickFcn) {
-      component.removeEventListener('click', callOnClickFcn);
-      component.removeEventListener('click', hideCxtMenuFn);
-    }
-
+    component.unbindOnClickFunctions();
     component.parentNode.removeChild(component);
   };
 
@@ -549,6 +687,11 @@ function contextMenus(opts) {
     var existingComponent = document.getElementById(existingComponentID);
     existingComponent.parentNode.insertBefore(component, existingComponent);
   };
+  /**
+   * 
+   * @param {MenuItem} component 
+   */
+
 
   var bindMenuItemClickFunction = function bindMenuItemClickFunction(component) {
     var hideCxtMenu = function hideCxtMenu() {
@@ -556,20 +699,19 @@ function contextMenus(opts) {
       setScratchProp('cxtMenuPosition', undefined);
     };
 
-    component.data['hide-cxt-menu-fn'] = hideCxtMenu;
-    component.addEventListener('click', hideCxtMenu);
+    component.bindOnClickFunction(hideCxtMenu);
   }; // this sets disabled to true
 
 
   var disableComponent = function disableComponent(componentID) {
-    document.getElementById(componentID) // https://stackoverflow.com/a/38057647/12045421
-    .setAttribute('disabled', '');
+    var elem = document.getElementById(componentID);
+    setBooleanAttribute(elem, 'disabled', true);
   }; // this sets disabled to false by removing
 
 
   var enableComponent = function enableComponent(componentID) {
-    document.getElementById(componentID) // https://stackoverflow.com/a/38057647/12045421
-    .removeAttribute('disabled');
+    var elem = document.getElementById(componentID);
+    setBooleanAttribute(elem, 'disabled', false);
   };
 
   var _setTrailingDivider = function setTrailingDivider(componentID, status) {
@@ -632,22 +774,24 @@ function contextMenus(opts) {
       },
       // Disables the menu item with given ID.
       hideMenuItem: function hideMenuItem(itemID) {
-        var item = document.getElementById(itemID);
+        var menuItem = document.getElementById(itemID);
+        console.log(menuItem['show']);
 
-        if (item) {
-          item['data']['show'] = false;
-          hideComponent(item);
+        if (menuItem) {
+          menuItem['show'] = false;
+          hideComponent(menuItem);
         }
 
         return cy;
       },
       // Enables the menu item with given ID.
       showMenuItem: function showMenuItem(itemID) {
-        var item = document.getElementById(itemID);
+        var menuItem = document.getElementById(itemID);
+        console.log(menuItem['show']);
 
-        if (item) {
-          item['data']['show'] = true;
-          displayComponent(item);
+        if (menuItem) {
+          menuItem['show'] = true;
+          displayComponent(menuItem);
         }
 
         return cy;
@@ -662,7 +806,9 @@ function contextMenus(opts) {
   };
 
   if (opts !== 'get') {
-    // merge the options with default ones
+    // Not mandatory since we always create components dynamically
+    context_menu_MenuItem.define(); // merge the options with default ones
+
     options = extend(DEFAULT_OPTS, opts);
     setScratchProp('options', options); // Clear old context menu if needed
 
