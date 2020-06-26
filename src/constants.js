@@ -36,5 +36,6 @@ export const DEFAULT_OPTS = {
     ]
 };
 
+export const CXT_MENU_CSS_CLASS = 'cy-context-menus-cxt-menu';
 export const MENUITEM_CSS_CLASS = 'cy-context-menus-cxt-menuitem';
 export const DIVIDER_CSS_CLASS = 'cy-context-menus-divider';
