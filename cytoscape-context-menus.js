@@ -288,21 +288,25 @@ var context_menu_MenuItem = /*#__PURE__*/function (_HTMLButtonElement) {
    * @param {{ 
    *      id: string; 
    *      className: string; 
-   *      tooltipText: string?;
-   *      disabled: any?; 
-   *      image: { 
+   *      tooltipText?: string;
+   *      disabled?: boolean; 
+   *      image?: { 
    *          src: string; 
    *          width: number; 
    *          height: number; 
    *          y: string; 
    *          x: string; 
-   *      }?; 
+   *      }; 
    *      content: string; 
-   *      selector: any; 
-   *      show: any; 
+   *      selector: string; 
+   *      show?: boolean; 
+   *      submenu?: Array;
+   *      coreAsWell?: boolean;
    * }} params
+   * @param { * } onMenuItemClick 
+   * called when the menu item is clicked
    */
-  function MenuItem(params) {
+  function MenuItem(params, onMenuItemClick) {
     var _thisSuper, _thisSuper2, _thisSuper3, _thisSuper4, _thisSuper5, _thisSuper6, _this;
 
     _classCallCheck(this, MenuItem);
@@ -316,6 +320,8 @@ var context_menu_MenuItem = /*#__PURE__*/function (_HTMLButtonElement) {
     if (_typeof(params.tooltipText) !== undefined) {
       _get((_thisSuper3 = _assertThisInitialized(_this), _getPrototypeOf(MenuItem.prototype)), "setAttribute", _thisSuper3).call(_thisSuper3, 'title', params.tooltipText);
     }
+
+    undefined;
 
     if (params.disabled) {
       setBooleanAttribute(_assertThisInitialized(_this), 'disabled', true);
@@ -335,10 +341,33 @@ var context_menu_MenuItem = /*#__PURE__*/function (_HTMLButtonElement) {
 
     _set((_thisSuper6 = _assertThisInitialized(_this), _getPrototypeOf(MenuItem.prototype)), "innerHTML", _get((_thisSuper5 = _assertThisInitialized(_this), _getPrototypeOf(MenuItem.prototype)), "innerHTML", _thisSuper5) + params.content, _thisSuper6, true);
 
+    _this.onMenuItemClick = onMenuItemClick;
     _this.data = {};
     _this.clickFns = [];
     _this.selector = params.selector;
     _this.show = params.show || true;
+    _this.coreAsWell = params.coreAsWell || false;
+
+    if (params.submenu instanceof Array) {
+      _this.submenu = new MenuItemList(_this.onMenuItemClick);
+
+      var _iterator = context_menu_createForOfIteratorHelper(params.submenu),
+          _step;
+
+      try {
+        for (_iterator.s(); !(_step = _iterator.n()).done;) {
+          var item = _step.value;
+          var menuItem = new MenuItem(item, _this.onMenuItemClick);
+
+          _this.submenu.appendMenuItem(menuItem);
+        }
+      } catch (err) {
+        _iterator.e(err);
+      } finally {
+        _iterator.f();
+      }
+    }
+
     console.log(_assertThisInitialized(_this));
     return _this;
   }
@@ -353,19 +382,19 @@ var context_menu_MenuItem = /*#__PURE__*/function (_HTMLButtonElement) {
   }, {
     key: "unbindOnClickFunctions",
     value: function unbindOnClickFunctions() {
-      var _iterator = context_menu_createForOfIteratorHelper(this.clickFns),
-          _step;
+      var _iterator2 = context_menu_createForOfIteratorHelper(this.clickFns),
+          _step2;
 
       try {
-        for (_iterator.s(); !(_step = _iterator.n()).done;) {
-          var onClickFn = _step.value;
+        for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
+          var onClickFn = _step2.value;
 
           _get(_getPrototypeOf(MenuItem.prototype), "removeEventListener", this).call(this, 'click', onClickFn);
         }
       } catch (err) {
-        _iterator.e(err);
+        _iterator2.e(err);
       } finally {
-        _iterator.f();
+        _iterator2.f();
       }
 
       this.clickFns = [];
@@ -403,38 +432,23 @@ var context_menu_MenuItem = /*#__PURE__*/function (_HTMLButtonElement) {
 
   return MenuItem;
 }( /*#__PURE__*/_wrapNativeSuper(HTMLButtonElement));
-var context_menu_ContextMenu = /*#__PURE__*/function (_HTMLDivElement) {
-  _inherits(ContextMenu, _HTMLDivElement);
+var MenuItemList = /*#__PURE__*/function (_HTMLDivElement) {
+  _inherits(MenuItemList, _HTMLDivElement);
 
-  var _super2 = _createSuper(ContextMenu);
+  var _super2 = _createSuper(MenuItemList);
 
-  /**
-   * @param {string} classes
-   */
-  function ContextMenu(classes, onMenuItemClick) {
-    var _thisSuper7, _thisSuper8, _thisSuper9, _this2;
+  function MenuItemList(onMenuItemClick, scratchpad) {
+    var _this2;
 
-    _classCallCheck(this, ContextMenu);
+    _classCallCheck(this, MenuItemList);
 
     _this2 = _super2.call(this);
-
-    _get((_thisSuper7 = _assertThisInitialized(_this2), _getPrototypeOf(ContextMenu.prototype)), "setAttribute", _thisSuper7).call(_thisSuper7, 'class', classes);
-
-    _get((_thisSuper8 = _assertThisInitialized(_this2), _getPrototypeOf(ContextMenu.prototype)), "style", _thisSuper8).position = 'absolute';
-
-    _get((_thisSuper9 = _assertThisInitialized(_this2), _getPrototypeOf(ContextMenu.prototype)), "classList", _thisSuper9).add(CXT_MENU_CSS_CLASS); // Called when a menu item is clicked
-
-
-    _this2.onMenuItemClick = function () {
-      _this2.hide();
-
-      onMenuItemClick;
-    };
-
+    _this2.onMenuItemClick = onMenuItemClick;
+    _this2.scratchpad = scratchpad;
     return _this2;
   }
 
-  _createClass(ContextMenu, [{
+  _createClass(MenuItemList, [{
     key: "hide",
     value: function hide() {
       this.style.display = 'none';
@@ -451,12 +465,12 @@ var context_menu_ContextMenu = /*#__PURE__*/function (_HTMLDivElement) {
   }, {
     key: "hideMenuItems",
     value: function hideMenuItems() {
-      var _iterator2 = context_menu_createForOfIteratorHelper(this.children),
-          _step2;
+      var _iterator3 = context_menu_createForOfIteratorHelper(this.children),
+          _step3;
 
       try {
-        for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
-          var item = _step2.value;
+        for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
+          var item = _step3.value;
 
           if (item instanceof HTMLElement) {
             item.style.display = 'none';
@@ -465,9 +479,9 @@ var context_menu_ContextMenu = /*#__PURE__*/function (_HTMLDivElement) {
           }
         }
       } catch (err) {
-        _iterator2.e(err);
+        _iterator3.e(err);
       } finally {
-        _iterator2.f();
+        _iterator3.f();
       }
     }
     /**
@@ -478,7 +492,7 @@ var context_menu_ContextMenu = /*#__PURE__*/function (_HTMLDivElement) {
   }, {
     key: "appendMenuItem",
     value: function appendMenuItem(menuItem) {
-      _get(_getPrototypeOf(ContextMenu.prototype), "appendChild", this).call(this, menuItem); // Bind click function to menuItem
+      _get(_getPrototypeOf(MenuItemList.prototype), "appendChild", this).call(this, menuItem); // Bind click function to menuItem
 
 
       menuItem.bindOnClickFunction(this.onMenuItemClick);
@@ -534,7 +548,77 @@ var context_menu_ContextMenu = /*#__PURE__*/function (_HTMLDivElement) {
       this.removeChild(menuItem);
       this.insertBefore(menuItem, otherMenuItem);
     }
+  }, {
+    key: "_performBindings",
+    value: function _performBindings(menuItem, onClickFn, selector, coreAsWell) {
+      throw new Error('Not implemented');
+    }
+    /**
+     * @param { MenuItem } menuItem 
+     */
+
+  }, {
+    key: "_bindOnClick",
+    value: function _bindOnClick(menuItem, onClickFn) {
+      var _this3 = this;
+
+      console.log('scratchpad: ', this.scratchpad);
+
+      var callback = function callback() {
+        onClickFn(_this3.scratchpad['currentCyEvent']);
+      };
+
+      menuItem.bindOnClickFunction(callback);
+    }
+  }, {
+    key: "_bindCyCxttap",
+    value: function _bindCyCxttap(menuItem, selector, coreAsWell) {
+      throw new Error('Not implemented');
+    }
   }], [{
+    key: "define",
+    value: function define() {
+      customElements.define('menu-item-list', MenuItemList, {
+        "extends": 'div'
+      });
+    }
+  }]);
+
+  return MenuItemList;
+}( /*#__PURE__*/_wrapNativeSuper(HTMLDivElement));
+var context_menu_ContextMenu = /*#__PURE__*/function (_MenuItemList) {
+  _inherits(ContextMenu, _MenuItemList);
+
+  var _super3 = _createSuper(ContextMenu);
+
+  /**
+   * @param {string} classes
+   */
+  function ContextMenu(classes, onMenuItemClick, scratchpad) {
+    var _thisSuper7, _thisSuper8, _thisSuper9, _this4;
+
+    _classCallCheck(this, ContextMenu);
+
+    _this4 = _super3.call(this, onMenuItemClick, scratchpad);
+
+    _get((_thisSuper7 = _assertThisInitialized(_this4), _getPrototypeOf(ContextMenu.prototype)), "setAttribute", _thisSuper7).call(_thisSuper7, 'class', classes);
+
+    _get((_thisSuper8 = _assertThisInitialized(_this4), _getPrototypeOf(ContextMenu.prototype)), "style", _thisSuper8).position = 'absolute';
+
+    _get((_thisSuper9 = _assertThisInitialized(_this4), _getPrototypeOf(ContextMenu.prototype)), "classList", _thisSuper9).add(CXT_MENU_CSS_CLASS);
+
+    _this4.scratchpad = scratchpad; // Called when a menu item is clicked
+
+    _this4.onMenuItemClick = function () {
+      _this4.hide();
+
+      onMenuItemClick();
+    };
+
+    return _this4;
+  }
+
+  _createClass(ContextMenu, null, [{
     key: "define",
     value: function define() {
       customElements.define('ctx-menu', ContextMenu, {
@@ -544,7 +628,7 @@ var context_menu_ContextMenu = /*#__PURE__*/function (_HTMLDivElement) {
   }]);
 
   return ContextMenu;
-}( /*#__PURE__*/_wrapNativeSuper(HTMLDivElement));
+}(MenuItemList);
 // CONCATENATED MODULE: ./src/cytoscape-context-menus.js
 function cytoscape_context_menus_createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = cytoscape_context_menus_unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
 
@@ -600,56 +684,51 @@ function contextMenus(opts) {
     component.bindOnClickFunction(callOnClickFn);
   };
   /**
-   * @param { MenuItem } menuItem 
+   * Right click event
    */
 
 
-  var bindCyCxttap = function bindCyCxttap(menuItem, selector, coreAsWell) {
-    var _cxtfcn = function _cxtfcn(event) {
-      setScratchProp('currentCyEvent', event);
-      adjustCxtMenu(event); // adjust the position of context menu
+  var onCxttap = function onCxttap(event) {
+    setScratchProp('currentCyEvent', event);
+    adjustCxtMenu(event); // adjust the position of context menu
 
-      if (menuItem.show) {
-        if (!isElementVisible(cxtMenu)) {
-          cxtMenu.display();
-        } // anyVisibleChild indicates if there is any visible child of context menu if not do not show the context menu
+    var target = event.target || event.cyTarget; // Check for each menuItem, if show is true, show the menuItem
 
+    var _iterator = cytoscape_context_menus_createForOfIteratorHelper(cxtMenu.children),
+        _step;
 
-        setScratchProp('anyVisibleChild', true); // there is visible child
+    try {
+      for (_iterator.s(); !(_step = _iterator.n()).done;) {
+        var menuItem = _step.value;
 
-        menuItem.display();
-      } // If there is no visible element hide the context menu as well(If it is visible)
+        if (menuItem instanceof context_menu_MenuItem) {
+          var shouldDisplay = target === cy ? // If user clicked in cy area then show core items
+          menuItem.coreAsWell : // If selector of the item matches then show
+          target.is(menuItem.selector); // User clicked on empty area and menuItem is core
 
+          if (shouldDisplay && menuItem.show) {
+            cxtMenu.display(); // anyVisibleChild indicates if there is any visible child of context menu if not do not show the context menu
 
-      if (!getScratchProp('anyVisibleChild') && isElementVisible(cxtMenu)) {
-        cxtMenu.hide();
-      }
-    };
+            setScratchProp('anyVisibleChild', true); // there is visible child
 
-    var cxtfcn;
-    var cxtCoreFcn;
-
-    if (coreAsWell) {
-      cy.on(options.evtType, cxtCoreFcn = function cxtCoreFcn(event) {
-        var target = event.target || event.cyTarget;
-
-        if (target != cy) {
-          return;
+            menuItem.display();
+          }
         }
-
-        _cxtfcn(event);
-      });
+      }
+    } catch (err) {
+      _iterator.e(err);
+    } finally {
+      _iterator.f();
     }
 
-    if (selector) {
-      cy.on(options.evtType, selector, cxtfcn = function cxtfcn(event) {
-        _cxtfcn(event);
-      });
-    } // Bind the event to menu item to be able to remove it back
+    if (!getScratchProp('anyVisibleChild') && isElementVisible(cxtMenu)) {
+      cxtMenu.hide();
+    }
+  };
 
-
-    menuItem.data['cy-context-menus-cxtfcn'] = cxtfcn;
-    menuItem.data['cy-context-menus-cxtcorefcn'] = cxtCoreFcn;
+  var bindOnCxttap = function bindOnCxttap() {
+    cy.on(options.evtType, onCxttap);
+    setScratchProp('onCxttap', onCxttap);
   };
 
   var bindCyEvents = function bindCyEvents() {
@@ -667,9 +746,8 @@ function contextMenus(opts) {
    */
 
 
-  var performBindings = function performBindings(menuItem, onClickFcn, selector, coreAsWell) {
+  var performBindings = function performBindings(menuItem, onClickFcn) {
     bindOnClickFunction(menuItem, onClickFcn);
-    bindCyCxttap(menuItem, selector, coreAsWell);
   }; // Adjusts context menu if necessary
 
 
@@ -728,7 +806,7 @@ function contextMenus(opts) {
     // Create and append menu item
     var menuItemComponent = createMenuItemComponent(opts);
     cxtMenu.appendMenuItem(menuItemComponent);
-    performBindings(menuItemComponent, opts.onClickFunction, opts.selector, opts.coreAsWell);
+    performBindings(menuItemComponent, opts.onClickFunction);
   }; //insertComponentBeforeExistingItem(component, existingItemID)
 
 
@@ -742,13 +820,13 @@ function contextMenus(opts) {
     // Create and insert menu item
     var menuItemComponent = createMenuItemComponent(opts);
     cxtMenu.insertBeforeExistingMenuItem(menuItemComponent, existingComponentID);
-    performBindings(menuItemComponent, opts.onClickFunction, opts.selector, opts.coreAsWell);
+    performBindings(menuItemComponent, opts.onClickFunction);
   }; // Creates a menu item as an html component
 
 
   var createMenuItemComponent = function createMenuItemComponent(opts) {
     opts.className = getMenuItemClassStr(options.menuItemClasses, opts.hasTrailingDivider);
-    return new context_menu_MenuItem(opts);
+    return new context_menu_MenuItem(opts, cxtMenu.onMenuItemClick);
   };
 
   var destroyCxtMenu = function destroyCxtMenu() {
@@ -758,26 +836,28 @@ function contextMenus(opts) {
 
     removeAndUnbindMenuItems();
     cy.off('tapstart', getScratchProp('eventCyTapStart'));
+    cy.off(options.evtType, onCxttap);
     cxtMenu.parentNode.removeChild(cxtMenu);
     cxtMenu = undefined;
     setScratchProp(cxtMenu, undefined);
     setScratchProp('active', false);
     setScratchProp('anyVisibleChild', false);
+    setScratchProp('onCxttap', undefined);
   };
 
   var removeAndUnbindMenuItems = function removeAndUnbindMenuItems() {
-    var _iterator = cytoscape_context_menus_createForOfIteratorHelper(cxtMenu.children),
-        _step;
+    var _iterator2 = cytoscape_context_menus_createForOfIteratorHelper(cxtMenu.children),
+        _step2;
 
     try {
-      for (_iterator.s(); !(_step = _iterator.n()).done;) {
-        var child = _step.value;
+      for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
+        var child = _step2.value;
         removeAndUnbindMenuItem(child.getAttribute('id'));
       }
     } catch (err) {
-      _iterator.e(err);
+      _iterator2.e(err);
     } finally {
-      _iterator.f();
+      _iterator2.f();
     }
   };
 
@@ -785,18 +865,6 @@ function contextMenus(opts) {
     var menuItem = typeof menuItemID === 'string' ? document.getElementById(menuItemID) : menuItemID;
 
     if (menuItem instanceof context_menu_MenuItem) {
-      var selector = menuItem.selector;
-      var cxtfcn = menuItem.data['cy-context-menus-cxtfcn'];
-      var cxtCoreFcn = menuItem.data['cy-context-menus-cxtcorefcn'];
-
-      if (cxtfcn) {
-        cy.off(options.evtType, selector, cxtfcn);
-      }
-
-      if (cxtCoreFcn) {
-        cy.off(options.evtType, cxtCoreFcn);
-      }
-
       menuItem.unbindOnClickFunctions();
       cxtMenu.removeMenuItem(menuItem);
     } else {
@@ -918,6 +986,7 @@ function contextMenus(opts) {
   if (opts !== 'get') {
     // https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_custom_elements
     context_menu_MenuItem.define();
+    MenuItemList.define();
     context_menu_ContextMenu.define(); // merge the options with default ones
 
     options = extend(DEFAULT_OPTS, opts);
@@ -935,11 +1004,13 @@ function contextMenus(opts) {
       return setScratchProp('cxtMenuPosition', undefined);
     };
 
-    cxtMenu = new context_menu_ContextMenu(classes, onMenuItemClick);
+    var scratchpad = cy.scratch('cycontextmenus');
+    cxtMenu = new context_menu_ContextMenu(classes, onMenuItemClick, scratchpad);
     setScratchProp('cxtMenu', cxtMenu);
     document.body.appendChild(cxtMenu);
     var menuItems = options.menuItems;
     createAndAppendMenuItemComponents(menuItems);
+    bindOnCxttap();
     bindCyEvents();
     preventDefaultContextTap();
   }

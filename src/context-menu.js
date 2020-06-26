@@ -7,22 +7,27 @@ export class MenuItem extends HTMLButtonElement {
      * @param {{ 
      *      id: string; 
      *      className: string; 
-     *      tooltipText: string?;
-     *      disabled: any?; 
-     *      image: { 
+     *      tooltipText?: string;
+     *      disabled?: boolean; 
+     *      image?: { 
      *          src: string; 
      *          width: number; 
      *          height: number; 
      *          y: string; 
      *          x: string; 
-     *      }?; 
+     *      }; 
      *      content: string; 
-     *      selector: any; 
-     *      show: any; 
+     *      selector: string; 
+     *      show?: boolean; 
+     *      submenu?: Array;
+     *      coreAsWell?: boolean;
      * }} params
+     * @param { * } onMenuItemClick 
+     * called when the menu item is clicked
      */
     constructor(
-        params
+        params,
+        onMenuItemClick
     ) {
         super();
 
@@ -32,7 +37,7 @@ export class MenuItem extends HTMLButtonElement {
         if (typeof params.tooltipText !== undefined) {
             super.setAttribute('title', params.tooltipText);
         }
-
+        undefined
         if (params.disabled) {
             setBooleanAttribute(this, 'disabled', true);
         }
@@ -51,10 +56,22 @@ export class MenuItem extends HTMLButtonElement {
 
         super.innerHTML += params.content;
 
+        this.onMenuItemClick = onMenuItemClick;
+
         this.data = {};
         this.clickFns = [];
         this.selector = params.selector;
         this.show = params.show || true;
+        this.coreAsWell = params.coreAsWell || false;
+
+        if (params.submenu instanceof Array) {
+            this.submenu = new MenuItemList(this.onMenuItemClick);
+            for (let item of params.submenu) {
+                let menuItem = new MenuItem(item, this.onMenuItemClick);
+                this.submenu.appendMenuItem(menuItem);
+            }
+        }
+
 
         console.log(this);
     }
@@ -95,23 +112,12 @@ export class MenuItem extends HTMLButtonElement {
     }
 }
 
-export class ContextMenu extends HTMLDivElement {
-
-    /**
-     * @param {string} classes
-     */
-    constructor(classes, onMenuItemClick) {
+export class MenuItemList extends HTMLDivElement {
+    constructor(onMenuItemClick, scratchpad) {
         super();
 
-        super.setAttribute('class', classes);
-        super.style.position = 'absolute';
-        super.classList.add(CXT_MENU_CSS_CLASS);
-
-        // Called when a menu item is clicked
-        this.onMenuItemClick = () => {
-            this.hide();
-            onMenuItemClick;
-        };
+        this.onMenuItemClick = onMenuItemClick;
+        this.scratchpad = scratchpad;
     }
 
     hide() {
@@ -186,6 +192,51 @@ export class ContextMenu extends HTMLDivElement {
 
         this.removeChild(menuItem);
         this.insertBefore(menuItem, otherMenuItem);
+    }
+
+    _performBindings(menuItem, onClickFn, selector, coreAsWell) {
+        throw new Error('Not implemented');
+    }
+
+    /**
+     * @param { MenuItem } menuItem 
+     */
+    _bindOnClick(menuItem, onClickFn) {
+        console.log('scratchpad: ', this.scratchpad);
+        let callback = () => {
+            onClickFn(this.scratchpad['currentCyEvent']);
+        };
+
+        menuItem.bindOnClickFunction(callback);
+    }
+
+    _bindCyCxttap(menuItem, selector, coreAsWell) {
+        throw new Error('Not implemented');
+    }
+
+    static define() {
+        customElements.define('menu-item-list', MenuItemList, { extends: 'div' });
+    }
+}
+
+export class ContextMenu extends MenuItemList {
+    /**
+     * @param {string} classes
+     */
+    constructor(classes, onMenuItemClick, scratchpad) {
+        super(onMenuItemClick, scratchpad);
+
+        super.setAttribute('class', classes);
+        super.style.position = 'absolute';
+        super.classList.add(CXT_MENU_CSS_CLASS);
+
+        this.scratchpad = scratchpad;
+
+        // Called when a menu item is clicked
+        this.onMenuItemClick = () => {
+            this.hide();
+            onMenuItemClick();
+        };
     }
 
     static define() {
