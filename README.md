@@ -14,7 +14,10 @@ U. Dogrusoz , A. Karacelik, I. Safarli, H. Balci, L. Dervishi, and M.C. Siper, "
 
 ## Demo
 
-Click [here](https://raw.githack.com/iVis-at-Bilkent/cytoscape.js-context-menus/unstable/demo.html) (simple) or [here](https://raw.githack.com/iVis-at-Bilkent/cytoscape.js-context-menus/unstable/demo-customized.html) (customized) or [here](https://raw.githack.com/iVis-at-Bilkent/cytoscape.js-context-menus/unstable/demo-show-hide-menuitem.html) (with different menu items) for demos
+* [Simple demo](https://raw.githack.com/onsah/cytoscape.js-context-menus/unstable/demo.html)
+* [Customized context menus](https://raw.githack.com/onsah/cytoscape.js-context-menus/unstable/demo-customized.html) 
+* [With different menu items](https://raw.githack.com/onsah/cytoscape.js-context-menus/unstable/demo-show-hide-menuitem.html)
+* [With submenus](https://raw.githack.com/onsah/cytoscape.js-context-menus/unstable/demo-submenu.html)
 
 ## Dependencies
 
