@@ -1,12 +1,11 @@
-import { setBooleanAttribute } from './utils';
-import { CXT_MENU_CSS_CLASS } from './constants';
+import { setBooleanAttribute, getClassStr } from './utils';
+import { CXT_MENU_CSS_CLASS, MENUITEM_CSS_CLASS, DIVIDER_CSS_CLASS } from './constants';
 
 // TODO: add submenu property
 export class MenuItem extends HTMLButtonElement {
     /**
      * @param {{ 
      *      id: string; 
-     *      className: string; 
      *      tooltipText?: string;
      *      disabled?: boolean; 
      *      image?: { 
@@ -21,23 +20,30 @@ export class MenuItem extends HTMLButtonElement {
      *      show?: boolean; 
      *      submenu?: Array;
      *      coreAsWell?: boolean;
+     *      onClickFunction?: any;
+     *      hasTrailingDivider?: boolean;
      * }} params
      * @param { * } onMenuItemClick 
+     * passed so that submenu items can have this
      * called when the menu item is clicked
      */
     constructor(
         params,
-        onMenuItemClick
+        onMenuItemClick,
+        scratchpad
     ) {
         super();
 
         super.setAttribute('id', params.id);
-        super.setAttribute('class', params.className);
+
+        let className = this._getMenuItemClassStr(scratchpad['cxtMenuItemClasses'], params.hasTrailingDivider);
+
+        super.setAttribute('class', className);
 
         if (typeof params.tooltipText !== undefined) {
             super.setAttribute('title', params.tooltipText);
         }
-        undefined
+
         if (params.disabled) {
             setBooleanAttribute(this, 'disabled', true);
         }
@@ -54,7 +60,7 @@ export class MenuItem extends HTMLButtonElement {
             super.appendChild(img);
         }
 
-        super.innerHTML += params.content;
+        this.innerHTML += params.content;
 
         this.onMenuItemClick = onMenuItemClick;
 
@@ -64,16 +70,37 @@ export class MenuItem extends HTMLButtonElement {
         this.show = params.show || true;
         this.coreAsWell = params.coreAsWell || false;
 
-        if (params.submenu instanceof Array) {
-            this.submenu = new MenuItemList(this.onMenuItemClick);
-            for (let item of params.submenu) {
-                let menuItem = new MenuItem(item, this.onMenuItemClick);
-                this.submenu.appendMenuItem(menuItem);
-            }
+        if (typeof params.onClickFunction !== 'undefined' && 
+            typeof params.submenu !== 'undefined') {
+
+            throw new Error("A menu item can't both have a click function and a submenu");
         }
 
+        this.onClickFunction = params.onClickFunction;
 
-        console.log(this);
+        // Create the submenu if neccessary
+        if (params.submenu instanceof Array) {
+            this.submenu = new MenuItemList(this.onMenuItemClick, scratchpad);
+            this.appendChild(this.submenu);
+
+            for (let item of params.submenu) {
+                let menuItem = new MenuItem(item, this.onMenuItemClick, scratchpad);
+                this.submenu.appendMenuItem(menuItem);
+            }
+            console.log('submenu: ', this.submenu);
+
+            // submenu should be visible when mouse is over
+            this.addEventListener('mouseenter', (_event) => {
+                console.log('mouse enter');
+
+                this.submenu.style.left = this.clientWidth + "px";
+                this.submenu.style.top = "0px";
+                this.submenu.style.right = "auto";
+                this.submenu.style.bottom = "auto";
+
+                this.submenu.display();
+            });
+        }
     }
 
     bindOnClickFunction(onClickFn) {
@@ -102,10 +129,24 @@ export class MenuItem extends HTMLButtonElement {
         this.style.display = 'none';
     }
 
+    hasSubmenu() {
+        return this.submenu !== undefined;
+    }
+
+    isClickable() {
+        return !this.hasSubmenu();
+    }
+
     display() {
         this.show = true;
         this.style.display = 'block';
     }
+
+    _getMenuItemClassStr(classStr, hasTrailingDivider) {
+        return hasTrailingDivider ?
+            classStr + ' ' + DIVIDER_CSS_CLASS :
+            classStr;
+    };  
 
     static define() {
         customElements.define('ctx-menu-item', MenuItem, { extends: 'button' });
@@ -115,6 +156,10 @@ export class MenuItem extends HTMLButtonElement {
 export class MenuItemList extends HTMLDivElement {
     constructor(onMenuItemClick, scratchpad) {
         super();
+
+        super.setAttribute('class', scratchpad['cxtMenuClasses']);
+
+        this.style.position = 'absolute';
 
         this.onMenuItemClick = onMenuItemClick;
         this.scratchpad = scratchpad;
@@ -148,8 +193,9 @@ export class MenuItemList extends HTMLDivElement {
     appendMenuItem(menuItem) {
         super.appendChild(menuItem);
 
-        // Bind click function to menuItem
-        menuItem.bindOnClickFunction(this.onMenuItemClick);
+        if (menuItem.isClickable()) {
+            this._performBindings(menuItem)
+        }
     }
 
     insertBeforeExistingMenuItem(menuItem, existingItemID) {
@@ -194,24 +240,21 @@ export class MenuItemList extends HTMLDivElement {
         this.insertBefore(menuItem, otherMenuItem);
     }
 
-    _performBindings(menuItem, onClickFn, selector, coreAsWell) {
-        throw new Error('Not implemented');
-    }
-
     /**
-     * @param { MenuItem } menuItem 
+     * @param { MenuItem } menuItem
      */
-    _bindOnClick(menuItem, onClickFn) {
-        console.log('scratchpad: ', this.scratchpad);
-        let callback = () => {
-            onClickFn(this.scratchpad['currentCyEvent']);
-        };
-
+    _performBindings(menuItem) {
+        let callback = this._bindOnClick(menuItem.onClickFunction);
         menuItem.bindOnClickFunction(callback);
+        menuItem.bindOnClickFunction(this.onMenuItemClick);
     }
 
-    _bindCyCxttap(menuItem, selector, coreAsWell) {
-        throw new Error('Not implemented');
+    _bindOnClick(onClickFn) {
+        console.log('scratchpad: ', this.scratchpad);
+        return () => {
+            let event = this.scratchpad['currentCyEvent']; 
+            onClickFn(event);
+        };
     }
 
     static define() {
@@ -220,17 +263,9 @@ export class MenuItemList extends HTMLDivElement {
 }
 
 export class ContextMenu extends MenuItemList {
-    /**
-     * @param {string} classes
-     */
-    constructor(classes, onMenuItemClick, scratchpad) {
+
+    constructor(onMenuItemClick, scratchpad) {
         super(onMenuItemClick, scratchpad);
-
-        super.setAttribute('class', classes);
-        super.style.position = 'absolute';
-        super.classList.add(CXT_MENU_CSS_CLASS);
-
-        this.scratchpad = scratchpad;
 
         // Called when a menu item is clicked
         this.onMenuItemClick = () => {

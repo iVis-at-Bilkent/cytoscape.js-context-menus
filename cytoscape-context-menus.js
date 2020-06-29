@@ -193,6 +193,9 @@ function setBooleanAttribute(element, attribute, boolValue) {
   }
 }
 // CONCATENATED MODULE: ./src/constants.js
+var CXT_MENU_CSS_CLASS = 'cy-context-menus-cxt-menu';
+var MENUITEM_CSS_CLASS = 'cy-context-menus-cxt-menuitem';
+var DIVIDER_CSS_CLASS = 'cy-context-menus-divider';
 var DEFAULT_OPTS = {
   // Customize event to bring up the context menu
   // Possible options https://js.cytoscape.org/#events/user-input-device-events
@@ -222,15 +225,10 @@ var DEFAULT_OPTS = {
     }*/
   ],
   // css classes that menu items will have
-  menuItemClasses: [// add class names to this list
-  ],
+  menuItemClasses: [MENUITEM_CSS_CLASS],
   // css classes that context menu will have
-  contextMenuClasses: [// add class names to this list
-  ]
+  contextMenuClasses: [CXT_MENU_CSS_CLASS]
 };
-var CXT_MENU_CSS_CLASS = 'cy-context-menus-cxt-menu';
-var MENUITEM_CSS_CLASS = 'cy-context-menus-cxt-menuitem';
-var DIVIDER_CSS_CLASS = 'cy-context-menus-divider';
 // CONCATENATED MODULE: ./src/context-menu.js
 function context_menu_createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = context_menu_unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
 
@@ -253,12 +251,6 @@ function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflec
 function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
 
 function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
-function set(target, property, value, receiver) { if (typeof Reflect !== "undefined" && Reflect.set) { set = Reflect.set; } else { set = function set(target, property, value, receiver) { var base = _superPropBase(target, property); var desc; if (base) { desc = Object.getOwnPropertyDescriptor(base, property); if (desc.set) { desc.set.call(receiver, value); return true; } else if (!desc.writable) { return false; } } desc = Object.getOwnPropertyDescriptor(receiver, property); if (desc) { if (!desc.writable) { return false; } desc.value = value; Object.defineProperty(receiver, property, desc); } else { _defineProperty(receiver, property, value); } return true; }; } return set(target, property, value, receiver); }
-
-function _set(target, property, value, receiver, isStrict) { var s = set(target, property, value, receiver || target); if (!s && isStrict) { throw new Error('failed to set property'); } return value; }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 function _get(target, property, receiver) { if (typeof Reflect !== "undefined" && Reflect.get) { _get = Reflect.get; } else { _get = function _get(target, property, receiver) { var base = _superPropBase(target, property); if (!base) return; var desc = Object.getOwnPropertyDescriptor(base, property); if (desc.get) { return desc.get.call(receiver); } return desc.value; }; } return _get(target, property, receiver || target); }
 
@@ -287,7 +279,6 @@ var context_menu_MenuItem = /*#__PURE__*/function (_HTMLButtonElement) {
   /**
    * @param {{ 
    *      id: string; 
-   *      className: string; 
    *      tooltipText?: string;
    *      disabled?: boolean; 
    *      image?: { 
@@ -302,12 +293,15 @@ var context_menu_MenuItem = /*#__PURE__*/function (_HTMLButtonElement) {
    *      show?: boolean; 
    *      submenu?: Array;
    *      coreAsWell?: boolean;
+   *      onClickFunction?: any;
+   *      hasTrailingDivider?: boolean;
    * }} params
    * @param { * } onMenuItemClick 
+   * passed so that submenu items can have this
    * called when the menu item is clicked
    */
-  function MenuItem(params, onMenuItemClick) {
-    var _thisSuper, _thisSuper2, _thisSuper3, _thisSuper4, _thisSuper5, _thisSuper6, _this;
+  function MenuItem(params, onMenuItemClick, scratchpad) {
+    var _thisSuper, _thisSuper2, _thisSuper3, _thisSuper4, _this;
 
     _classCallCheck(this, MenuItem);
 
@@ -315,13 +309,13 @@ var context_menu_MenuItem = /*#__PURE__*/function (_HTMLButtonElement) {
 
     _get((_thisSuper = _assertThisInitialized(_this), _getPrototypeOf(MenuItem.prototype)), "setAttribute", _thisSuper).call(_thisSuper, 'id', params.id);
 
-    _get((_thisSuper2 = _assertThisInitialized(_this), _getPrototypeOf(MenuItem.prototype)), "setAttribute", _thisSuper2).call(_thisSuper2, 'class', params.className);
+    var className = _this._getMenuItemClassStr(scratchpad['cxtMenuItemClasses'], params.hasTrailingDivider);
+
+    _get((_thisSuper2 = _assertThisInitialized(_this), _getPrototypeOf(MenuItem.prototype)), "setAttribute", _thisSuper2).call(_thisSuper2, 'class', className);
 
     if (_typeof(params.tooltipText) !== undefined) {
       _get((_thisSuper3 = _assertThisInitialized(_this), _getPrototypeOf(MenuItem.prototype)), "setAttribute", _thisSuper3).call(_thisSuper3, 'title', params.tooltipText);
     }
-
-    undefined;
 
     if (params.disabled) {
       setBooleanAttribute(_assertThisInitialized(_this), 'disabled', true);
@@ -339,8 +333,7 @@ var context_menu_MenuItem = /*#__PURE__*/function (_HTMLButtonElement) {
       _get((_thisSuper4 = _assertThisInitialized(_this), _getPrototypeOf(MenuItem.prototype)), "appendChild", _thisSuper4).call(_thisSuper4, img);
     }
 
-    _set((_thisSuper6 = _assertThisInitialized(_this), _getPrototypeOf(MenuItem.prototype)), "innerHTML", _get((_thisSuper5 = _assertThisInitialized(_this), _getPrototypeOf(MenuItem.prototype)), "innerHTML", _thisSuper5) + params.content, _thisSuper6, true);
-
+    _this.innerHTML += params.content;
     _this.onMenuItemClick = onMenuItemClick;
     _this.data = {};
     _this.clickFns = [];
@@ -348,8 +341,16 @@ var context_menu_MenuItem = /*#__PURE__*/function (_HTMLButtonElement) {
     _this.show = params.show || true;
     _this.coreAsWell = params.coreAsWell || false;
 
+    if (typeof params.onClickFunction !== 'undefined' && typeof params.submenu !== 'undefined') {
+      throw new Error("A menu item can't both have a click function and a submenu");
+    }
+
+    _this.onClickFunction = params.onClickFunction; // Create the submenu if neccessary
+
     if (params.submenu instanceof Array) {
-      _this.submenu = new MenuItemList(_this.onMenuItemClick);
+      _this.submenu = new MenuItemList(_this.onMenuItemClick, scratchpad);
+
+      _this.appendChild(_this.submenu);
 
       var _iterator = context_menu_createForOfIteratorHelper(params.submenu),
           _step;
@@ -357,7 +358,7 @@ var context_menu_MenuItem = /*#__PURE__*/function (_HTMLButtonElement) {
       try {
         for (_iterator.s(); !(_step = _iterator.n()).done;) {
           var item = _step.value;
-          var menuItem = new MenuItem(item, _this.onMenuItemClick);
+          var menuItem = new MenuItem(item, _this.onMenuItemClick, scratchpad);
 
           _this.submenu.appendMenuItem(menuItem);
         }
@@ -366,9 +367,20 @@ var context_menu_MenuItem = /*#__PURE__*/function (_HTMLButtonElement) {
       } finally {
         _iterator.f();
       }
+
+      console.log('submenu: ', _this.submenu); // submenu should be visible when mouse is over
+
+      _this.addEventListener('mouseenter', function (_event) {
+        console.log('mouse enter');
+        _this.submenu.style.left = _this.clientWidth + "px";
+        _this.submenu.style.top = "0px";
+        _this.submenu.style.right = "auto";
+        _this.submenu.style.bottom = "auto";
+
+        _this.submenu.display();
+      });
     }
 
-    console.log(_assertThisInitialized(_this));
     return _this;
   }
 
@@ -416,10 +428,25 @@ var context_menu_MenuItem = /*#__PURE__*/function (_HTMLButtonElement) {
       this.style.display = 'none';
     }
   }, {
+    key: "hasSubmenu",
+    value: function hasSubmenu() {
+      return this.submenu !== undefined;
+    }
+  }, {
+    key: "isClickable",
+    value: function isClickable() {
+      return !this.hasSubmenu();
+    }
+  }, {
     key: "display",
     value: function display() {
       this.show = true;
       this.style.display = 'block';
+    }
+  }, {
+    key: "_getMenuItemClassStr",
+    value: function _getMenuItemClassStr(classStr, hasTrailingDivider) {
+      return hasTrailingDivider ? classStr + ' ' + DIVIDER_CSS_CLASS : classStr;
     }
   }], [{
     key: "define",
@@ -438,11 +465,15 @@ var MenuItemList = /*#__PURE__*/function (_HTMLDivElement) {
   var _super2 = _createSuper(MenuItemList);
 
   function MenuItemList(onMenuItemClick, scratchpad) {
-    var _this2;
+    var _thisSuper5, _this2;
 
     _classCallCheck(this, MenuItemList);
 
     _this2 = _super2.call(this);
+
+    _get((_thisSuper5 = _assertThisInitialized(_this2), _getPrototypeOf(MenuItemList.prototype)), "setAttribute", _thisSuper5).call(_thisSuper5, 'class', scratchpad['cxtMenuClasses']);
+
+    _this2.style.position = 'absolute';
     _this2.onMenuItemClick = onMenuItemClick;
     _this2.scratchpad = scratchpad;
     return _this2;
@@ -492,10 +523,11 @@ var MenuItemList = /*#__PURE__*/function (_HTMLDivElement) {
   }, {
     key: "appendMenuItem",
     value: function appendMenuItem(menuItem) {
-      _get(_getPrototypeOf(MenuItemList.prototype), "appendChild", this).call(this, menuItem); // Bind click function to menuItem
+      _get(_getPrototypeOf(MenuItemList.prototype), "appendChild", this).call(this, menuItem);
 
-
-      menuItem.bindOnClickFunction(this.onMenuItemClick);
+      if (menuItem.isClickable()) {
+        this._performBindings(menuItem);
+      }
     }
   }, {
     key: "insertBeforeExistingMenuItem",
@@ -548,32 +580,28 @@ var MenuItemList = /*#__PURE__*/function (_HTMLDivElement) {
       this.removeChild(menuItem);
       this.insertBefore(menuItem, otherMenuItem);
     }
-  }, {
-    key: "_performBindings",
-    value: function _performBindings(menuItem, onClickFn, selector, coreAsWell) {
-      throw new Error('Not implemented');
-    }
     /**
-     * @param { MenuItem } menuItem 
+     * @param { MenuItem } menuItem
      */
 
   }, {
+    key: "_performBindings",
+    value: function _performBindings(menuItem) {
+      var callback = this._bindOnClick(menuItem.onClickFunction);
+
+      menuItem.bindOnClickFunction(callback);
+      menuItem.bindOnClickFunction(this.onMenuItemClick);
+    }
+  }, {
     key: "_bindOnClick",
-    value: function _bindOnClick(menuItem, onClickFn) {
+    value: function _bindOnClick(onClickFn) {
       var _this3 = this;
 
       console.log('scratchpad: ', this.scratchpad);
-
-      var callback = function callback() {
-        onClickFn(_this3.scratchpad['currentCyEvent']);
+      return function () {
+        var event = _this3.scratchpad['currentCyEvent'];
+        onClickFn(event);
       };
-
-      menuItem.bindOnClickFunction(callback);
-    }
-  }, {
-    key: "_bindCyCxttap",
-    value: function _bindCyCxttap(menuItem, selector, coreAsWell) {
-      throw new Error('Not implemented');
     }
   }], [{
     key: "define",
@@ -586,28 +614,17 @@ var MenuItemList = /*#__PURE__*/function (_HTMLDivElement) {
 
   return MenuItemList;
 }( /*#__PURE__*/_wrapNativeSuper(HTMLDivElement));
-var context_menu_ContextMenu = /*#__PURE__*/function (_MenuItemList) {
+var ContextMenu = /*#__PURE__*/function (_MenuItemList) {
   _inherits(ContextMenu, _MenuItemList);
 
   var _super3 = _createSuper(ContextMenu);
 
-  /**
-   * @param {string} classes
-   */
-  function ContextMenu(classes, onMenuItemClick, scratchpad) {
-    var _thisSuper7, _thisSuper8, _thisSuper9, _this4;
+  function ContextMenu(onMenuItemClick, scratchpad) {
+    var _this4;
 
     _classCallCheck(this, ContextMenu);
 
-    _this4 = _super3.call(this, onMenuItemClick, scratchpad);
-
-    _get((_thisSuper7 = _assertThisInitialized(_this4), _getPrototypeOf(ContextMenu.prototype)), "setAttribute", _thisSuper7).call(_thisSuper7, 'class', classes);
-
-    _get((_thisSuper8 = _assertThisInitialized(_this4), _getPrototypeOf(ContextMenu.prototype)), "style", _thisSuper8).position = 'absolute';
-
-    _get((_thisSuper9 = _assertThisInitialized(_this4), _getPrototypeOf(ContextMenu.prototype)), "classList", _thisSuper9).add(CXT_MENU_CSS_CLASS);
-
-    _this4.scratchpad = scratchpad; // Called when a menu item is clicked
+    _this4 = _super3.call(this, onMenuItemClick, scratchpad); // Called when a menu item is clicked
 
     _this4.onMenuItemClick = function () {
       _this4.hide();
@@ -657,76 +674,51 @@ function contextMenus(opts) {
   var options = getScratchProp('options');
   /** @type { ContextMenu } */
 
-  var cxtMenu = getScratchProp('cxtMenu'); // Get string representation of css classes
-
-  var getMenuItemClassStr = function getMenuItemClassStr(classes, hasTrailingDivider) {
-    var str = getClassStr(classes);
-    str += ' ' + MENUITEM_CSS_CLASS;
-
-    if (hasTrailingDivider) {
-      str += ' ' + DIVIDER_CSS_CLASS;
-    }
-
-    return str;
-  };
-  /**
-   * 
-   * @param { MenuItem } component 
-   * @param {*} onClickFcn 
-   */
-
-
-  var bindOnClickFunction = function bindOnClickFunction(component, onClickFcn) {
-    var callOnClickFn = function callOnClickFn() {
-      onClickFcn(getScratchProp('currentCyEvent'));
-    };
-
-    component.bindOnClickFunction(callOnClickFn);
-  };
+  var cxtMenu = getScratchProp('cxtMenu');
   /**
    * Right click event
    */
 
+  var bindOnCxttap = function bindOnCxttap() {
+    // TODO: move this to ContextMenu, just do the binding here
+    var onCxttap = function onCxttap(event) {
+      setScratchProp('currentCyEvent', event);
+      adjustCxtMenu(event); // adjust the position of context menu
 
-  var onCxttap = function onCxttap(event) {
-    setScratchProp('currentCyEvent', event);
-    adjustCxtMenu(event); // adjust the position of context menu
+      var target = event.target || event.cyTarget; // Check for each menuItem, if show is true, show the menuItem
 
-    var target = event.target || event.cyTarget; // Check for each menuItem, if show is true, show the menuItem
+      var _iterator = cytoscape_context_menus_createForOfIteratorHelper(cxtMenu.children),
+          _step;
 
-    var _iterator = cytoscape_context_menus_createForOfIteratorHelper(cxtMenu.children),
-        _step;
+      try {
+        for (_iterator.s(); !(_step = _iterator.n()).done;) {
+          var menuItem = _step.value;
 
-    try {
-      for (_iterator.s(); !(_step = _iterator.n()).done;) {
-        var menuItem = _step.value;
+          if (menuItem instanceof context_menu_MenuItem) {
+            var shouldDisplay = target === cy ? // If user clicked in cy area then show core items
+            menuItem.coreAsWell : // If selector of the item matches then show
+            target.is(menuItem.selector); // User clicked on empty area and menuItem is core
 
-        if (menuItem instanceof context_menu_MenuItem) {
-          var shouldDisplay = target === cy ? // If user clicked in cy area then show core items
-          menuItem.coreAsWell : // If selector of the item matches then show
-          target.is(menuItem.selector); // User clicked on empty area and menuItem is core
+            if (shouldDisplay && menuItem.show) {
+              cxtMenu.display(); // anyVisibleChild indicates if there is any visible child of context menu if not do not show the context menu
 
-          if (shouldDisplay && menuItem.show) {
-            cxtMenu.display(); // anyVisibleChild indicates if there is any visible child of context menu if not do not show the context menu
+              setScratchProp('anyVisibleChild', true); // there is visible child
 
-            setScratchProp('anyVisibleChild', true); // there is visible child
-
-            menuItem.display();
+              menuItem.display();
+            }
           }
         }
+      } catch (err) {
+        _iterator.e(err);
+      } finally {
+        _iterator.f();
       }
-    } catch (err) {
-      _iterator.e(err);
-    } finally {
-      _iterator.f();
-    }
 
-    if (!getScratchProp('anyVisibleChild') && isElementVisible(cxtMenu)) {
-      cxtMenu.hide();
-    }
-  };
+      if (!getScratchProp('anyVisibleChild') && isElementVisible(cxtMenu)) {
+        cxtMenu.hide();
+      }
+    };
 
-  var bindOnCxttap = function bindOnCxttap() {
     cy.on(options.evtType, onCxttap);
     setScratchProp('onCxttap', onCxttap);
   };
@@ -738,16 +730,8 @@ function contextMenus(opts) {
       setScratchProp('currentCyEvent', undefined);
     };
 
-    setScratchProp('eventCyTapStart', eventCyTapStart);
     cy.on('tapstart', eventCyTapStart);
-  };
-  /**
-   * @param { MenuItem } menuItem 
-   */
-
-
-  var performBindings = function performBindings(menuItem, onClickFcn) {
-    bindOnClickFunction(menuItem, onClickFcn);
+    setScratchProp('eventCyTapStart', eventCyTapStart);
   }; // Adjusts context menu if necessary
 
 
@@ -806,7 +790,6 @@ function contextMenus(opts) {
     // Create and append menu item
     var menuItemComponent = createMenuItemComponent(opts);
     cxtMenu.appendMenuItem(menuItemComponent);
-    performBindings(menuItemComponent, opts.onClickFunction);
   }; //insertComponentBeforeExistingItem(component, existingItemID)
 
 
@@ -820,13 +803,12 @@ function contextMenus(opts) {
     // Create and insert menu item
     var menuItemComponent = createMenuItemComponent(opts);
     cxtMenu.insertBeforeExistingMenuItem(menuItemComponent, existingComponentID);
-    performBindings(menuItemComponent, opts.onClickFunction);
   }; // Creates a menu item as an html component
 
 
   var createMenuItemComponent = function createMenuItemComponent(opts) {
-    opts.className = getMenuItemClassStr(options.menuItemClasses, opts.hasTrailingDivider);
-    return new context_menu_MenuItem(opts, cxtMenu.onMenuItemClick);
+    var scratchpad = cy.scratch('cycontextmenus');
+    return new context_menu_MenuItem(opts, cxtMenu.onMenuItemClick, scratchpad);
   };
 
   var destroyCxtMenu = function destroyCxtMenu() {
@@ -836,10 +818,10 @@ function contextMenus(opts) {
 
     removeAndUnbindMenuItems();
     cy.off('tapstart', getScratchProp('eventCyTapStart'));
-    cy.off(options.evtType, onCxttap);
+    cy.off(options.evtType, getScratchProp('onCxttap'));
     cxtMenu.parentNode.removeChild(cxtMenu);
     cxtMenu = undefined;
-    setScratchProp(cxtMenu, undefined);
+    setScratchProp('cxtMenu', undefined);
     setScratchProp('active', false);
     setScratchProp('anyVisibleChild', false);
     setScratchProp('onCxttap', undefined);
@@ -987,7 +969,7 @@ function contextMenus(opts) {
     // https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_custom_elements
     context_menu_MenuItem.define();
     MenuItemList.define();
-    context_menu_ContextMenu.define(); // merge the options with default ones
+    ContextMenu.define(); // merge the options with default ones
 
     options = extend(DEFAULT_OPTS, opts);
     setScratchProp('options', options); // Clear old context menu if needed
@@ -998,16 +980,18 @@ function contextMenus(opts) {
 
     setScratchProp('active', true); // Create cxtMenu and append it to body
 
-    var classes = getClassStr(options.contextMenuClasses);
+    var cxtMenuClasses = getClassStr(options.contextMenuClasses);
+    setScratchProp('cxtMenuClasses', cxtMenuClasses);
 
     var onMenuItemClick = function onMenuItemClick() {
       return setScratchProp('cxtMenuPosition', undefined);
     };
 
     var scratchpad = cy.scratch('cycontextmenus');
-    cxtMenu = new context_menu_ContextMenu(classes, onMenuItemClick, scratchpad);
+    cxtMenu = new ContextMenu(onMenuItemClick, scratchpad);
     setScratchProp('cxtMenu', cxtMenu);
     document.body.appendChild(cxtMenu);
+    setScratchProp('cxtMenuItemClasses', getClassStr(options.menuItemClasses));
     var menuItems = options.menuItems;
     createAndAppendMenuItemComponents(menuItems);
     bindOnCxttap();

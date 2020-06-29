@@ -20,36 +20,13 @@ export function contextMenus(opts) {
   /** @type { ContextMenu } */
   let cxtMenu = getScratchProp('cxtMenu');
 
-  // Get string representation of css classes
-  let getMenuItemClassStr = (classes, hasTrailingDivider) => {
-    let str = utils.getClassStr(classes);
-
-    str += ' ' + MENUITEM_CSS_CLASS;
-
-    if (hasTrailingDivider) {
-      str += ' ' + DIVIDER_CSS_CLASS;
-    }
-
-    return str;
-  };
-
-  /**
-   * 
-   * @param { MenuItem } component 
-   * @param {*} onClickFcn 
-   */
-  let bindOnClickFunction = (component, onClickFcn) => {        
-    let callOnClickFn = () => { 
-      onClickFcn(getScratchProp('currentCyEvent')); 
-    };
-    
-    component.bindOnClickFunction(callOnClickFn);
-  }
-
   /**
    * Right click event
    */
-  let onCxttap = (event) => {
+  let bindOnCxttap = () => {
+
+    // TODO: move this to ContextMenu, just do the binding here
+    let onCxttap = (event) => {
       setScratchProp('currentCyEvent', event);
       adjustCxtMenu(event); // adjust the position of context menu
       
@@ -77,29 +54,22 @@ export function contextMenus(opts) {
       if (!getScratchProp('anyVisibleChild') && utils.isElementVisible(cxtMenu)) {
         cxtMenu.hide();
       }
-  };
+    };
 
-  let bindOnCxttap = () => {
     cy.on(options.evtType, onCxttap);
     setScratchProp('onCxttap', onCxttap);
   };
 
   let bindCyEvents = () => {
+
     let eventCyTapStart = () => {
       cxtMenu.hide();
       setScratchProp('cxtMenuPosition', undefined);
       setScratchProp('currentCyEvent', undefined);
     };
     
-    setScratchProp('eventCyTapStart', eventCyTapStart);
     cy.on('tapstart', eventCyTapStart);
-  };
-
-  /**
-   * @param { MenuItem } menuItem 
-   */
-  let performBindings = (menuItem, onClickFcn) => {
-    bindOnClickFunction(menuItem, onClickFcn);
+    setScratchProp('eventCyTapStart', eventCyTapStart);
   };
 
   // Adjusts context menu if necessary
@@ -160,7 +130,6 @@ export function contextMenus(opts) {
     let menuItemComponent = createMenuItemComponent(opts);
     cxtMenu.appendMenuItem(menuItemComponent);
 
-    performBindings(menuItemComponent, opts.onClickFunction);
   };//insertComponentBeforeExistingItem(component, existingItemID)
 
   let createAndAppendMenuItemComponents = (optionsArr) => {
@@ -174,13 +143,12 @@ export function contextMenus(opts) {
     let menuItemComponent = createMenuItemComponent(opts);
     cxtMenu.insertBeforeExistingMenuItem(menuItemComponent, existingComponentID);
 
-    performBindings(menuItemComponent, opts.onClickFunction);
   };
 
   // Creates a menu item as an html component
   let createMenuItemComponent = (opts) => {
-    opts.className = getMenuItemClassStr(options.menuItemClasses, opts.hasTrailingDivider);
-    return new MenuItem(opts, cxtMenu.onMenuItemClick);
+    let scratchpad = cy.scratch('cycontextmenus');
+    return new MenuItem(opts, cxtMenu.onMenuItemClick, scratchpad);
   };
 
   let destroyCxtMenu = () => {
@@ -191,11 +159,11 @@ export function contextMenus(opts) {
     removeAndUnbindMenuItems();
 
     cy.off('tapstart', getScratchProp('eventCyTapStart'));
-    cy.off(options.evtType, onCxttap);
+    cy.off(options.evtType, getScratchProp('onCxttap'));
 
     cxtMenu.parentNode.removeChild(cxtMenu);
     cxtMenu = undefined;
-    setScratchProp(cxtMenu, undefined);
+    setScratchProp('cxtMenu', undefined);
     setScratchProp('active', false);
     setScratchProp('anyVisibleChild', false);
     setScratchProp('onCxttap', undefined);
@@ -338,14 +306,19 @@ export function contextMenus(opts) {
     setScratchProp('active', true);
 
     // Create cxtMenu and append it to body
-    let classes = utils.getClassStr(options.contextMenuClasses);
-    let onMenuItemClick = () => setScratchProp('cxtMenuPosition', undefined);
-    let scratchpad = cy.scratch('cycontextmenus')
-    cxtMenu = new ContextMenu(classes, onMenuItemClick, scratchpad);
+    let cxtMenuClasses = utils.getClassStr(options.contextMenuClasses);
+    setScratchProp('cxtMenuClasses', cxtMenuClasses);
+
+    let onMenuItemClick = 
+      () => setScratchProp('cxtMenuPosition', undefined);
+      
+    let scratchpad = cy.scratch('cycontextmenus');
+    cxtMenu = new ContextMenu(onMenuItemClick, scratchpad);
 
     setScratchProp('cxtMenu', cxtMenu);
     document.body.appendChild(cxtMenu);
 
+    setScratchProp('cxtMenuItemClasses', utils.getClassStr(options.menuItemClasses));
     let menuItems = options.menuItems;
     createAndAppendMenuItemComponents(menuItems);
 
