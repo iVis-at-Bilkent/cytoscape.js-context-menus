@@ -1,5 +1,5 @@
 import * as utils from './utils.js';
-import { DEFAULT_OPTS, MENUITEM_CSS_CLASS, DIVIDER_CSS_CLASS } from './constants.js';
+import { DEFAULT_OPTS, MENUITEM_CSS_CLASS, DIVIDER_CSS_CLASS, INDICATOR_CSS_CLASS } from './constants.js';
 import { MenuItem, ContextMenu, MenuItemList } from './context-menu.js';
 
 export function contextMenus(opts) {
@@ -215,6 +215,16 @@ export function contextMenus(opts) {
     }
   };
 
+  let makeSubmenuIndicator = (props) => {
+    let elem = document.createElement('img');
+    elem.src = props.src;
+    elem.width = props.width;
+    elem.height = props.height;
+    elem.classList.add(INDICATOR_CSS_CLASS);
+
+    return elem;
+  };
+
   // Get an extension instance to enable users to access extension methods
   let getInstance = (cy) => {
     let instance = {
@@ -304,6 +314,8 @@ export function contextMenus(opts) {
     }
 
     setScratchProp('active', true);
+
+    setScratchProp('submenuIndicatorGen', makeSubmenuIndicator.bind(undefined, options.submenuIndicator));
 
     // Create cxtMenu and append it to body
     let cxtMenuClasses = utils.getClassStr(options.contextMenuClasses);

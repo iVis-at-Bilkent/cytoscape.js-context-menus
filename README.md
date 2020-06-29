@@ -69,6 +69,7 @@ var options = {
     // Possible options https://js.cytoscape.org/#events/user-input-device-events
     evtType: 'cxttap',
     // List of initial menu items
+    // A menu item must have either onClickFunction or submenu or both
     menuItems: [/*
       {
         id: 'remove', // ID of menu item
@@ -85,6 +86,7 @@ var options = {
         show: false, // Whether the item will be shown or not
         hasTrailingDivider: true, // Whether the item will have a trailing divider
         coreAsWell: false // Whether core instance have this item on cxttap
+        submenu: [] // Shows the listed menuItems as a submenu for this item. An item can't have both submenu and onClickFunction property at once
       },
       {
         id: 'hide',

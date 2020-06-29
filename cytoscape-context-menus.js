@@ -192,10 +192,38 @@ function setBooleanAttribute(element, attribute, boolValue) {
     element.removeAttribute(attribute);
   }
 }
+/**
+ * Returns true if the first parameter is inside the element
+ * @param {*} param0 
+ * @param { HTMLElement } element 
+ */
+
+function isIn(_ref, element) {
+  var x = _ref.x,
+      y = _ref.y;
+  var rect = element.getBoundingClientRect();
+  return x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom;
+}
+/**
+ * Get the dimensions from a hidden element
+ * @param { HTMLElement } element
+ */
+
+function getDimensionsHidden(element) {
+  // Temporarily show the element
+  element.style.opacity = "0";
+  element.style.display = "block";
+  var rect = element.getBoundingClientRect(); // Hide back after getting the dimensions
+
+  element.style.opacity = "1";
+  element.style.display = "none";
+  return rect;
+}
 // CONCATENATED MODULE: ./src/constants.js
 var CXT_MENU_CSS_CLASS = 'cy-context-menus-cxt-menu';
 var MENUITEM_CSS_CLASS = 'cy-context-menus-cxt-menuitem';
 var DIVIDER_CSS_CLASS = 'cy-context-menus-divider';
+var INDICATOR_CSS_CLASS = 'cy-context-menus-submenu-indicator';
 var DEFAULT_OPTS = {
   // Customize event to bring up the context menu
   // Possible options https://js.cytoscape.org/#events/user-input-device-events
@@ -227,7 +255,12 @@ var DEFAULT_OPTS = {
   // css classes that menu items will have
   menuItemClasses: [MENUITEM_CSS_CLASS],
   // css classes that context menu will have
-  contextMenuClasses: [CXT_MENU_CSS_CLASS]
+  contextMenuClasses: [CXT_MENU_CSS_CLASS],
+  submenuIndicator: {
+    src: 'assets/submenu-indicator-default.svg',
+    width: 12,
+    height: 12
+  }
 };
 // CONCATENATED MODULE: ./src/context-menu.js
 function context_menu_createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = context_menu_unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
@@ -341,14 +374,19 @@ var context_menu_MenuItem = /*#__PURE__*/function (_HTMLButtonElement) {
     _this.show = params.show || true;
     _this.coreAsWell = params.coreAsWell || false;
 
-    if (typeof params.onClickFunction !== 'undefined' && typeof params.submenu !== 'undefined') {
-      throw new Error("A menu item can't both have a click function and a submenu");
+    if (typeof params.onClickFunction === 'undefined' && typeof params.submenu === 'undefined') {
+      throw new Error("A menu item must either have click function or a submenu or both");
     }
 
     _this.onClickFunction = params.onClickFunction; // Create the submenu if neccessary
 
     if (params.submenu instanceof Array) {
+      // We generate another indicator for each
+      var indicator = scratchpad['submenuIndicatorGen']();
       _this.submenu = new MenuItemList(_this.onMenuItemClick, scratchpad);
+
+      _this.appendChild(indicator); // TODO: add indicator
+
 
       _this.appendChild(_this.submenu);
 
@@ -371,13 +409,49 @@ var context_menu_MenuItem = /*#__PURE__*/function (_HTMLButtonElement) {
       console.log('submenu: ', _this.submenu); // submenu should be visible when mouse is over
 
       _this.addEventListener('mouseenter', function (_event) {
-        console.log('mouse enter');
-        _this.submenu.style.left = _this.clientWidth + "px";
-        _this.submenu.style.top = "0px";
-        _this.submenu.style.right = "auto";
-        _this.submenu.style.bottom = "auto";
+        console.log('mouse enter', _this.submenu.clientWidth);
+
+        var rect = _this.getBoundingClientRect();
+
+        var submenuRect = getDimensionsHidden(_this.submenu);
+        var exceedsRight = rect.right + submenuRect.width > window.innerWidth;
+        var exceedsBottom = rect.top + submenuRect.height > window.innerHeight; // Regular case
+
+        if (!exceedsRight && !exceedsBottom) {
+          _this.submenu.style.left = _this.clientWidth + "px";
+          _this.submenu.style.top = "0px";
+          _this.submenu.style.right = "auto";
+          _this.submenu.style.bottom = "auto";
+        } else if (exceedsRight && !exceedsBottom) {
+          _this.submenu.style.right = _this.clientWidth + "px";
+          _this.submenu.style.top = "0px";
+          _this.submenu.style.left = "auto";
+          _this.submenu.style.bottom = "auto";
+        } else if (exceedsRight && exceedsBottom) {
+          _this.submenu.style.right = _this.clientWidth + "px";
+          _this.submenu.style.bottom = "0px";
+          _this.submenu.style.top = "auto";
+          _this.submenu.style.left = "auto";
+        } else {
+          _this.submenu.style.left = _this.clientWidth + "px";
+          _this.submenu.style.bottom = "0px";
+          _this.submenu.style.right = "auto";
+          _this.submenu.style.top = "auto";
+        }
 
         _this.submenu.display();
+      });
+
+      _this.addEventListener('mouseleave', function (event) {
+        console.log('mouseout');
+        var pos = {
+          x: event.clientX,
+          y: event.clientY
+        }; // Hide if mouse is not passed to the submenu
+
+        if (!isIn(pos, _this.submenu)) {
+          _this.submenu.hide();
+        }
       });
     }
 
@@ -435,7 +509,7 @@ var context_menu_MenuItem = /*#__PURE__*/function (_HTMLButtonElement) {
   }, {
     key: "isClickable",
     value: function isClickable() {
-      return !this.hasSubmenu();
+      return this.onMenuItemClick !== undefined;
     }
   }, {
     key: "display",
@@ -482,6 +556,7 @@ var MenuItemList = /*#__PURE__*/function (_HTMLDivElement) {
   _createClass(MenuItemList, [{
     key: "hide",
     value: function hide() {
+      this.hideMenuItemSubmenus();
       this.style.display = 'none';
     }
   }, {
@@ -515,8 +590,29 @@ var MenuItemList = /*#__PURE__*/function (_HTMLDivElement) {
         _iterator3.f();
       }
     }
+  }, {
+    key: "hideMenuItemSubmenus",
+    value: function hideMenuItemSubmenus() {
+      var _iterator4 = context_menu_createForOfIteratorHelper(this.children),
+          _step4;
+
+      try {
+        for (_iterator4.s(); !(_step4 = _iterator4.n()).done;) {
+          var menuItem = _step4.value;
+
+          if (menuItem instanceof context_menu_MenuItem) {
+            if (menuItem.submenu) {
+              menuItem.submenu.hide();
+            }
+          }
+        }
+      } catch (err) {
+        _iterator4.e(err);
+      } finally {
+        _iterator4.f();
+      }
+    }
     /**
-     * 
      * @param { MenuItem } menuItem 
      */
 
@@ -626,11 +722,17 @@ var ContextMenu = /*#__PURE__*/function (_MenuItemList) {
 
     _this4 = _super3.call(this, onMenuItemClick, scratchpad); // Called when a menu item is clicked
 
-    _this4.onMenuItemClick = function () {
+    _this4.onMenuItemClick = function (event) {
+      event.stopPropagation();
+
       _this4.hide();
 
       onMenuItemClick();
     };
+    /* this.addEventListener('mouseleave', (_event) => {
+        this.hideMenuItemSubmenus();
+    }); */
+
 
     return _this4;
   }
@@ -884,6 +986,15 @@ function contextMenus(opts) {
     } else {
       component.classList.remove(DIVIDER_CSS_CLASS);
     }
+  };
+
+  var makeSubmenuIndicator = function makeSubmenuIndicator(props) {
+    var elem = document.createElement('img');
+    elem.src = props.src;
+    elem.width = props.width;
+    elem.height = props.height;
+    elem.classList.add(INDICATOR_CSS_CLASS);
+    return elem;
   }; // Get an extension instance to enable users to access extension methods
 
 
@@ -978,7 +1089,8 @@ function contextMenus(opts) {
       destroyCxtMenu();
     }
 
-    setScratchProp('active', true); // Create cxtMenu and append it to body
+    setScratchProp('active', true);
+    setScratchProp('submenuIndicatorGen', makeSubmenuIndicator.bind(undefined, options.submenuIndicator)); // Create cxtMenu and append it to body
 
     var cxtMenuClasses = getClassStr(options.contextMenuClasses);
     setScratchProp('cxtMenuClasses', cxtMenuClasses);

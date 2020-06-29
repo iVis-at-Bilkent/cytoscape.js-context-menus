@@ -1,5 +1,5 @@
-import { setBooleanAttribute, getClassStr } from './utils';
-import { CXT_MENU_CSS_CLASS, MENUITEM_CSS_CLASS, DIVIDER_CSS_CLASS } from './constants';
+import { setBooleanAttribute, getClassStr, isIn, getDimensionsHidden } from './utils';
+import { DIVIDER_CSS_CLASS } from './constants';
 
 // TODO: add submenu property
 export class MenuItem extends HTMLButtonElement {
@@ -70,17 +70,22 @@ export class MenuItem extends HTMLButtonElement {
         this.show = params.show || true;
         this.coreAsWell = params.coreAsWell || false;
 
-        if (typeof params.onClickFunction !== 'undefined' && 
-            typeof params.submenu !== 'undefined') {
+        if (typeof params.onClickFunction === 'undefined' && 
+            typeof params.submenu === 'undefined') {
 
-            throw new Error("A menu item can't both have a click function and a submenu");
+            throw new Error("A menu item must either have click function or a submenu or both");
         }
 
         this.onClickFunction = params.onClickFunction;
 
         // Create the submenu if neccessary
         if (params.submenu instanceof Array) {
+            // We generate another indicator for each
+            let indicator = scratchpad['submenuIndicatorGen']();
+
             this.submenu = new MenuItemList(this.onMenuItemClick, scratchpad);
+            this.appendChild(indicator);
+            // TODO: add indicator
             this.appendChild(this.submenu);
 
             for (let item of params.submenu) {
@@ -91,14 +96,49 @@ export class MenuItem extends HTMLButtonElement {
 
             // submenu should be visible when mouse is over
             this.addEventListener('mouseenter', (_event) => {
-                console.log('mouse enter');
+                console.log('mouse enter', this.submenu.clientWidth);
+                let rect = this.getBoundingClientRect();
+                let submenuRect = getDimensionsHidden(this.submenu);
 
-                this.submenu.style.left = this.clientWidth + "px";
-                this.submenu.style.top = "0px";
-                this.submenu.style.right = "auto";
-                this.submenu.style.bottom = "auto";
+                let exceedsRight = (rect.right + submenuRect.width) > window.innerWidth;
+                let exceedsBottom = (rect.top + submenuRect.height) > window.innerHeight;
+
+                // Regular case
+                if (!exceedsRight && !exceedsBottom) {
+                    this.submenu.style.left = this.clientWidth + "px";
+                    this.submenu.style.top = "0px";
+                    this.submenu.style.right = "auto";
+                    this.submenu.style.bottom = "auto";
+                } else if (exceedsRight && !exceedsBottom) {
+                    this.submenu.style.right = this.clientWidth + "px";
+                    this.submenu.style.top = "0px";
+                    this.submenu.style.left = "auto";
+                    this.submenu.style.bottom = "auto";
+                } else if (exceedsRight && exceedsBottom) {
+                    this.submenu.style.right = this.clientWidth + "px";
+                    this.submenu.style.bottom = "0px";
+                    this.submenu.style.top = "auto";
+                    this.submenu.style.left = "auto";
+                } else {
+                    this.submenu.style.left = this.clientWidth + "px";
+                    this.submenu.style.bottom = "0px";
+                    this.submenu.style.right = "auto";
+                    this.submenu.style.top = "auto";
+                }
+
+                
 
                 this.submenu.display();
+            });
+
+            this.addEventListener('mouseleave', (event) => {
+                console.log('mouseout')
+                let pos = { x: event.clientX, y: event.clientY };
+
+                // Hide if mouse is not passed to the submenu
+                if (!isIn(pos, this.submenu)) {
+                    this.submenu.hide();
+                }
             });
         }
     }
@@ -134,7 +174,7 @@ export class MenuItem extends HTMLButtonElement {
     }
 
     isClickable() {
-        return !this.hasSubmenu();
+        return this.onMenuItemClick !== undefined;
     }
 
     display() {
@@ -166,6 +206,8 @@ export class MenuItemList extends HTMLDivElement {
     }
 
     hide() {
+        this.hideMenuItemSubmenus();
+
         this.style.display = 'none';
     }
 
@@ -186,8 +228,17 @@ export class MenuItemList extends HTMLDivElement {
         }
     }
 
+    hideMenuItemSubmenus() {
+        for (let menuItem of this.children) {
+            if (menuItem instanceof MenuItem) {
+                if (menuItem.submenu) {
+                    menuItem.submenu.hide();
+                }
+            }
+        }
+    }
+
     /**
-     * 
      * @param { MenuItem } menuItem 
      */
     appendMenuItem(menuItem) {
@@ -268,10 +319,16 @@ export class ContextMenu extends MenuItemList {
         super(onMenuItemClick, scratchpad);
 
         // Called when a menu item is clicked
-        this.onMenuItemClick = () => {
+        this.onMenuItemClick = (event) => {
+            // So that parent menuItems won't be clicked
+            event.stopPropagation();
             this.hide();
             onMenuItemClick();
         };
+
+        /* this.addEventListener('mouseleave', (_event) => {
+            this.hideMenuItemSubmenus();
+        }); */
     }
 
     static define() {

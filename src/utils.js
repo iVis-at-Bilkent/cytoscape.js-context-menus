@@ -77,3 +77,35 @@ export function setBooleanAttribute(element, attribute, boolValue) {
     element.removeAttribute(attribute);
   }
 }
+
+/**
+ * Returns true if the first parameter is inside the element
+ * @param {*} param0 
+ * @param { HTMLElement } element 
+ */
+export function isIn({ x, y }, element) {
+  let rect = element.getBoundingClientRect();
+
+  return x >= rect.left && 
+        x <= rect.right &&
+        y >= rect.top &&
+        y <= rect.bottom;
+}
+
+/**
+ * Get the dimensions from a hidden element
+ * @param { HTMLElement } element
+ */
+export function getDimensionsHidden(element) {
+  // Temporarily show the element
+  element.style.opacity = "0";
+  element.style.display = "block";
+
+  let rect = element.getBoundingClientRect();
+
+  // Hide back after getting the dimensions
+  element.style.opacity = "1";
+  element.style.display = "none";
+
+  return rect;
+}
