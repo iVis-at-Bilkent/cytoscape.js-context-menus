@@ -112,25 +112,71 @@
 				cy.contextMenus({
                                     menuItems: [
                                           {
-                                            id: 'node',
-                                            content: 'node ->',
-                                            tooltipText: 'node ->',
+                                            id: 'remove',
+                                            content: 'remove',
+                                            tooltipText: 'remove',
+                                            image: {src : "assets/remove.svg", width : 12, height : 12, x : 6, y : 4},
                                             selector: 'node, edge',
+                                            onClickFunction: function (event) {
+                                              var target = event.target || event.cyTarget;
+                                              target.remove();
+                                            },
+                                          },
+                                          {
+                                            id: 'color',
+                                            content: 'change color',
+                                            tooltipText: 'change color',
+                                            selector: 'node',
                                             hasTrailingDivider: true,
                                             submenu: [
                                               {
-                                                id: 'remove',
-                                                content: 'remove',
-                                                tooltipText: 'remove',
-                                                image: {src : "assets/remove.svg", width : 12, height : 12, x : 6, y : 4},
-                                                selector: 'node, edge',
+                                                id: 'colorBlue',
+                                                content: 'blue',
+                                                tooltipText: 'blue',
                                                 onClickFunction: function (event) {
-                                                  var target = event.target || event.cyTarget;
-                                                  target.remove();
+                                                  let target = event.target || event.cyTarget;
+                                                  target.style('background-color', 'blue');
                                                 },
-                                                hasTrailingDivider: true
+                                                submenu: [
+                                                  {
+                                                    id: 'colorLightBlue',
+                                                    content: 'light blue',
+                                                    tooltipText: 'light blue',
+                                                    onClickFunction: function (event) {
+                                                      let target = event.target || event.cyTarget;
+                                                      target.style('background-color', 'lightblue');
+                                                    },
+                                                  },
+                                                  {
+                                                    id: 'colorDarkBlue',
+                                                    content: 'dark blue',
+                                                    tooltipText: 'dark blue',
+                                                    onClickFunction: function (event) {
+                                                      let target = event.target || event.cyTarget;
+                                                      target.style('background-color', 'darkblue');
+                                                    },
+                                                  },
+                                                ],
                                               },
-                                            ],
+                                              {
+                                                id: 'colorGreen',
+                                                content: 'green',
+                                                tooltipText: 'green',
+                                                onClickFunction: function (event) {
+                                                  let target = event.target || event.cyTarget;
+                                                  target.style('background-color', 'green');
+                                                },
+                                              },
+                                              {
+                                                id: 'colorRed',
+                                                content: 'red',
+                                                tooltipText: 'red',
+                                                onClickFunction: function (event) {
+                                                  let target = event.target || event.cyTarget;
+                                                  target.style('background-color', 'red');
+                                                },
+                                              },
+                                            ]
                                           },
                                           {
                                             id: 'hide',
