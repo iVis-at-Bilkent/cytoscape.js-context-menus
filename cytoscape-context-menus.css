@@ -50,7 +50,6 @@
 .cy-context-menus-submenu-indicator {
     position: absolute;
     right: 2px;
-    margin: auto;
     top: 50%;
     transform: translateY(-50%);
 }

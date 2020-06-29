@@ -399,18 +399,15 @@ var context_menu_MenuItem = /*#__PURE__*/function (_HTMLButtonElement) {
           var menuItem = new MenuItem(item, _this.onMenuItemClick, scratchpad);
 
           _this.submenu.appendMenuItem(menuItem);
-        }
+        } // submenu should be visible when mouse is over
+
       } catch (err) {
         _iterator.e(err);
       } finally {
         _iterator.f();
       }
 
-      console.log('submenu: ', _this.submenu); // submenu should be visible when mouse is over
-
       _this.addEventListener('mouseenter', function (_event) {
-        console.log('mouse enter', _this.submenu.clientWidth);
-
         var rect = _this.getBoundingClientRect();
 
         var submenuRect = getDimensionsHidden(_this.submenu);
@@ -443,7 +440,6 @@ var context_menu_MenuItem = /*#__PURE__*/function (_HTMLButtonElement) {
       });
 
       _this.addEventListener('mouseleave', function (event) {
-        console.log('mouseout');
         var pos = {
           x: event.clientX,
           y: event.clientY
@@ -693,7 +689,6 @@ var MenuItemList = /*#__PURE__*/function (_HTMLDivElement) {
     value: function _bindOnClick(onClickFn) {
       var _this3 = this;
 
-      console.log('scratchpad: ', this.scratchpad);
       return function () {
         var event = _this3.scratchpad['currentCyEvent'];
         onClickFn(event);
@@ -723,6 +718,7 @@ var ContextMenu = /*#__PURE__*/function (_MenuItemList) {
     _this4 = _super3.call(this, onMenuItemClick, scratchpad); // Called when a menu item is clicked
 
     _this4.onMenuItemClick = function (event) {
+      // So that parent menuItems won't be clicked
       event.stopPropagation();
 
       _this4.hide();
