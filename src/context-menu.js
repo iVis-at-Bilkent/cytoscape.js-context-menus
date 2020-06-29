@@ -92,11 +92,9 @@ export class MenuItem extends HTMLButtonElement {
                 let menuItem = new MenuItem(item, this.onMenuItemClick, scratchpad);
                 this.submenu.appendMenuItem(menuItem);
             }
-            console.log('submenu: ', this.submenu);
 
             // submenu should be visible when mouse is over
             this.addEventListener('mouseenter', (_event) => {
-                console.log('mouse enter', this.submenu.clientWidth);
                 let rect = this.getBoundingClientRect();
                 let submenuRect = getDimensionsHidden(this.submenu);
 
@@ -132,7 +130,6 @@ export class MenuItem extends HTMLButtonElement {
             });
 
             this.addEventListener('mouseleave', (event) => {
-                console.log('mouseout')
                 let pos = { x: event.clientX, y: event.clientY };
 
                 // Hide if mouse is not passed to the submenu
@@ -301,7 +298,6 @@ export class MenuItemList extends HTMLDivElement {
     }
 
     _bindOnClick(onClickFn) {
-        console.log('scratchpad: ', this.scratchpad);
         return () => {
             let event = this.scratchpad['currentCyEvent']; 
             onClickFn(event);
