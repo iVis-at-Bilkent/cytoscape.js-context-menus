@@ -125,23 +125,38 @@ export function contextMenus(opts) {
     }
   };
 
-  let createAndAppendMenuItemComponent = (opts) => {
+  let createAndAppendMenuItemComponent = (opts, parentID = undefined) => {
     // Create and append menu item
     let menuItemComponent = createMenuItemComponent(opts);
-    cxtMenu.appendMenuItem(menuItemComponent);
 
+    if (typeof parentID !== 'undefined') {
+      let parent = document.getElementById(parentID);
+
+      if (parent instanceof MenuItem) {
+        cxtMenu.insertMenuItem(menuItemComponent, { parent });
+      } else {
+        throw new Error(`item with id=${parentID} is not a menu item`)
+      }
+    } else {
+      cxtMenu.insertMenuItem(menuItemComponent);
+    }    
   };//insertComponentBeforeExistingItem(component, existingItemID)
 
-  let createAndAppendMenuItemComponents = (optionsArr) => {
+  let createAndAppendMenuItemComponents = (optionsArr, parentID = undefined) => {
     for (let i = 0; i < optionsArr.length; i++) {
-      createAndAppendMenuItemComponent(optionsArr[i]);
+      createAndAppendMenuItemComponent(optionsArr[i], parentID);
     }
   };
 
-  let createAndInsertMenuItemComponentBeforeExistingComponent = (opts, existingComponentID) => {
+  let createAndInsertMenuItemComponentBeforeExistingComponent = (opts, existingItemID) => {
     // Create and insert menu item
     let menuItemComponent = createMenuItemComponent(opts);
-    cxtMenu.insertBeforeExistingMenuItem(menuItemComponent, existingComponentID);
+    let existingItem = document.getElementById(existingItemID);
+    if (existingItem instanceof MenuItem) {
+      cxtMenu.insertMenuItem(menuItemComponent, { before: existingItem });
+    } else {
+      throw new Error(`The item with id=${existingItemID} is not a menu item`);
+    }
   };
 
   // Creates a menu item as an html component
@@ -216,13 +231,13 @@ export function contextMenus(opts) {
         return getScratchProp('active');
       },
       // Appends given menu item to the menu items list.
-      appendMenuItem: function(item) {
-        createAndAppendMenuItemComponent(item);
+      appendMenuItem: function(item, parentID = undefined) {
+        createAndAppendMenuItemComponent(item, parentID);
         return cy;
       },
       // Appends menu items in the given list to the menu items list.
-      appendMenuItems: function(items) {
-        createAndAppendMenuItemComponents(items);
+      appendMenuItems: function(items, parentID = undefined) {
+        createAndAppendMenuItemComponents(items, parentID);
         return cy;
       },
       // Removes the menu item with given ID.
@@ -247,7 +262,13 @@ export function contextMenus(opts) {
       },
       // Moves the item with given ID before the existingitem.
       moveBeforeOtherMenuItem: function(itemID, existingItemID) {
-        cxtMenu.moveBefore(itemID, existingItemID);
+        let item = document.getElementById(itemID);
+        let before = document.getElementById(existingItemID);
+        if (item instanceof MenuItem && before instanceof MenuItem) {
+          cxtMenu.moveBefore(item, before);
+        } else {
+          throw new Error('Items must be menu items');
+        }
         return cy;
       },
       // Disables the menu item with given ID.

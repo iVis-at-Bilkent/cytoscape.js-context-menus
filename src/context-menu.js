@@ -69,6 +69,7 @@ export class MenuItem extends HTMLButtonElement {
         this.selector = params.selector;
         this.show = params.show || true;
         this.coreAsWell = params.coreAsWell || false;
+        this.scratchpad = scratchpad;
 
         if (typeof params.onClickFunction === 'undefined' && 
             typeof params.submenu === 'undefined') {
@@ -80,25 +81,7 @@ export class MenuItem extends HTMLButtonElement {
 
         // Create the submenu if neccessary
         if (params.submenu instanceof Array) {
-            // We generate another indicator for each
-            let indicator = scratchpad['submenuIndicatorGen']();
-            this.submenu = new MenuItemList(this.onMenuItemClick, scratchpad);
-
-            this.appendChild(indicator);
-            this.appendChild(this.submenu);
-
-            for (let item of params.submenu) {
-                let menuItem = new MenuItem(item, this.onMenuItemClick, scratchpad);
-                this.submenu.appendMenuItem(menuItem);
-            }
-
-            this.mouseEnterHandler = this._onMouseEnter.bind(this);
-            this.mouseLeaveHandler = this._onMouseLeave.bind(this);
-
-            // submenu should be visible when mouse is over
-            this.addEventListener('mouseenter', this.mouseEnterHandler);
-
-            this.addEventListener('mouseleave', this.mouseLeaveHandler);
+            this._createSubmenu(params.submenu);
         }
     }
 
@@ -140,6 +123,13 @@ export class MenuItem extends HTMLButtonElement {
         return this.submenu instanceof MenuItemList;
     }
 
+    appendSubmenuItem(menuItem, before = undefined) {
+        if (!this.hasSubmenu()) {
+            this._createSubmenu();    
+        }
+        this.submenu.appendMenuItem(menuItem, before)
+    }
+
     isClickable() {
         return this.onMenuItemClick !== undefined;
     }
@@ -169,7 +159,7 @@ export class MenuItem extends HTMLButtonElement {
         let exceedsRight = (rect.right + submenuRect.width) > window.innerWidth;
         let exceedsBottom = (rect.top + submenuRect.height) > window.innerHeight;
 
-        // Regular case
+        // Adjusts the position of the submenu 
         if (!exceedsRight && !exceedsBottom) {
             this.submenu.style.left = this.clientWidth + "px";
             this.submenu.style.top = "0px";
@@ -202,6 +192,28 @@ export class MenuItem extends HTMLButtonElement {
         if (!isIn(pos, this.submenu)) {
             this.submenu.hide();
         }
+    }
+
+    _createSubmenu(items = []) {
+        // We generate another indicator for each
+        let indicator = this.scratchpad['submenuIndicatorGen']();
+        this.submenu = new MenuItemList(this.onMenuItemClick, this.scratchpad);
+
+        this.appendChild(indicator);
+        this.appendChild(this.submenu);
+
+        for (let item of items) {
+            let menuItem = new MenuItem(item, this.onMenuItemClick, this.scratchpad);
+            this.submenu.appendMenuItem(menuItem);
+        }
+
+        this.mouseEnterHandler = this._onMouseEnter.bind(this);
+        this.mouseLeaveHandler = this._onMouseLeave.bind(this);
+
+        // submenu should be visible when mouse is over
+        this.addEventListener('mouseenter', this.mouseEnterHandler);
+
+        this.addEventListener('mouseleave', this.mouseLeaveHandler);
     }
 
     _getMenuItemClassStr(classStr, hasTrailingDivider) {
@@ -262,27 +274,23 @@ export class MenuItemList extends HTMLDivElement {
 
     /**
      * @param { MenuItem } menuItem
-     * @param { Element } before
-     * If specified menuItem is inserted before this element instead of at the end
+     * @param { Element? } before 
+     * If before is specified menuItem is inserted before this element instead of at the end \
+     * By default appends at the end of the this
      */
-    appendMenuItem(menuItem, before = null) {
-        if (before !== null && before.parentNode === this) {
-            this.insertBefore(menuItem, before);
+    appendMenuItem(menuItem, before = undefined) {
+        if (typeof before !== 'undefined') {
+            if (before.parentNode === this) {
+                this.insertBefore(menuItem, before);
+            } else {
+                throw new Error(`The item with id='${before.id}' is not a child of the context menu`);
+            }
         } else {
             this.appendChild(menuItem);
         }
 
         if (menuItem.isClickable()) {
             this._performBindings(menuItem);
-        }
-    }
-
-    insertBeforeExistingMenuItem(menuItem, existingItemID) {
-        let existingItem = document.getElementById(existingItemID);
-        if (existingItem.parentNode === this) {
-            this.appendMenuItem(menuItem, existingItem);
-        } else {
-            throw new Error(`The item with id='${existingItemID}' is not a child of the context menu`);
         }
     }
 
@@ -309,24 +317,19 @@ export class MenuItemList extends HTMLDivElement {
 
     /**
      * Moves a menuItem before another
-     * @param { string } menuItemID 
-     * @param { string } otherMenuItemID 
+     * @param { MenuItem } menuItem 
+     * @param { MenuItem } before 
      */
-    moveBefore(menuItemID, otherMenuItemID) {
-        if (menuItemID === otherMenuItemID) {
-            return;
-        }
-        let menuItem = document.getElementById(menuItemID);
-        let otherMenuItem = document.getElementById(otherMenuItemID);
+    moveBefore(menuItem, before) {
         if (menuItem.parentNode !== this) {
-            throw new Error(`The item with id='${menuItemID}' is not a child of context menu`);
+            throw new Error(`The item with id='${menuItem.id}' is not a child of context menu`);
         }
-        if (otherMenuItem.parentNode !== this) {
-            throw new Error(`The item with id='${otherMenuItemID}' is not a child of context menu`);
+        if (before.parentNode !== this) {
+            throw new Error(`The item with id='${before.id}' is not a child of context menu`);
         }
 
         this.removeChild(menuItem);
-        this.insertBefore(menuItem, otherMenuItem);
+        this.insertBefore(menuItem, before);
     }
 
     removeAllMenuItems() {        
@@ -396,6 +399,55 @@ export class ContextMenu extends MenuItemList {
         /* this.addEventListener('mouseleave', (_event) => {
             this.hideMenuItemSubmenus();
         }); */
+    }
+
+    /**
+     * Inserts the menu item to the context menu \
+     * If before is specified, item is inserted before the 'before' inside the same submenu \
+     * The parent argument is ignored if before is specified because parent can be inferred from the before argument \
+     * If parent is specified, item is inserted into the submenu of specified parent
+     * @param { MenuItem } menuItem 
+     * @param {{ before?: MenuItem, parent?: MenuItem }} param1
+     */
+    insertMenuItem(menuItem, { before, parent } = {}) {
+        if (typeof before !== 'undefined') {
+            if (this.contains(before)) {
+                let parent = before.parentNode;
+                if (parent instanceof MenuItemList) {
+                    parent.appendMenuItem(menuItem, before);
+                } else {
+                    throw new Error(`Parent of before(id=${before.id}) is not a submenu`);
+                }
+            } else {
+                throw new Error(`before(id=${before.id}) is not in the context menu`);
+            }
+        } else if (typeof parent !== 'undefined') {
+            if (this.contains(parent)) {
+                parent.appendSubmenuItem(menuItem);
+            } else {
+                throw new Error(`parent(id=${parent.id}) is not a descendant of the context menu`);
+            }
+        } else {
+            this.appendMenuItem(menuItem);
+        }
+    }
+
+    moveBefore(menuItem, before) {
+        let parent = before.parentNode;
+        if (parent instanceof MenuItemList) {
+            if (this.contains(parent)) {
+                // We need to check this otherwise infinite recursion occurs
+                if (parent === this) {
+                    super.moveBefore(menuItem, before);
+                } else {
+                    parent.moveBefore(menuItem, before);
+                }
+            } else {
+                throw new Error(`parent(id=${parent.id}) is not in the contex menu`);
+            }
+        } else {
+            throw new Error(`parent(id=${parent.id}) is not a menu`);
+        }
     }
 
     static define() {
