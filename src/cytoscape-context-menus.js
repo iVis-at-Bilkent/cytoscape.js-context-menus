@@ -142,7 +142,6 @@ export function contextMenus(opts) {
     // Create and insert menu item
     let menuItemComponent = createMenuItemComponent(opts);
     cxtMenu.insertBeforeExistingMenuItem(menuItemComponent, existingComponentID);
-
   };
 
   // Creates a menu item as an html component

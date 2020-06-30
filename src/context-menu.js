@@ -92,50 +92,13 @@ export class MenuItem extends HTMLButtonElement {
                 this.submenu.appendMenuItem(menuItem);
             }
 
+            this.mouseEnterHandler = this._onMouseEnter.bind(this);
+            this.mouseLeaveHandler = this._onMouseLeave.bind(this);
+
             // submenu should be visible when mouse is over
-            this.addEventListener('mouseenter', (_event) => {
-                // TODO: check if overlaps with previous context menus
+            this.addEventListener('mouseenter', this.mouseEnterHandler);
 
-                let rect = this.getBoundingClientRect();
-                let submenuRect = getDimensionsHidden(this.submenu);
-
-                let exceedsRight = (rect.right + submenuRect.width) > window.innerWidth;
-                let exceedsBottom = (rect.top + submenuRect.height) > window.innerHeight;
-
-                // Regular case
-                if (!exceedsRight && !exceedsBottom) {
-                    this.submenu.style.left = this.clientWidth + "px";
-                    this.submenu.style.top = "0px";
-                    this.submenu.style.right = "auto";
-                    this.submenu.style.bottom = "auto";
-                } else if (exceedsRight && !exceedsBottom) {
-                    this.submenu.style.right = this.clientWidth + "px";
-                    this.submenu.style.top = "0px";
-                    this.submenu.style.left = "auto";
-                    this.submenu.style.bottom = "auto";
-                } else if (exceedsRight && exceedsBottom) {
-                    this.submenu.style.right = this.clientWidth + "px";
-                    this.submenu.style.bottom = "0px";
-                    this.submenu.style.top = "auto";
-                    this.submenu.style.left = "auto";
-                } else {
-                    this.submenu.style.left = this.clientWidth + "px";
-                    this.submenu.style.bottom = "0px";
-                    this.submenu.style.right = "auto";
-                    this.submenu.style.top = "auto";
-                }                
-
-                this.submenu.display();
-            });
-
-            this.addEventListener('mouseleave', (event) => {
-                let pos = { x: event.clientX, y: event.clientY };
-
-                // Hide if mouse is not passed to the submenu
-                if (!isIn(pos, this.submenu)) {
-                    this.submenu.hide();
-                }
-            });
+            this.addEventListener('mouseleave', this.mouseLeaveHandler);
         }
     }
 
@@ -154,10 +117,18 @@ export class MenuItem extends HTMLButtonElement {
 
     enable() {
         setBooleanAttribute(this, 'disabled', false);
+
+        if (this.hasSubmenu()) {
+            this.addEventListener('mouseenter', this.mouseEnterHandler);
+        }
     }
 
     disable() {
         setBooleanAttribute(this, 'disabled', true);
+
+        if (this.hasSubmenu()) {
+            this.removeEventListener('mouseenter', this.mouseEnterHandler);
+        }
     }
 
     hide() {
@@ -185,7 +156,51 @@ export class MenuItem extends HTMLButtonElement {
         if (this.hasSubmenu()) {
             this.submenu.removeAllMenuItems();
             this.removeChild(this.submenu);
+            this.removeEventListener('mouseenter', this.mouseEnterHandler);
+            this.removeEventListener('mouseleave', this.mouseLeaveHandler);
             this.submenu = undefined;
+        }
+    }
+
+    _onMouseEnter(_event) {
+        let rect = this.getBoundingClientRect();
+        let submenuRect = getDimensionsHidden(this.submenu);
+
+        let exceedsRight = (rect.right + submenuRect.width) > window.innerWidth;
+        let exceedsBottom = (rect.top + submenuRect.height) > window.innerHeight;
+
+        // Regular case
+        if (!exceedsRight && !exceedsBottom) {
+            this.submenu.style.left = this.clientWidth + "px";
+            this.submenu.style.top = "0px";
+            this.submenu.style.right = "auto";
+            this.submenu.style.bottom = "auto";
+        } else if (exceedsRight && !exceedsBottom) {
+            this.submenu.style.right = this.clientWidth + "px";
+            this.submenu.style.top = "0px";
+            this.submenu.style.left = "auto";
+            this.submenu.style.bottom = "auto";
+        } else if (exceedsRight && exceedsBottom) {
+            this.submenu.style.right = this.clientWidth + "px";
+            this.submenu.style.bottom = "0px";
+            this.submenu.style.top = "auto";
+            this.submenu.style.left = "auto";
+        } else {
+            this.submenu.style.left = this.clientWidth + "px";
+            this.submenu.style.bottom = "0px";
+            this.submenu.style.right = "auto";
+            this.submenu.style.top = "auto";
+        }                
+
+        this.submenu.display();
+    }
+
+    _onMouseLeave(event) {
+        let pos = { x: event.clientX, y: event.clientY };
+
+        // Hide if mouse is not passed to the submenu
+        if (!isIn(pos, this.submenu)) {
+            this.submenu.hide();
         }
     }
 
@@ -246,20 +261,26 @@ export class MenuItemList extends HTMLDivElement {
     }
 
     /**
-     * @param { MenuItem } menuItem 
+     * @param { MenuItem } menuItem
+     * @param { Element } before
+     * If specified menuItem is inserted before this element instead of at the end
      */
-    appendMenuItem(menuItem) {
-        super.appendChild(menuItem);
+    appendMenuItem(menuItem, before = null) {
+        if (before !== null && before.parentNode === this) {
+            this.insertBefore(menuItem, before);
+        } else {
+            this.appendChild(menuItem);
+        }
 
         if (menuItem.isClickable()) {
-            this._performBindings(menuItem)
+            this._performBindings(menuItem);
         }
     }
 
     insertBeforeExistingMenuItem(menuItem, existingItemID) {
         let existingItem = document.getElementById(existingItemID);
         if (existingItem.parentNode === this) {
-            this.insertBefore(menuItem, existingItem);
+            this.appendMenuItem(menuItem, existingItem);
         } else {
             throw new Error(`The item with id='${existingItemID}' is not a child of the context menu`);
         }
