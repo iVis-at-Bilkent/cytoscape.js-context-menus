@@ -167,7 +167,7 @@ export class MenuItem extends HTMLButtonElement {
     }
 
     hasSubmenu() {
-        return this.submenu !== undefined;
+        return this.submenu instanceof MenuItemList;
     }
 
     isClickable() {
@@ -177,6 +177,17 @@ export class MenuItem extends HTMLButtonElement {
     display() {
         this.show = true;
         this.style.display = 'block';
+    }
+
+    /**
+     * Removes the submenu if exists
+     */
+    removeSubmenu() {
+        if (this.hasSubmenu()) {
+            this.submenu.removeAllMenuItems();
+            this.removeChild(this.submenu);
+            this.submenu = undefined;
+        }
     }
 
     _getMenuItemClassStr(classStr, hasTrailingDivider) {
@@ -256,13 +267,24 @@ export class MenuItemList extends HTMLDivElement {
     }
 
     /**
+     * Removes any menuItem that is any children of the context menu
+     * Returns true if child is found and removed, false otherwise
      * @param { MenuItem } menuItem 
      */
     removeMenuItem(menuItem) {
-        if (menuItem.parentNode === this) {
-            this.removeChild(menuItem);
+        if (this._removeImmediateMenuItem(menuItem)) {
+            return true;
         } else {
-            throw new Error(`The item with id='${menuItem.id}' is not a child of the context menu`)
+            for (let child of this.children) {
+                if (child instanceof MenuItem && child.hasSubmenu()) {
+                    if (child.submenu.removeMenuItem(menuItem)) {
+                        return true;
+                    }
+                }
+            }
+            
+            // throw new Error(`The item with id='${menuItem.id}' is not a child of the context menu`);
+            return false;
         }
     }
 
@@ -286,6 +308,36 @@ export class MenuItemList extends HTMLDivElement {
 
         this.removeChild(menuItem);
         this.insertBefore(menuItem, otherMenuItem);
+    }
+
+    removeAllMenuItems() {        
+        // https://stackoverflow.com/a/3955238/12045421
+        while (this.firstChild) {
+            let child = this.lastChild;
+            if (child instanceof MenuItem) {
+                this._removeImmediateMenuItem(child);
+            } else {
+                console.warn("Found non menu item in the context menu: ", child);
+                // Remove it as well
+                this.removeChild(child);
+            }
+        }
+    }
+
+    /**
+     * Removes if the menu item is direct child of the parent
+     * @param { MenuItem } menuItem 
+     */
+    _removeImmediateMenuItem(menuItem) {
+        if (menuItem.parentNode === this) {
+            menuItem.removeSubmenu();
+            menuItem.unbindOnClickFunctions();
+
+            this.removeChild(menuItem);
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**

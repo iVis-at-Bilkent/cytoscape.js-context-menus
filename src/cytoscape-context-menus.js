@@ -156,7 +156,7 @@ export function contextMenus(opts) {
       return;
     }
 
-    removeAndUnbindMenuItems();
+    cxtMenu.removeAllMenuItems();
 
     cy.off('tapstart', getScratchProp('eventCyTapStart'));
     cy.off(options.evtType, getScratchProp('onCxttap'));
@@ -167,22 +167,6 @@ export function contextMenus(opts) {
     setScratchProp('active', false);
     setScratchProp('anyVisibleChild', false);
     setScratchProp('onCxttap', undefined);
-  };
-
-  let removeAndUnbindMenuItems = () => {
-    for (let child of cxtMenu.children) {
-      removeAndUnbindMenuItem(child.getAttribute('id'));
-    }        
-  };
-
-  let removeAndUnbindMenuItem = (menuItemID) => {
-    let menuItem = typeof menuItemID === 'string' ? document.getElementById(menuItemID) : menuItemID;
-    if (menuItem instanceof MenuItem) {  
-      menuItem.unbindOnClickFunctions();
-      cxtMenu.removeMenuItem(menuItem);      
-    } else {
-      throw new Error(`The item with id='${menuItemID}' is not a menu item`);
-    }
   };
 
   // this sets disabled to true
@@ -244,7 +228,12 @@ export function contextMenus(opts) {
       },
       // Removes the menu item with given ID.
       removeMenuItem: function(itemID) {
-        removeAndUnbindMenuItem(itemID);
+        let item = document.getElementById(itemID);
+        if (item instanceof MenuItem) {
+          cxtMenu.removeMenuItem(item);
+        } else {
+          console.error(`The item with id: ${itemID} is not a menu item`);
+        }
         return cy;
       },
       // Sets whether the menuItem with given ID will have a following divider.
