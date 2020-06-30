@@ -1,6 +1,6 @@
 .cy-context-menus-cxt-menu {
     display:none;
-    z-index:1000;
+    z-index: 1000;
     position:absolute;
     border:1px solid #A0A0A0;
     padding: 0;
@@ -10,7 +10,6 @@
 
 .cy-context-menus-cxt-menuitem {
     display:block;
-    z-index:1000;
     width: 100%;
     padding: 3px 20px;
     position:relative;

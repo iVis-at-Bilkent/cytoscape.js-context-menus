@@ -82,10 +82,9 @@ export class MenuItem extends HTMLButtonElement {
         if (params.submenu instanceof Array) {
             // We generate another indicator for each
             let indicator = scratchpad['submenuIndicatorGen']();
-
             this.submenu = new MenuItemList(this.onMenuItemClick, scratchpad);
+
             this.appendChild(indicator);
-            // TODO: add indicator
             this.appendChild(this.submenu);
 
             for (let item of params.submenu) {
@@ -95,6 +94,8 @@ export class MenuItem extends HTMLButtonElement {
 
             // submenu should be visible when mouse is over
             this.addEventListener('mouseenter', (_event) => {
+                // TODO: check if overlaps with previous context menus
+
                 let rect = this.getBoundingClientRect();
                 let submenuRect = getDimensionsHidden(this.submenu);
 
@@ -122,9 +123,7 @@ export class MenuItem extends HTMLButtonElement {
                     this.submenu.style.bottom = "0px";
                     this.submenu.style.right = "auto";
                     this.submenu.style.top = "auto";
-                }
-
-                
+                }                
 
                 this.submenu.display();
             });
@@ -281,8 +280,7 @@ export class MenuItemList extends HTMLDivElement {
                         return true;
                     }
                 }
-            }
-            
+            }            
             // throw new Error(`The item with id='${menuItem.id}' is not a child of the context menu`);
             return false;
         }
