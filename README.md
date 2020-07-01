@@ -132,37 +132,51 @@ var instance = cy.contextMenus( options );
 
 An instance has a number of functions available:
 
-```js
-instance.isActive(); // Returns whether the extension is active.
+### `instance.isActive()`
+* Returns whether the extension is active.
 
-instance.appendMenuItem(item); // Appends given menu item to the menu items list.
+### `instance.appendMenuItem(item, parentID = undefined)`
+* Appends given menu item to the menu items list.
+* If parentID is specified, the item is inserted to the submenu of the item with parentID. 
+* If the parent has no submenu then it will automatically be created. 
+* If not specified item will be inserted to the root of the contextmenu
 
-instance.appendMenuItems(items); // Appends menu items in the given list to the menu items list.
+### `instance.appendMenuItems(items, parentID = undefined)`
+* Same with above but takes an array of items
 
-instance.removeMenuItem(itemID); // Removes the menu item with given ID.
+### `instance.removeMenuItem(itemID)`
+* Removes the menu item with given ID and its submenu along with
 
-instance.setTrailingDivider(itemID, status); // Sets whether the menuItem with given ID will have a following divider.
+### `instance.setTrailingDivider(itemID, status)`
+* Sets whether the menuItem with given ID will have a following divider
 
-instance.insertBeforeMenuItem(item, existingItemID); // Inserts given item before the existingitem.
+### `instance.insertBeforeMenuItem(item, existingItemID)`
+* Inserts given item before the existingitem
 
-instance.moveBeforeOtherMenuItem(itemID, existingItemID); // Moves the item with given ID before the existingitem.
+### `instance.moveToSubmenu(itemID, parentID)`
+* Moves the item with given ID to the submenu of the parent with the given ID
 
-instance.disableMenuItem(itemID); // Disables the menu item with given ID.
+### `instance.moveBeforeOtherMenuItem(itemID, existingItemID)`
+* Moves the item with given ID before the existingitem.
+* If the are not in the same submenu, item with the given ID will be moved to the submenu that contains the existingItem
 
-instance.enableMenuItem(itemID); // Enables the menu item with given ID.
+### `instance.disableMenuItem(itemID)`
+* Disables the menu item with given ID.
 
-instance.showMenuItem(itemID); // Shows the menu item with given ID.
+### `instance.enableMenuItem(itemID)`
+* Enables the menu item with given ID.
 
-instance.hideMenuItem(itemID); // Hides the menu item with given ID.
+### `instance.showMenuItem(itemID)`
+* Shows the menu item with given ID.
 
-instance.destroy(); // Destroys the extension instance
-```
+### `instance.hideMenuItem(itemID)`
+* Hides the menu item with given ID.
 
-You can also get an existing instance:
+### `instance.destroy()`
+* Destroys the extension instance
 
-```js
-cy.contextMenus('get');
-```
+### ```cy.contextMenus('get')```
+* Returns the existing instance to the extension
 
 ## Publishing instructions
 
