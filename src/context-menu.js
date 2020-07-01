@@ -349,7 +349,7 @@ export class MenuItemList extends HTMLDivElement {
     }
 
     /**
-     * Removes if the menu item is direct child of the parent
+     * Removes if the `menuItem` is direct child of the parent
      * @param { MenuItem } menuItem 
      */
     _removeImmediateMenuItem(menuItem) {
@@ -442,21 +442,39 @@ export class ContextMenu extends MenuItemList {
         }
     }
 
+    /**
+     * @param { MenuItem } menuItem 
+     * @param { MenuItem } before 
+     */
     moveBefore(menuItem, before) {
-        let parent = before.parentNode;
-        if (parent instanceof MenuItemList) {
-            if (this.contains(parent)) {
-                // We need to check this otherwise infinite recursion occurs
-                if (parent === this) {
-                    super.moveBefore(menuItem, before);
-                } else {
-                    parent.moveBefore(menuItem, before);
-                }
+        let parent = menuItem.parentElement;
+        if (this.contains(parent)) {
+            if (this.contains(before)) {
+                parent.removeChild(menuItem);
+                this.insertMenuItem(menuItem, { before });
             } else {
-                throw new Error(`parent(id=${parent.id}) is not in the contex menu`);
+                throw new Error(`before(id=${before.id}) is not in the context menu`);
             }
         } else {
-            throw new Error(`parent(id=${parent.id}) is not a menu`);
+            throw new Error(`parent(id=${parent.id}) is not in the contex menu`);
+        }
+    }
+
+    /**
+     * @param { MenuItem } menuItem 
+     * @param { MenuItem } parent 
+     */
+    moveToSubmenu(menuItem, parent) {
+        if (this.contains(parent)) {
+            let oldParent = menuItem.parentElement;
+            if (this.contains(oldParent)) {
+                oldParent.removeChild(menuItem);
+                parent.appendSubmenuItem(menuItem);
+            } else {
+                throw new Error(`parent of the menu item(id=${oldParent.id}) is not in the context menu`);
+            }
+        } else {
+            throw new Error(`parent(id=${parent.id}) is not in the context menu`);
         }
     }
 

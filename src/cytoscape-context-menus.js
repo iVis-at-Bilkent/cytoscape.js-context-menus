@@ -260,6 +260,19 @@ export function contextMenus(opts) {
         createAndInsertMenuItemComponentBeforeExistingComponent(item, existingItemID);
         return cy;
       },
+      // Moves the item to the submenu of the parent with the given ID
+      moveToSubmenu: function(itemID, parentID) {
+        let item = document.getElementById(itemID);
+        let parent = document.getElementById(parentID);
+        
+        if (item instanceof MenuItem && parent instanceof MenuItem) {
+          cxtMenu.moveToSubmenu(item, parent);
+        } else {
+          console.error('Items must be menu items');
+        }
+
+        return cy;
+      },
       // Moves the item with given ID before the existingitem.
       moveBeforeOtherMenuItem: function(itemID, existingItemID) {
         let item = document.getElementById(itemID);
@@ -267,7 +280,7 @@ export function contextMenus(opts) {
         if (item instanceof MenuItem && before instanceof MenuItem) {
           cxtMenu.moveBefore(item, before);
         } else {
-          throw new Error('Items must be menu items');
+          console.error('Items must be menu items');
         }
         return cy;
       },
