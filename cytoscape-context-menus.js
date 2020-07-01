@@ -837,21 +837,36 @@ var ContextMenu = /*#__PURE__*/function (_MenuItemList) {
     return _this4;
   }
   /**
-   * Inserts the menu item to the context menu \
-   * If before is specified, item is inserted before the 'before' inside the same submenu \
-   * The parent argument is ignored if before is specified because parent can be inferred from the before argument \
-   * If parent is specified, item is inserted into the submenu of specified parent
-   * @param { MenuItem } menuItem 
-   * @param {{ before?: MenuItem, parent?: MenuItem }} param1
+   * @param { MenuItem } menuItem
+   * @param { Element? } before 
    */
 
 
   _createClass(ContextMenu, [{
+    key: "appendMenuItem",
+    value: function appendMenuItem(menuItem) {
+      var before = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+      this.ensureDoesntContain(menuItem.id);
+
+      _get(_getPrototypeOf(ContextMenu.prototype), "appendMenuItem", this).call(this, menuItem, before);
+    }
+    /**
+     * Inserts the menu item to the context menu \
+     * If before is specified, item is inserted before the 'before' inside the same submenu \
+     * The parent argument is ignored if before is specified because parent can be inferred from the before argument \
+     * If parent is specified, item is inserted into the submenu of specified parent
+     * @param { MenuItem } menuItem 
+     * @param {{ before?: MenuItem, parent?: MenuItem }} param1
+     */
+
+  }, {
     key: "insertMenuItem",
     value: function insertMenuItem(menuItem) {
       var _ref = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
           before = _ref.before,
           parent = _ref.parent;
+
+      this.ensureDoesntContain(menuItem.id);
 
       if (typeof before !== 'undefined') {
         if (this.contains(before)) {
@@ -885,11 +900,15 @@ var ContextMenu = /*#__PURE__*/function (_MenuItemList) {
     value: function moveBefore(menuItem, before) {
       var parent = menuItem.parentElement;
 
-      if (this.contains(parent) && this.contains(before)) {
-        parent.removeChild(menuItem);
-        this.insertMenuItem(menuItem, {
-          before: before
-        });
+      if (this.contains(parent)) {
+        if (this.contains(before)) {
+          parent.removeChild(menuItem);
+          this.insertMenuItem(menuItem, {
+            before: before
+          });
+        } else {
+          throw new Error("before(id=".concat(before.id, ") is not in the context menu"));
+        }
       } else {
         throw new Error("parent(id=".concat(parent.id, ") is not in the contex menu"));
       }
@@ -909,10 +928,19 @@ var ContextMenu = /*#__PURE__*/function (_MenuItemList) {
           oldParent.removeChild(menuItem);
           parent.appendSubmenuItem(menuItem);
         } else {
-          throw new Error("old parent(id=".concat(oldParent.id, ") is not in the context menu"));
+          throw new Error("parent of the menu item(id=".concat(oldParent.id, ") is not in the context menu"));
         }
       } else {
         throw new Error("parent(id=".concat(parent.id, ") is not in the context menu"));
+      }
+    }
+  }, {
+    key: "ensureDoesntContain",
+    value: function ensureDoesntContain(id) {
+      var elem = document.getElementById(id);
+
+      if (typeof elem !== 'undefined' && this.contains(elem)) {
+        throw new Error("There is already an element with id=".concat(id, " in the context menu"));
       }
     }
   }], [{
@@ -1214,6 +1242,7 @@ function contextMenus(opts) {
         createAndInsertMenuItemComponentBeforeExistingComponent(item, existingItemID);
         return cy;
       },
+      // Moves the item to the submenu of the parent with the given ID
       moveToSubmenu: function moveToSubmenu(itemID, parentID) {
         var item = document.getElementById(itemID);
         var parent = document.getElementById(parentID);

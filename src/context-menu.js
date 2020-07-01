@@ -412,6 +412,16 @@ export class ContextMenu extends MenuItemList {
     }
 
     /**
+     * @param { MenuItem } menuItem
+     * @param { Element? } before 
+     */
+    appendMenuItem(menuItem, before = undefined) {
+        this.ensureDoesntContain(menuItem.id);
+
+        super.appendMenuItem(menuItem, before);
+    }
+
+    /**
      * Inserts the menu item to the context menu \
      * If before is specified, item is inserted before the 'before' inside the same submenu \
      * The parent argument is ignored if before is specified because parent can be inferred from the before argument \
@@ -420,6 +430,8 @@ export class ContextMenu extends MenuItemList {
      * @param {{ before?: MenuItem, parent?: MenuItem }} param1
      */
     insertMenuItem(menuItem, { before, parent } = {}) {
+        this.ensureDoesntContain(menuItem.id);
+
         if (typeof before !== 'undefined') {
             if (this.contains(before)) {
                 let parent = before.parentNode;
@@ -475,6 +487,13 @@ export class ContextMenu extends MenuItemList {
             }
         } else {
             throw new Error(`parent(id=${parent.id}) is not in the context menu`);
+        }
+    }
+
+    ensureDoesntContain(id) {
+        let elem = document.getElementById(id);
+        if (typeof elem !== 'undefined' && this.contains(elem)) {
+            throw new Error(`There is already an element with id=${id} in the context menu`);
         }
     }
 
