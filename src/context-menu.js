@@ -146,6 +146,7 @@ export class MenuItem extends HTMLButtonElement {
         if (this.hasSubmenu()) {
             this.submenu.removeAllMenuItems();
             this.removeChild(this.submenu);
+            this.removeChild(this.indicator);
             this.removeEventListener('mouseenter', this.mouseEnterHandler);
             this.removeEventListener('mouseleave', this.mouseLeaveHandler);
             this.submenu = undefined;
@@ -196,10 +197,10 @@ export class MenuItem extends HTMLButtonElement {
 
     _createSubmenu(items = []) {
         // We generate another indicator for each
-        let indicator = this.scratchpad['submenuIndicatorGen']();
+        this.indicator = this.scratchpad['submenuIndicatorGen']();
         this.submenu = new MenuItemList(this.onMenuItemClick, this.scratchpad);
 
-        this.appendChild(indicator);
+        this.appendChild(this.indicator);
         this.appendChild(this.submenu);
 
         for (let item of items) {
@@ -216,6 +217,7 @@ export class MenuItem extends HTMLButtonElement {
         this.addEventListener('mouseleave', this.mouseLeaveHandler);
     }
 
+    // TODO: can be static
     _getMenuItemClassStr(classStr, hasTrailingDivider) {
         return hasTrailingDivider ?
             classStr + ' ' + DIVIDER_CSS_CLASS :
@@ -356,6 +358,14 @@ export class MenuItemList extends HTMLDivElement {
             menuItem.unbindOnClickFunctions();
 
             this.removeChild(menuItem);
+
+            if (this.children.length <= 0) {
+                let parent = this.parentNode;
+                if (parent instanceof MenuItem) {
+                    parent.removeSubmenu();
+                }
+            }
+
             return true;
         } else {
             return false;

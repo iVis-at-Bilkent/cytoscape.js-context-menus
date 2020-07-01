@@ -1,5 +1,5 @@
 import * as utils from './utils.js';
-import { DEFAULT_OPTS, MENUITEM_CSS_CLASS, DIVIDER_CSS_CLASS, INDICATOR_CSS_CLASS } from './constants.js';
+import { DEFAULT_OPTS, DIVIDER_CSS_CLASS, INDICATOR_CSS_CLASS } from './constants.js';
 import { MenuItem, ContextMenu, MenuItemList } from './context-menu.js';
 
 export function contextMenus(opts) {
