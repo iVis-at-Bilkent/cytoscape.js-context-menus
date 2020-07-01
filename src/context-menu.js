@@ -145,11 +145,18 @@ export class MenuItem extends HTMLButtonElement {
     removeSubmenu() {
         if (this.hasSubmenu()) {
             this.submenu.removeAllMenuItems();
+            this.detachSubmenu();
+        }
+    }
+
+    detachSubmenu() {
+        if (this.hasSubmenu()) {
             this.removeChild(this.submenu);
             this.removeChild(this.indicator);
             this.removeEventListener('mouseenter', this.mouseEnterHandler);
             this.removeEventListener('mouseleave', this.mouseLeaveHandler);
             this.submenu = undefined;
+            this.indicator = undefined;
         }
     }
 
@@ -301,7 +308,7 @@ export class MenuItemList extends HTMLDivElement {
      * Returns true if child is found and removed, false otherwise
      * @param { MenuItem } menuItem 
      */
-    removeMenuItem(menuItem) {
+    /* removeMenuItem(menuItem) {
         if (this._removeImmediateMenuItem(menuItem)) {
             return true;
         } else {
@@ -315,7 +322,7 @@ export class MenuItemList extends HTMLDivElement {
             // throw new Error(`The item with id='${menuItem.id}' is not a child of the context menu`);
             return false;
         }
-    }
+    } */
 
     /**
      * Moves a menuItem before another
@@ -362,13 +369,11 @@ export class MenuItemList extends HTMLDivElement {
             if (this.children.length <= 0) {
                 let parent = this.parentNode;
                 if (parent instanceof MenuItem) {
-                    parent.removeSubmenu();
+                    parent.detachSubmenu();
                 }
             }
-
-            return true;
         } else {
-            return false;
+            throw new Error(`menu item(id=${menuItem.id}) is not in the context menu`);
         }
     }
 
@@ -409,6 +414,17 @@ export class ContextMenu extends MenuItemList {
         /* this.addEventListener('mouseleave', (_event) => {
             this.hideMenuItemSubmenus();
         }); */
+    }
+
+    /**
+     * @param { MenuItem } menuItem 
+     */
+    removeMenuItem(menuItem) {
+        let parent = menuItem.parentElement;
+
+        if (parent instanceof MenuItemList && this.contains(parent)) {
+            parent._removeImmediateMenuItem(menuItem);
+        }
     }
 
     /**

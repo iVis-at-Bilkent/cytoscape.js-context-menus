@@ -475,11 +475,19 @@ var context_menu_MenuItem = /*#__PURE__*/function (_HTMLButtonElement) {
     value: function removeSubmenu() {
       if (this.hasSubmenu()) {
         this.submenu.removeAllMenuItems();
+        this.detachSubmenu();
+      }
+    }
+  }, {
+    key: "detachSubmenu",
+    value: function detachSubmenu() {
+      if (this.hasSubmenu()) {
         this.removeChild(this.submenu);
         this.removeChild(this.indicator);
         this.removeEventListener('mouseenter', this.mouseEnterHandler);
         this.removeEventListener('mouseleave', this.mouseLeaveHandler);
         this.submenu = undefined;
+        this.indicator = undefined;
       }
     }
   }, {
@@ -685,35 +693,22 @@ var MenuItemList = /*#__PURE__*/function (_HTMLDivElement) {
      * @param { MenuItem } menuItem 
      */
 
-  }, {
-    key: "removeMenuItem",
-    value: function removeMenuItem(menuItem) {
-      if (this._removeImmediateMenuItem(menuItem)) {
-        return true;
-      } else {
-        var _iterator5 = context_menu_createForOfIteratorHelper(this.children),
-            _step5;
-
-        try {
-          for (_iterator5.s(); !(_step5 = _iterator5.n()).done;) {
-            var child = _step5.value;
-
-            if (child instanceof context_menu_MenuItem && child.hasSubmenu()) {
-              if (child.submenu.removeMenuItem(menuItem)) {
-                return true;
-              }
-            }
-          } // throw new Error(`The item with id='${menuItem.id}' is not a child of the context menu`);
-
-        } catch (err) {
-          _iterator5.e(err);
-        } finally {
-          _iterator5.f();
+    /* removeMenuItem(menuItem) {
+        if (this._removeImmediateMenuItem(menuItem)) {
+            return true;
+        } else {
+            for (let child of this.children) {
+                if (child instanceof MenuItem && child.hasSubmenu()) {
+                    if (child.submenu.removeMenuItem(menuItem)) {
+                        return true;
+                    }
+                }
+            }            
+            // throw new Error(`The item with id='${menuItem.id}' is not a child of the context menu`);
+            return false;
         }
+    } */
 
-        return false;
-      }
-    }
     /**
      * Moves a menuItem before another
      * @param { MenuItem } menuItem 
@@ -767,13 +762,11 @@ var MenuItemList = /*#__PURE__*/function (_HTMLDivElement) {
           var parent = this.parentNode;
 
           if (parent instanceof context_menu_MenuItem) {
-            parent.removeSubmenu();
+            parent.detachSubmenu();
           }
         }
-
-        return true;
       } else {
-        return false;
+        throw new Error("menu item(id=".concat(menuItem.id, ") is not in the context menu"));
       }
     }
     /**
@@ -837,12 +830,25 @@ var ContextMenu = /*#__PURE__*/function (_MenuItemList) {
     return _this4;
   }
   /**
-   * @param { MenuItem } menuItem
-   * @param { Element? } before 
+   * @param { MenuItem } menuItem 
    */
 
 
   _createClass(ContextMenu, [{
+    key: "removeMenuItem",
+    value: function removeMenuItem(menuItem) {
+      var parent = menuItem.parentElement;
+
+      if (parent instanceof MenuItemList && this.contains(parent)) {
+        parent._removeImmediateMenuItem(menuItem);
+      }
+    }
+    /**
+     * @param { MenuItem } menuItem
+     * @param { Element? } before 
+     */
+
+  }, {
     key: "appendMenuItem",
     value: function appendMenuItem(menuItem) {
       var before = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
