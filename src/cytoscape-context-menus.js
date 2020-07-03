@@ -60,7 +60,7 @@ export function contextMenus(opts) {
     setScratchProp('onCxttap', onCxttap);
   };
 
-  let bindCyEvents = () => {
+  let bindCyEvents = (hideOnZoom) => {
 
     let eventCyTapStart = () => {
       cxtMenu.hide();
@@ -70,6 +70,15 @@ export function contextMenus(opts) {
     
     cy.on('tapstart', eventCyTapStart);
     setScratchProp('eventCyTapStart', eventCyTapStart);
+
+    let eventCyZoom = () => {
+      cxtMenu.hide();
+    };
+
+    if (hideOnZoom) {
+      cy.on('zoom', eventCyZoom);
+      setScratchProp('onZoom', eventCyZoom);
+    }
   };
 
   // Adjusts context menu if necessary
@@ -173,6 +182,7 @@ export function contextMenus(opts) {
     cxtMenu.removeAllMenuItems();
 
     cy.off('tapstart', getScratchProp('eventCyTapStart'));
+    cy.off('zoom', getScratchProp('onZoom'));
     cy.off(options.evtType, getScratchProp('onCxttap'));
 
     cxtMenu.parentNode.removeChild(cxtMenu);
@@ -357,7 +367,7 @@ export function contextMenus(opts) {
     createAndAppendMenuItemComponents(menuItems);
 
     bindOnCxttap();
-    bindCyEvents();
+    bindCyEvents(options.hideOnZoom);
     utils.preventDefaultContextTap();
   }
   

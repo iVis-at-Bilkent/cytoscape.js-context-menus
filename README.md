@@ -120,7 +120,11 @@ var options = {
     // css classes that context menu will have
     contextMenuClasses: [
       // add class names to this list
-    ]
+    ],
+    // Indicates that the menu item has a submenu. If not provided default one will be used
+    submenuIndicator: { src: 'assets/submenu-indicator-default.svg', width: 12, height: 12 },
+    // Whether to hide or not when zoomed. False by default.
+    hideOnZoom: true,
 };
 ```
 
