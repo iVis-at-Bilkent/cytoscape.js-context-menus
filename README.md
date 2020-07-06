@@ -32,6 +32,8 @@ Import the library as appropriate for your project:
 
 ES import:
 
+Note: es import doesn't work for plain javascript applications because webpack doesn't support es module output at the moment.
+
 ```js
 import cytoscape from 'cytoscape';
 import contextMenus from 'cytoscape-context-menus';
@@ -161,8 +163,11 @@ cy.contextMenus('get');
 
 This project is set up to automatically be published to npm and bower.  To publish:
 
-1. Set the version number environment variable: `export VERSION=1.2.3`
-1. Publish: `gulp publish`
+1. Build the extension : `npm run build`
+1. Commit the build : `git commit -am "Build for release"`
+1. Bump the version number and tag: `npm version major|minor|patch`
+1. Push to origin: `git push && git push --tags`
+1. Publish to npm: `npm publish .`
 1. If publishing to bower for the first time, you'll need to run `bower register cytoscape-context-menus https://github.com/iVis-at-Bilkent/cytoscape.js-context-menus.git`
 
 ## Team

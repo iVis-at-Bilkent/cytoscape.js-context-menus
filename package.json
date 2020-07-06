@@ -8,7 +8,9 @@
     "main": "cytoscape-context-menus.js"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "cross-env NODE_ENV=production webpack",
+    "build:dev": "webpack"
   },
   "repository": {
     "type": "git",
@@ -24,13 +26,12 @@
   },
   "homepage": "https://github.com/iVis-at-Bilkent/cytoscape.js-context-menus",
   "devDependencies": {
-    "gulp": "^3.9.1",
-    "gulp-jshint": "^1.8.5",
-    "gulp-prompt": "^0.1.1",
-    "gulp-replace": "^0.4.0",
-    "gulp-shell": "^0.2.9",
-    "jshint-stylish": "^1.0.0",
-    "run-sequence": "^1.0.0"
+    "@babel/core": "^7.10.3",
+    "@babel/preset-env": "^7.10.3",
+    "babel-loader": "^8.1.0",
+    "cross-env": "^7.0.2",
+    "webpack": "^4.43.0",
+    "webpack-cli": "^3.3.12"
   },
   "peerDependencies": {
     "cytoscape": "^2.7.0 || ^3.0.0"
