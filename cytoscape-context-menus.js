@@ -96,6 +96,32 @@ return /******/ (function(modules) { // webpackBootstrap
 /************************************************************************/
 /******/ ([
 /* 0 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// We have to use CommonJS here https://stackoverflow.com/questions/33505992/babel-6-changes-how-it-exports-default
+var _require = __webpack_require__(1),
+    contextMenus = _require.contextMenus;
+
+var register = function register(cytoscape) {
+  if (!cytoscape) {
+    return;
+  } // can't register if cytoscape unspecified
+
+
+  cytoscape('core', 'contextMenus', contextMenus);
+}; // @ts-ignore
+
+
+if (typeof cytoscape !== 'undefined') {
+  // Register for plain javascript
+  // @ts-ignore
+  register(cytoscape);
+}
+
+module.exports = register;
+
+/***/ }),
+/* 1 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -103,7 +129,7 @@ return /******/ (function(modules) { // webpackBootstrap
 __webpack_require__.r(__webpack_exports__);
 
 // EXPORTS
-__webpack_require__.d(__webpack_exports__, "default", function() { return /* binding */ register; });
+__webpack_require__.d(__webpack_exports__, "contextMenus", function() { return /* binding */ contextMenus; });
 
 // CONCATENATED MODULE: ./src/utils.js
 function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
@@ -175,6 +201,21 @@ function preventDefaultContextTap() {
     _iterator.e(err);
   } finally {
     _iterator.f();
+  }
+}
+/**
+ * https://stackoverflow.com/a/38057647/12045421
+ * 
+ * @param { Element } element 
+ * @param { string } attribute
+ * @param { boolean } boolValue 
+ */
+
+function setBooleanAttribute(element, attribute, boolValue) {
+  if (boolValue) {
+    element.setAttribute(attribute, '');
+  } else {
+    element.removeAttribute(attribute);
   }
 }
 // CONCATENATED MODULE: ./src/constants.js
@@ -450,7 +491,7 @@ function contextMenus(opts) {
     }
 
     if (item.disabled) {
-      itemEl.setAttribute('disabled', 'true');
+      setBooleanAttribute(itemEl, 'disabled', true);
     }
 
     if (item.image) {
@@ -562,14 +603,14 @@ function contextMenus(opts) {
 
 
   var disableComponent = function disableComponent(componentID) {
-    document.getElementById(componentID) // https://stackoverflow.com/a/38057647/12045421
-    .setAttribute('disabled', '');
+    var elem = document.getElementById(componentID);
+    setBooleanAttribute(elem, 'disabled', true);
   }; // this sets disabled to false by removing
 
 
   var enableComponent = function enableComponent(componentID) {
-    document.getElementById(componentID) // https://stackoverflow.com/a/38057647/12045421
-    .removeAttribute('disabled');
+    var elem = document.getElementById(componentID);
+    setBooleanAttribute(elem, 'disabled', false);
   };
 
   var _setTrailingDivider = function setTrailingDivider(componentID, status) {
@@ -679,22 +720,6 @@ function contextMenus(opts) {
   }
 
   return getInstance(this);
-}
-// CONCATENATED MODULE: ./src/index.js
-
-function register(cytoscape) {
-  if (!cytoscape) {
-    return;
-  } // can't register if cytoscape unspecified
-
-
-  cytoscape('core', 'contextMenus', contextMenus);
-} // @ts-ignore
-
-if (typeof cytoscape !== 'undefined') {
-  // Register for plain javascript
-  // @ts-ignore
-  register(cytoscape);
 }
 
 /***/ })

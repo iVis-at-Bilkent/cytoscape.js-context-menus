@@ -1,12 +1,13 @@
-import { contextMenus } from './cytoscape-context-menus.js';
+// We have to use CommonJS here https://stackoverflow.com/questions/33505992/babel-6-changes-how-it-exports-default
+let { contextMenus } = require('./cytoscape-context-menus.js');
 
-export default function register(cytoscape) {
+let register = function(cytoscape) {
     if (!cytoscape) { 
         return; 
     } // can't register if cytoscape unspecified
 
     cytoscape('core', 'contextMenus', contextMenus);
-}
+};
 
 // @ts-ignore
 if (typeof cytoscape !== 'undefined') {
@@ -14,3 +15,5 @@ if (typeof cytoscape !== 'undefined') {
     // @ts-ignore
     register(cytoscape);
 }
+
+module.exports = register;
