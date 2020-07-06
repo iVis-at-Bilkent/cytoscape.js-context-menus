@@ -6,7 +6,7 @@ cytoscape-context-menus
 
 A Cytoscape.js extension to provide context menu around elements and core instance distributed under [The MIT License](https://opensource.org/licenses/MIT).
 
-![Image of extension](example.png)
+![Image of extension](assets/example.png)
 
 Please cite the following paper when using this extension:
 
@@ -19,7 +19,6 @@ Click [here](https://raw.githack.com/iVis-at-Bilkent/cytoscape.js-context-menus/
 ## Dependencies
 
  * Cytoscape.js ^2.7.0 || ^3.0.0
- * jQuery ^1.7.0 || ^2.0.0 || ^3.0.0
 
 
 ## Usage instructions
@@ -35,11 +34,10 @@ ES import:
 
 ```js
 import cytoscape from 'cytoscape';
-import $ from 'jquery';
 import contextMenus from 'cytoscape-context-menus';
 
 // register extension
-cytoscape.use(contextMenus, $);
+cytoscape.use(contextMenus);
 
 // import CSS as well
 import 'cytoscape-context-menus/cytoscape-context-menus.css';
@@ -48,16 +46,15 @@ import 'cytoscape-context-menus/cytoscape-context-menus.css';
 CommonJS:
 ```js
 var cytoscape = require('cytoscape');
-var jquery = require('jquery');
 var contextMenus = require('cytoscape-context-menus');
 
-contextMenus( cytoscape, jquery ); // register extension
+contextMenus(cytoscape); // register extension
 ```
 
 AMD:
 ```js
-require(['cytoscape', 'cytoscape-context-menus', 'jquery'], function( cytoscape, contextMenus, jquery ){
-  contextMenus( cytoscape, jquery ); // register extension
+require(['cytoscape', 'cytoscape-context-menus'], function(cytoscape, contextMenus) {
+  contextMenus(cytoscape); // register extension
 });
 ```
 
