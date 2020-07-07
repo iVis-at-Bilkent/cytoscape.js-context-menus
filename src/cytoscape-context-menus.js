@@ -234,12 +234,21 @@ export function contextMenus(opts) {
         return cy;
       },
       // Moves the item to the submenu of the parent with the given ID
-      moveToSubmenu: function(itemID, parentID) {
+      moveToSubmenu: function(itemID, options = null) {
         let item = asMenuItem(itemID);
-        let parent = typeof parentID !== 'undefined' ? 
-          asMenuItem(parentID) : null;
-        
-        cxtMenu.moveToSubmenu(item, parent);
+
+        if (options === null) {
+          cxtMenu.moveToSubmenu(item);
+        } else if (typeof options === 'string') {
+          // options is parentID
+          let parent = asMenuItem(options.toString());
+          cxtMenu.moveToSubmenu(item, parent);
+        } else if (typeof options.coreAsWell !== 'undefined' || typeof options.selector !== 'undefined') {
+          cxtMenu.moveToSubmenu(item, null, options);
+        } else {
+          console.warn('options neither has coreAsWell nor selector property but it is an object. Are you sure that this is what you want to do?');
+        }
+
         return cy;
       },
       // Moves the item with given ID before the existingitem.

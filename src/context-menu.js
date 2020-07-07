@@ -502,22 +502,30 @@ export class ContextMenu extends MenuItemList {
     }
 
     /**
-     * TODO: if parent is null, move to root submenu
      * @param { MenuItem } menuItem 
-     * @param { MenuItem } parent 
+     * @param { MenuItem } parent
+     * @param { { selector?: string, coreAsWell: boolean } } options
      */
-    moveToSubmenu(menuItem, parent = null) {
+    moveToSubmenu(menuItem, parent = null, options = null) {
         let oldParent = menuItem.parentElement;
         if (oldParent instanceof MenuItemList) {
             if (this.contains(oldParent)) {
-                if (parent === null) {
+                // Assuming parameters are always correct since this is an internal function
+                if (parent !== null) {
+                    if (this.contains(parent)) {
+                        oldParent._detachImmediateMenuItem(menuItem);
+                        parent.appendSubmenuItem(menuItem);
+                    } else {
+                        throw new Error(`parent(id=${parent.id}) is not in the context menu`);
+                    }
+                } else {
+                    if (options !== null) {
+                        menuItem.selector = options.selector;
+                        menuItem.coreAsWell = options.coreAsWell;
+                    }
+                    
                     oldParent._detachImmediateMenuItem(menuItem);
                     this.appendMenuItem(menuItem);
-                } else if (this.contains(parent)) {
-                    oldParent._detachImmediateMenuItem(menuItem);
-                    parent.appendSubmenuItem(menuItem);
-                } else {
-                    throw new Error(`parent(id=${parent.id}) is not in the context menu`);
                 }
             } else {
                 throw new Error(`parent of the menu item(id=${oldParent.id}) is not in the context menu`);
