@@ -89,7 +89,7 @@ var options = {
         show: false, // Whether the item will be shown or not
         hasTrailingDivider: true, // Whether the item will have a trailing divider
         coreAsWell: false // Whether core instance have this item on cxttap
-        submenu: [] // Shows the listed menuItems as a submenu for this item. An item can't have both submenu and onClickFunction property at once
+        submenu: [] // Shows the listed menuItems as a submenu for this item. An item must have either submenu or onClickFunction or both.
       },
       {
         id: 'hide',
