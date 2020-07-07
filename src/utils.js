@@ -34,7 +34,12 @@ export function extend(defaults, options) {
     }
 
     for (let i in options) {
-      obj[i] = options[i];
+      // Arrays should be merged
+      if (obj[i] instanceof Array) {
+        obj[i] = obj[i].concat(options[i]);
+      } else {
+        obj[i] = options[i];
+      }
     }
 
     return obj;
