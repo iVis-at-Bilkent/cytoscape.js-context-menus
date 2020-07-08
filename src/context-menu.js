@@ -131,7 +131,7 @@ export class MenuItem extends HTMLButtonElement {
     }
 
     isClickable() {
-        return this.onMenuItemClick !== undefined;
+        return this.onClickFunction !== undefined;
     }
 
     display() {
@@ -360,10 +360,21 @@ export class MenuItemList extends HTMLDivElement {
      * @param { MenuItem } menuItem 
      */
     _removeImmediateMenuItem(menuItem) {
-        if (menuItem.parentNode === this) {
-            menuItem.removeSubmenu();
+        if (this._detachImmediateMenuItem(menuItem)) {
+            menuItem.detachSubmenu();
             menuItem.unbindOnClickFunctions();
+        } else {
+            throw new Error(`menu item(id=${menuItem.id}) is not in the context menu`);
+        }
+    }
 
+    /**
+     * Detaches `menuItem` from `this` doesn't destroy it
+     * @param { MenuItem } menuItem
+     * @returns { boolean }
+     */
+    _detachImmediateMenuItem(menuItem) {
+        if (menuItem.parentNode === this) {
             this.removeChild(menuItem);
 
             if (this.children.length <= 0) {
@@ -372,8 +383,10 @@ export class MenuItemList extends HTMLDivElement {
                     parent.detachSubmenu();
                 }
             }
+
+            return true;
         } else {
-            throw new Error(`menu item(id=${menuItem.id}) is not in the context menu`);
+            return false;
         }
     }
 
@@ -490,20 +503,37 @@ export class ContextMenu extends MenuItemList {
 
     /**
      * @param { MenuItem } menuItem 
-     * @param { MenuItem } parent 
+     * @param { MenuItem } parent
+     * @param { { selector?: string, coreAsWell: boolean } } options
      */
-    moveToSubmenu(menuItem, parent) {
-        if (this.contains(parent)) {
-            let oldParent = menuItem.parentElement;
+    moveToSubmenu(menuItem, parent = null, options = null) {
+        let oldParent = menuItem.parentElement;
+        if (oldParent instanceof MenuItemList) {
             if (this.contains(oldParent)) {
-                oldParent.removeChild(menuItem);
-                parent.appendSubmenuItem(menuItem);
+                // Assuming parameters are always correct since this is an internal function
+                if (parent !== null) {
+                    if (this.contains(parent)) {
+                        oldParent._detachImmediateMenuItem(menuItem);
+                        parent.appendSubmenuItem(menuItem);
+                    } else {
+                        throw new Error(`parent(id=${parent.id}) is not in the context menu`);
+                    }
+                } else {
+                    if (options !== null) {
+                        menuItem.selector = options.selector;
+                        menuItem.coreAsWell = options.coreAsWell;
+                    }
+                    
+                    oldParent._detachImmediateMenuItem(menuItem);
+                    this.appendMenuItem(menuItem);
+                }
             } else {
                 throw new Error(`parent of the menu item(id=${oldParent.id}) is not in the context menu`);
             }
         } else {
-            throw new Error(`parent(id=${parent.id}) is not in the context menu`);
+            throw new Error(`current parent(id=${oldParent.id}) is not a submenu`);
         }
+
     }
 
     ensureDoesntContain(id) {

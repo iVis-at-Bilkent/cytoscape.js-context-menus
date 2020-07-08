@@ -139,13 +139,9 @@ export function contextMenus(opts) {
     let menuItemComponent = createMenuItemComponent(opts);
 
     if (typeof parentID !== 'undefined') {
-      let parent = document.getElementById(parentID);
+      let parent = asMenuItem(parentID);
 
-      if (parent instanceof MenuItem) {
-        cxtMenu.insertMenuItem(menuItemComponent, { parent });
-      } else {
-        throw new Error(`item with id=${parentID} is not a menu item`)
-      }
+      cxtMenu.insertMenuItem(menuItemComponent, { parent });
     } else {
       cxtMenu.insertMenuItem(menuItemComponent);
     }    
@@ -154,17 +150,6 @@ export function contextMenus(opts) {
   let createAndAppendMenuItemComponents = (optionsArr, parentID = undefined) => {
     for (let i = 0; i < optionsArr.length; i++) {
       createAndAppendMenuItemComponent(optionsArr[i], parentID);
-    }
-  };
-
-  let createAndInsertMenuItemComponentBeforeExistingComponent = (opts, existingItemID) => {
-    // Create and insert menu item
-    let menuItemComponent = createMenuItemComponent(opts);
-    let existingItem = document.getElementById(existingItemID);
-    if (existingItem instanceof MenuItem) {
-      cxtMenu.insertMenuItem(menuItemComponent, { before: existingItem });
-    } else {
-      throw new Error(`The item with id=${existingItemID} is not a menu item`);
     }
   };
 
@@ -193,36 +178,6 @@ export function contextMenus(opts) {
     setScratchProp('onCxttap', undefined);
   };
 
-  // this sets disabled to true
-  let disableMenuItem = (menuItemID) => {
-    let menuItem = document.getElementById(menuItemID);
-    if (menuItem instanceof MenuItem) {
-      menuItem.disable();
-    } else {
-      throw new Error(`There is no menu item with id=${menuItemID}`);
-    }
-  };
-
-  // this sets disabled to false by removing
-  let enableMenuItem = (menuItemID) => {
-    let menuItem = document.getElementById(menuItemID);
-    if (menuItem instanceof MenuItem) {
-      menuItem.enable();
-    } else {
-      throw new Error(`There is no menu item with id=${menuItemID}`);
-    }
-  };
-
-  let setTrailingDivider = (componentID, status) => {
-    let component = document.getElementById(componentID);
-
-    if (status) {
-      component.classList.add(DIVIDER_CSS_CLASS);
-    } else {
-      component.classList.remove(DIVIDER_CSS_CLASS);
-    }
-  };
-
   let makeSubmenuIndicator = (props) => {
     let elem = document.createElement('img');
     elem.src = props.src;
@@ -231,6 +186,18 @@ export function contextMenus(opts) {
     elem.classList.add(INDICATOR_CSS_CLASS);
 
     return elem;
+  };
+
+  /**
+   * @param { string } menuItemID 
+   */
+  let asMenuItem = (menuItemID) => {
+    let menuItem = document.getElementById(menuItemID);
+    if (menuItem instanceof MenuItem) {
+      return menuItem;
+    } else {
+      throw new Error(`The item with id=${menuItemID} is not a menu item`);
+    }
   };
 
   // Get an extension instance to enable users to access extension methods
@@ -252,72 +219,82 @@ export function contextMenus(opts) {
       },
       // Removes the menu item with given ID.
       removeMenuItem: function(itemID) {
-        let item = document.getElementById(itemID);
-        if (item instanceof MenuItem) {
-          cxtMenu.removeMenuItem(item);
-        } else {
-          console.error(`The item with id: ${itemID} is not a menu item`);
-        }
+        let item = asMenuItem(itemID);
+
+        cxtMenu.removeMenuItem(item);
         return cy;
       },
       // Sets whether the menuItem with given ID will have a following divider.
       setTrailingDivider: function(itemID, status) {
-        setTrailingDivider(itemID, status);
+        let menuItem = asMenuItem(itemID);
+
+        if (status) {
+          menuItem.classList.add(DIVIDER_CSS_CLASS);
+        } else {
+          menuItem.classList.remove(DIVIDER_CSS_CLASS);
+        }
         return cy;
       },
       // Inserts given item before the existingitem.
       insertBeforeMenuItem: function(item, existingItemID) {
-        createAndInsertMenuItemComponentBeforeExistingComponent(item, existingItemID);
+        let menuItemComponent = createMenuItemComponent(item);
+        let existingItem = asMenuItem(existingItemID);
+
+        cxtMenu.insertMenuItem(menuItemComponent, { before: existingItem });
         return cy;
       },
       // Moves the item to the submenu of the parent with the given ID
-      moveToSubmenu: function(itemID, parentID) {
-        let item = document.getElementById(itemID);
-        let parent = document.getElementById(parentID);
-        
-        if (item instanceof MenuItem && parent instanceof MenuItem) {
+      moveToSubmenu: function(itemID, options = null) {
+        let item = asMenuItem(itemID);
+
+        if (options === null) {
+          cxtMenu.moveToSubmenu(item);
+        } else if (typeof options === 'string') {
+          // options is parentID
+          let parent = asMenuItem(options.toString());
           cxtMenu.moveToSubmenu(item, parent);
+        } else if (typeof options.coreAsWell !== 'undefined' || typeof options.selector !== 'undefined') {
+          cxtMenu.moveToSubmenu(item, null, options);
         } else {
-          console.error('Items must be menu items');
+          console.warn('options neither has coreAsWell nor selector property but it is an object. Are you sure that this is what you want to do?');
         }
 
         return cy;
       },
       // Moves the item with given ID before the existingitem.
       moveBeforeOtherMenuItem: function(itemID, existingItemID) {
-        let item = document.getElementById(itemID);
-        let before = document.getElementById(existingItemID);
-        if (item instanceof MenuItem && before instanceof MenuItem) {
-          cxtMenu.moveBefore(item, before);
-        } else {
-          console.error('Items must be menu items');
-        }
+        let item = asMenuItem(itemID);
+        let before = asMenuItem(existingItemID);
+
+        cxtMenu.moveBefore(item, before);
         return cy;
       },
       // Disables the menu item with given ID.
       disableMenuItem: function(itemID) {
-        disableMenuItem(itemID);
+        let menuItem = asMenuItem(itemID);
+
+        menuItem.disable();
         return cy;
       },
       // Enables the menu item with given ID.
       enableMenuItem: function(itemID) {
-        enableMenuItem(itemID);
+        let menuItem = asMenuItem(itemID);
+        
+        menuItem.enable();
         return cy;
       },
       // Disables the menu item with given ID.
       hideMenuItem: function(itemID) {
-        let menuItem = document.getElementById(itemID);
-        if (menuItem instanceof MenuItem) {
-          menuItem.hide();
-        }
+        let menuItem = asMenuItem(itemID);
+
+        menuItem.hide();
         return cy;
       },
       // Enables the menu item with given ID.
       showMenuItem: function(itemID) {
-        let menuItem = document.getElementById(itemID);
-        if (menuItem instanceof MenuItem) {
-          menuItem.display();
-        }
+        let menuItem = asMenuItem(itemID);
+        
+        menuItem.display();
         return cy;
       },
       // Destroys the extension instance
