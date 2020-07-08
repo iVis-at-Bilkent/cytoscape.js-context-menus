@@ -93,7 +93,7 @@ export function contextMenus(opts) {
       }
     };
 
-    document.body.addEventListener('mousedown', onClick);
+    document.body.addEventListener('mouseup', onClick);
     setScratchProp('hideOnNonCyClick', onClick);    
   };
 
@@ -185,7 +185,7 @@ export function contextMenus(opts) {
     cy.off('tapstart', getScratchProp('eventCyTapStart'));
     cy.off(options.evtType, getScratchProp('onCxttap'));
     cy.off('viewport', getScratchProp('onViewport'));
-    document.body.removeEventListener('click', getScratchProp('hideOnNonCyClick'));
+    document.body.removeEventListener('mouseup', getScratchProp('hideOnNonCyClick'));
     
     cxtMenu.parentNode.removeChild(cxtMenu);
     cxtMenu = undefined;
