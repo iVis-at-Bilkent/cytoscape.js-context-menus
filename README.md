@@ -163,11 +163,10 @@ var instance = cy.contextMenus(options);
 * Moves the item with given ID to the submenu of the parent with the given ID or to root with the specified options
 * If `options` is a `string`, then it is the id of the parent
 * If `options` is a `{ selector?: string, coreAsWell?: boolean }`, then old properties are overwritten by them and the menu item is moved to the root. If it doesn't have either properties item is **not moved**.
-* If `options` in null or not provided, then it is just moved to the root  
+* If `options` is null or not provided, then it is just moved to the root  
 
 #### `instance.moveBeforeOtherMenuItem(itemID, existingItemID)`
-* Moves the item with given ID before the existingitem.
-* If the are not in the same submenu, item with the given ID will be moved to the submenu that contains the existingItem
+* Inserts the `item` before the `existingItem` and moves it to the submenu that contains the `existingItem`
 
 #### `instance.disableMenuItem(itemID)`
 * Disables the menu item with given ID.
