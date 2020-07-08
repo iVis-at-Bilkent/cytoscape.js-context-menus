@@ -122,11 +122,7 @@ var options = {
       // add class names to this list
     ],
     // Indicates that the menu item has a submenu. If not provided default one will be used
-    submenuIndicator: { src: 'assets/submenu-indicator-default.svg', width: 12, height: 12 },
-    // Hide when zoomed in cytoscape area. `false` by default.
-    hideOnZoom: false,
-    // Hide when a left click occurs on the document body. `true` by default.
-    hideOnNonCyClick: true,
+    submenuIndicator: { src: 'assets/submenu-indicator-default.svg', width: 12, height: 12 }
 };
 ```
 

@@ -1,1 +1,1410 @@
-!function(e,t){"object"==typeof exports&&"object"==typeof module?module.exports=t():"function"==typeof define&&define.amd?define([],t):"object"==typeof exports?exports.cytoscapeContextMenus=t():e.cytoscapeContextMenus=t()}(window,(function(){return function(e){var t={};function n(i){if(t[i])return t[i].exports;var o=t[i]={i:i,l:!1,exports:{}};return e[i].call(o.exports,o,o.exports,n),o.l=!0,o.exports}return n.m=e,n.c=t,n.d=function(e,t,i){n.o(e,t)||Object.defineProperty(e,t,{enumerable:!0,get:i})},n.r=function(e){"undefined"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(e,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(e,"__esModule",{value:!0})},n.t=function(e,t){if(1&t&&(e=n(e)),8&t)return e;if(4&t&&"object"==typeof e&&e&&e.__esModule)return e;var i=Object.create(null);if(n.r(i),Object.defineProperty(i,"default",{enumerable:!0,value:e}),2&t&&"string"!=typeof e)for(var o in e)n.d(i,o,function(t){return e[t]}.bind(null,o));return i},n.n=function(e){var t=e&&e.__esModule?function(){return e.default}:function(){return e};return n.d(t,"a",t),t},n.o=function(e,t){return Object.prototype.hasOwnProperty.call(e,t)},n.p="",n(n.s=0)}([function(e,t,n){var i=n(1).contextMenus,o=function(e){e&&e("core","contextMenus",i)};"undefined"!=typeof cytoscape&&o(cytoscape),e.exports=o},function(e,t,n){"use strict";function i(e,t){var n;if("undefined"==typeof Symbol||null==e[Symbol.iterator]){if(Array.isArray(e)||(n=function(e,t){if(!e)return;if("string"==typeof e)return o(e,t);var n=Object.prototype.toString.call(e).slice(8,-1);"Object"===n&&e.constructor&&(n=e.constructor.name);if("Map"===n||"Set"===n)return Array.from(e);if("Arguments"===n||/^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n))return o(e,t)}(e))||t&&e&&"number"==typeof e.length){n&&(e=n);var i=0,r=function(){};return{s:r,n:function(){return i>=e.length?{done:!0}:{done:!1,value:e[i++]}},e:function(e){throw e},f:r}}throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.")}var u,s=!0,c=!1;return{s:function(){n=e[Symbol.iterator]()},n:function(){var e=n.next();return s=e.done,e},e:function(e){c=!0,u=e},f:function(){try{s||null==n.return||n.return()}finally{if(c)throw u}}}}function o(e,t){(null==t||t>e.length)&&(t=e.length);for(var n=0,i=new Array(t);n<t;n++)i[n]=e[n];return i}function r(e){return!function(e){return e.offsetWidth<=0&&e.offsetHeight<=0||e.style&&e.style.display||getComputedStyle(e).display}(e)}function u(e){for(var t="",n=0;n<e.length;n++){t+=e[n],n!==e.length-1&&(t+=" ")}return t}function s(e,t,n){n?e.setAttribute(t,""):e.removeAttribute(t)}n.r(t),n.d(t,"contextMenus",(function(){return _}));var c={evtType:"cxttap",menuItems:[],menuItemClasses:["cy-context-menus-cxt-menuitem"],contextMenuClasses:["cy-context-menus-cxt-menu"],submenuIndicator:{src:"assets/submenu-indicator-default.svg",width:12,height:12},hideOnZoom:!1,hideOnNonCyClick:!0};function a(e,t){var n;if("undefined"==typeof Symbol||null==e[Symbol.iterator]){if(Array.isArray(e)||(n=function(e,t){if(!e)return;if("string"==typeof e)return l(e,t);var n=Object.prototype.toString.call(e).slice(8,-1);"Object"===n&&e.constructor&&(n=e.constructor.name);if("Map"===n||"Set"===n)return Array.from(e);if("Arguments"===n||/^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n))return l(e,t)}(e))||t&&e&&"number"==typeof e.length){n&&(e=n);var i=0,o=function(){};return{s:o,n:function(){return i>=e.length?{done:!0}:{done:!1,value:e[i++]}},e:function(e){throw e},f:o}}throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.")}var r,u=!0,s=!1;return{s:function(){n=e[Symbol.iterator]()},n:function(){var e=n.next();return u=e.done,e},e:function(e){s=!0,r=e},f:function(){try{u||null==n.return||n.return()}finally{if(s)throw r}}}}function l(e,t){(null==t||t>e.length)&&(t=e.length);for(var n=0,i=new Array(t);n<t;n++)i[n]=e[n];return i}function f(e){return(f="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(e){return typeof e}:function(e){return e&&"function"==typeof Symbol&&e.constructor===Symbol&&e!==Symbol.prototype?"symbol":typeof e})(e)}function d(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}function h(e,t){for(var n=0;n<t.length;n++){var i=t[n];i.enumerable=i.enumerable||!1,i.configurable=!0,"value"in i&&(i.writable=!0),Object.defineProperty(e,i.key,i)}}function m(e,t,n){return t&&h(e.prototype,t),n&&h(e,n),e}function y(e,t){if("function"!=typeof t&&null!==t)throw new TypeError("Super expression must either be null or a function");e.prototype=Object.create(t&&t.prototype,{constructor:{value:e,writable:!0,configurable:!0}}),t&&M(e,t)}function v(e){var t=C();return function(){var n,i=I(e);if(t){var o=I(this).constructor;n=Reflect.construct(i,arguments,o)}else n=i.apply(this,arguments);return p(this,n)}}function p(e,t){return!t||"object"!==f(t)&&"function"!=typeof t?b(e):t}function b(e){if(void 0===e)throw new ReferenceError("this hasn't been initialised - super() hasn't been called");return e}function g(e,t,n){return(g="undefined"!=typeof Reflect&&Reflect.get?Reflect.get:function(e,t,n){var i=function(e,t){for(;!Object.prototype.hasOwnProperty.call(e,t)&&null!==(e=I(e)););return e}(e,t);if(i){var o=Object.getOwnPropertyDescriptor(i,t);return o.get?o.get.call(n):o.value}})(e,t,n||e)}function x(e){var t="function"==typeof Map?new Map:void 0;return(x=function(e){if(null===e||(n=e,-1===Function.toString.call(n).indexOf("[native code]")))return e;var n;if("function"!=typeof e)throw new TypeError("Super expression must either be null or a function");if(void 0!==t){if(t.has(e))return t.get(e);t.set(e,i)}function i(){return w(e,arguments,I(this).constructor)}return i.prototype=Object.create(e.prototype,{constructor:{value:i,enumerable:!1,writable:!0,configurable:!0}}),M(i,e)})(e)}function w(e,t,n){return(w=C()?Reflect.construct:function(e,t,n){var i=[null];i.push.apply(i,t);var o=new(Function.bind.apply(e,i));return n&&M(o,n.prototype),o}).apply(null,arguments)}function C(){if("undefined"==typeof Reflect||!Reflect.construct)return!1;if(Reflect.construct.sham)return!1;if("function"==typeof Proxy)return!0;try{return Date.prototype.toString.call(Reflect.construct(Date,[],(function(){}))),!0}catch(e){return!1}}function M(e,t){return(M=Object.setPrototypeOf||function(e,t){return e.__proto__=t,e})(e,t)}function I(e){return(I=Object.setPrototypeOf?Object.getPrototypeOf:function(e){return e.__proto__||Object.getPrototypeOf(e)})(e)}var k=function(e){y(n,e);var t=v(n);function n(e,i,o){var r,u,c,a,l;d(this,n),g((r=b(l=t.call(this)),I(n.prototype)),"setAttribute",r).call(r,"id",e.id);var h=l._getMenuItemClassStr(o.cxtMenuItemClasses,e.hasTrailingDivider);if(g((u=b(l),I(n.prototype)),"setAttribute",u).call(u,"class",h),void 0!==f(e.tooltipText)&&g((c=b(l),I(n.prototype)),"setAttribute",c).call(c,"title",e.tooltipText),e.disabled&&s(b(l),"disabled",!0),e.image){var m=document.createElement("img");m.src=e.image.src,m.width=e.image.width,m.height=e.image.height,m.style.position="absolute",m.style.top=e.image.y+"px",m.style.left=e.image.x+"px",g((a=b(l),I(n.prototype)),"appendChild",a).call(a,m)}if(l.innerHTML+=e.content,l.onMenuItemClick=i,l.data={},l.clickFns=[],l.selector=e.selector,l.show=e.show||!0,l.coreAsWell=e.coreAsWell||!1,l.scratchpad=o,void 0===e.onClickFunction&&void 0===e.submenu)throw new Error("A menu item must either have click function or a submenu or both");return l.onClickFunction=e.onClickFunction,e.submenu instanceof Array&&l._createSubmenu(e.submenu),l}return m(n,[{key:"bindOnClickFunction",value:function(e){this.clickFns.push(e),g(I(n.prototype),"addEventListener",this).call(this,"click",e)}},{key:"unbindOnClickFunctions",value:function(){var e,t=a(this.clickFns);try{for(t.s();!(e=t.n()).done;){var i=e.value;g(I(n.prototype),"removeEventListener",this).call(this,"click",i)}}catch(e){t.e(e)}finally{t.f()}this.clickFns=[]}},{key:"enable",value:function(){s(this,"disabled",!1),this.hasSubmenu()&&this.addEventListener("mouseenter",this.mouseEnterHandler)}},{key:"disable",value:function(){s(this,"disabled",!0),this.hasSubmenu()&&this.removeEventListener("mouseenter",this.mouseEnterHandler)}},{key:"hide",value:function(){this.show=!1,this.style.display="none"}},{key:"hasSubmenu",value:function(){return this.submenu instanceof S}},{key:"appendSubmenuItem",value:function(e){var t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:void 0;this.hasSubmenu()||this._createSubmenu(),this.submenu.appendMenuItem(e,t)}},{key:"isClickable",value:function(){return void 0!==this.onClickFunction}},{key:"display",value:function(){this.show=!0,this.style.display="block"}},{key:"removeSubmenu",value:function(){this.hasSubmenu()&&(this.submenu.removeAllMenuItems(),this.detachSubmenu())}},{key:"detachSubmenu",value:function(){this.hasSubmenu()&&(this.removeChild(this.submenu),this.removeChild(this.indicator),this.removeEventListener("mouseenter",this.mouseEnterHandler),this.removeEventListener("mouseleave",this.mouseLeaveHandler),this.submenu=void 0,this.indicator=void 0)}},{key:"_onMouseEnter",value:function(e){var t=this.getBoundingClientRect(),n=function(e){e.style.opacity="0",e.style.display="block";var t=e.getBoundingClientRect();return e.style.opacity="1",e.style.display="none",t}(this.submenu),i=t.right+n.width>window.innerWidth,o=t.top+n.height>window.innerHeight;i||o?i&&!o?(this.submenu.style.right=this.clientWidth+"px",this.submenu.style.top="0px",this.submenu.style.left="auto",this.submenu.style.bottom="auto"):i&&o?(this.submenu.style.right=this.clientWidth+"px",this.submenu.style.bottom="0px",this.submenu.style.top="auto",this.submenu.style.left="auto"):(this.submenu.style.left=this.clientWidth+"px",this.submenu.style.bottom="0px",this.submenu.style.right="auto",this.submenu.style.top="auto"):(this.submenu.style.left=this.clientWidth+"px",this.submenu.style.top="0px",this.submenu.style.right="auto",this.submenu.style.bottom="auto"),this.submenu.display()}},{key:"_onMouseLeave",value:function(e){var t,n,i,o,r,u={x:e.clientX,y:e.clientY};t=u,n=this.submenu,i=t.x,o=t.y,r=n.getBoundingClientRect(),i>=r.left&&i<=r.right&&o>=r.top&&o<=r.bottom||this.submenu.hide()}},{key:"_createSubmenu",value:function(){var e=arguments.length>0&&void 0!==arguments[0]?arguments[0]:[];this.indicator=this.scratchpad.submenuIndicatorGen(),this.submenu=new S(this.onMenuItemClick,this.scratchpad),this.appendChild(this.indicator),this.appendChild(this.submenu);var t,i=a(e);try{for(i.s();!(t=i.n()).done;){var o=t.value,r=new n(o,this.onMenuItemClick,this.scratchpad);this.submenu.appendMenuItem(r)}}catch(e){i.e(e)}finally{i.f()}this.mouseEnterHandler=this._onMouseEnter.bind(this),this.mouseLeaveHandler=this._onMouseLeave.bind(this),this.addEventListener("mouseenter",this.mouseEnterHandler),this.addEventListener("mouseleave",this.mouseLeaveHandler)}},{key:"_getMenuItemClassStr",value:function(e,t){return t?e+" cy-context-menus-divider":e}}],[{key:"define",value:function(){customElements.define("ctx-menu-item",n,{extends:"button"})}}]),n}(x(HTMLButtonElement)),S=function(e){y(n,e);var t=v(n);function n(e,i){var o,r;return d(this,n),g((o=b(r=t.call(this)),I(n.prototype)),"setAttribute",o).call(o,"class",i.cxtMenuClasses),r.style.position="absolute",r.onMenuItemClick=e,r.scratchpad=i,r}return m(n,[{key:"hide",value:function(){this.hideMenuItemSubmenus(),this.style.display="none"}},{key:"display",value:function(){this.style.display="block"}},{key:"hideMenuItems",value:function(){var e,t=a(this.children);try{for(t.s();!(e=t.n()).done;){var n=e.value;n instanceof HTMLElement?n.style.display="none":console.warn("".concat(n," is not a HTMLElement"))}}catch(e){t.e(e)}finally{t.f()}}},{key:"hideMenuItemSubmenus",value:function(){var e,t=a(this.children);try{for(t.s();!(e=t.n()).done;){var n=e.value;n instanceof k&&n.submenu&&n.submenu.hide()}}catch(e){t.e(e)}finally{t.f()}}},{key:"appendMenuItem",value:function(e){var t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:void 0;if(void 0!==t){if(t.parentNode!==this)throw new Error("The item with id='".concat(t.id,"' is not a child of the context menu"));this.insertBefore(e,t)}else this.appendChild(e);e.isClickable()&&this._performBindings(e)}},{key:"moveBefore",value:function(e,t){if(e.parentNode!==this)throw new Error("The item with id='".concat(e.id,"' is not a child of context menu"));if(t.parentNode!==this)throw new Error("The item with id='".concat(t.id,"' is not a child of context menu"));this.removeChild(e),this.insertBefore(e,t)}},{key:"removeAllMenuItems",value:function(){for(;this.firstChild;){var e=this.lastChild;e instanceof k?this._removeImmediateMenuItem(e):(console.warn("Found non menu item in the context menu: ",e),this.removeChild(e))}}},{key:"_removeImmediateMenuItem",value:function(e){if(!this._detachImmediateMenuItem(e))throw new Error("menu item(id=".concat(e.id,") is not in the context menu"));e.detachSubmenu(),e.unbindOnClickFunctions()}},{key:"_detachImmediateMenuItem",value:function(e){if(e.parentNode===this){if(this.removeChild(e),this.children.length<=0){var t=this.parentNode;t instanceof k&&t.detachSubmenu()}return!0}return!1}},{key:"_performBindings",value:function(e){var t=this._bindOnClick(e.onClickFunction);e.bindOnClickFunction(t),e.bindOnClickFunction(this.onMenuItemClick)}},{key:"_bindOnClick",value:function(e){var t=this;return function(){var n=t.scratchpad.currentCyEvent;e(n)}}}],[{key:"define",value:function(){customElements.define("menu-item-list",n,{extends:"div"})}}]),n}(x(HTMLDivElement)),E=function(e){y(n,e);var t=v(n);function n(e,i){var o;return d(this,n),(o=t.call(this,e,i)).onMenuItemClick=function(t){t.stopPropagation(),o.hide(),e()},o}return m(n,[{key:"removeMenuItem",value:function(e){var t=e.parentElement;t instanceof S&&this.contains(t)&&t._removeImmediateMenuItem(e)}},{key:"appendMenuItem",value:function(e){var t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:void 0;this.ensureDoesntContain(e.id),g(I(n.prototype),"appendMenuItem",this).call(this,e,t)}},{key:"insertMenuItem",value:function(e){var t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:{},n=t.before,i=t.parent;if(this.ensureDoesntContain(e.id),void 0!==n){if(!this.contains(n))throw new Error("before(id=".concat(n.id,") is not in the context menu"));var o=n.parentNode;if(!(o instanceof S))throw new Error("Parent of before(id=".concat(n.id,") is not a submenu"));o.appendMenuItem(e,n)}else if(void 0!==i){if(!this.contains(i))throw new Error("parent(id=".concat(i.id,") is not a descendant of the context menu"));i.appendSubmenuItem(e)}else this.appendMenuItem(e)}},{key:"moveBefore",value:function(e,t){var n=e.parentElement;if(!this.contains(n))throw new Error("parent(id=".concat(n.id,") is not in the contex menu"));if(!this.contains(t))throw new Error("before(id=".concat(t.id,") is not in the context menu"));n.removeChild(e),this.insertMenuItem(e,{before:t})}},{key:"moveToSubmenu",value:function(e){var t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:null,n=arguments.length>2&&void 0!==arguments[2]?arguments[2]:null,i=e.parentElement;if(!(i instanceof S))throw new Error("current parent(id=".concat(i.id,") is not a submenu"));if(!this.contains(i))throw new Error("parent of the menu item(id=".concat(i.id,") is not in the context menu"));if(null!==t){if(!this.contains(t))throw new Error("parent(id=".concat(t.id,") is not in the context menu"));i._detachImmediateMenuItem(e),t.appendSubmenuItem(e)}else null!==n&&(e.selector=n.selector,e.coreAsWell=n.coreAsWell),i._detachImmediateMenuItem(e),this.appendMenuItem(e)}},{key:"ensureDoesntContain",value:function(e){var t=document.getElementById(e);if(void 0!==t&&this.contains(t))throw new Error("There is already an element with id=".concat(e," in the context menu"))}}],[{key:"define",value:function(){customElements.define("ctx-menu",n,{extends:"div"})}}]),n}(S);function O(e,t){var n;if("undefined"==typeof Symbol||null==e[Symbol.iterator]){if(Array.isArray(e)||(n=function(e,t){if(!e)return;if("string"==typeof e)return A(e,t);var n=Object.prototype.toString.call(e).slice(8,-1);"Object"===n&&e.constructor&&(n=e.constructor.name);if("Map"===n||"Set"===n)return Array.from(e);if("Arguments"===n||/^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n))return A(e,t)}(e))||t&&e&&"number"==typeof e.length){n&&(e=n);var i=0,o=function(){};return{s:o,n:function(){return i>=e.length?{done:!0}:{done:!1,value:e[i++]}},e:function(e){throw e},f:o}}throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.")}var r,u=!0,s=!1;return{s:function(){n=e[Symbol.iterator]()},n:function(){var e=n.next();return u=e.done,e},e:function(e){s=!0,r=e},f:function(){try{u||null==n.return||n.return()}finally{if(s)throw r}}}}function A(e,t){(null==t||t>e.length)&&(t=e.length);for(var n=0,i=new Array(t);n<t;n++)i[n]=e[n];return i}function _(e){var t=this;t.scratch("cycontextmenus")||t.scratch("cycontextmenus",{});var n,o=function(e){return t.scratch("cycontextmenus")[e]},s=function(e,n){return t.scratch("cycontextmenus")[e]=n},a=function(e){return void 0!==t.scratch("cycontextmenus")[e]},l=o("options"),f=o("cxtMenu"),d=function(e){var n,i=t.container(),r=o("cxtMenuPosition"),u=e.position||e.cyPosition;if(r!=u){f.hideMenuItems(),s("anyVisibleChild",!1),s("cxtMenuPosition",u);var c={top:(n=i.getBoundingClientRect()).top,left:n.left},a=e.renderedPosition||e.cyRenderedPosition,l=getComputedStyle(i)["border-width"],d=parseInt(l.replace("px",""))||0;d>0&&(c.top+=d,c.left+=d);var h=i.clientHeight/2,m=i.clientWidth/2,y=window.innerHeight,v=window.innerWidth;a.y>h&&a.x<=m?(f.style.left=a.x+c.left+"px",f.style.bottom=y-(c.top+a.y)+"px",f.style.right="auto",f.style.top="auto"):a.y>h&&a.x>m?(f.style.right=v-(c.left+a.x)+"px",f.style.bottom=y-(c.top+a.y)+"px",f.style.left="auto",f.style.top="auto"):a.y<=h&&a.x<=m?(f.style.left=a.x+c.left+"px",f.style.top=a.y+c.top+"px",f.style.right="auto",f.style.bottom="auto"):(f.style.right=v-(a.x+c.left)+"px",f.style.top=a.y+c.top+"px",f.style.left="auto",f.style.bottom="auto")}},h=function(e){var t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:void 0,n=y(e);if(void 0!==t){var i=p(t);f.insertMenuItem(n,{parent:i})}else f.insertMenuItem(n)},m=function(e){for(var t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:void 0,n=0;n<e.length;n++)h(e[n],t)},y=function(e){var n=t.scratch("cycontextmenus");return new k(e,f.onMenuItemClick,n)},v=function(){o("active")&&(f.removeAllMenuItems(),t.off("tapstart",o("eventCyTapStart")),t.off(l.evtType,o("onCxttap")),a("onZoom")&&(t.off("zoom",o("onZoom")),s("onZoom",void 0)),a("hideOnNonCyClick")&&(document.body.removeEventListener("click",o("hideOnNonCyClick")),s("hideOnNonCyClick",void 0)),f.parentNode.removeChild(f),f=void 0,s("cxtMenu",void 0),s("active",!1),s("anyVisibleChild",!1),s("onCxttap",void 0))},p=function(e){var t=document.getElementById(e);if(t instanceof k)return t;throw new Error("The item with id=".concat(e," is not a menu item"))};if("get"!==e){k.define(),S.define(),E.define(),l=function(e,t){var n={};for(var i in e)n[i]=e[i];for(var o in t)n[o]instanceof Array?n[o]=n[o].concat(t[o]):n[o]=t[o];return n}(c,e),s("options",l),o("active")&&v(),s("active",!0),s("submenuIndicatorGen",function(e){var t=document.createElement("img");return t.src=e.src,t.width=e.width,t.height=e.height,t.classList.add("cy-context-menus-submenu-indicator"),t}.bind(void 0,l.submenuIndicator));var b=u(l.contextMenuClasses);s("cxtMenuClasses",b);var g=t.scratch("cycontextmenus");f=new E((function(){return s("cxtMenuPosition",void 0)}),g),s("cxtMenu",f),document.body.appendChild(f),s("cxtMenuItemClasses",u(l.menuItemClasses));var x=l.menuItems;if(m(x),n=function(e){s("currentCyEvent",e),d(e);var n,i=e.target||e.cyTarget,u=O(f.children);try{for(u.s();!(n=u.n()).done;){var c=n.value;c instanceof k&&(i===t?c.coreAsWell:i.is(c.selector))&&c.show&&(f.display(),s("anyVisibleChild",!0),c.display())}}catch(e){u.e(e)}finally{u.f()}!o("anyVisibleChild")&&r(f)&&f.hide()},t.on(l.evtType,n),s("onCxttap",n),function(e){var n=function(){f.hide(),s("cxtMenuPosition",void 0),s("currentCyEvent",void 0)};if(t.on("tapstart",n),s("eventCyTapStart",n),e){var i=function(){f.hide()};t.on("zoom",i),s("onZoom",i)}}(l.hideOnZoom),l.hideOnNonCyClick){var w=function(){f.hide(),s("cxtMenuPosition",void 0)};document.body.addEventListener("click",w),s("hideOnNonCyClick",w)}!function(){var e,t=i(document.getElementsByClassName("cy-context-menus-cxt-menu"));try{for(t.s();!(e=t.n()).done;){e.value.addEventListener("contextmenu",(function(e){return e.preventDefault()}))}}catch(e){t.e(e)}finally{t.f()}}()}return function(e){return{isActive:function(){return o("active")},appendMenuItem:function(t){var n=arguments.length>1&&void 0!==arguments[1]?arguments[1]:void 0;return h(t,n),e},appendMenuItems:function(t){var n=arguments.length>1&&void 0!==arguments[1]?arguments[1]:void 0;return m(t,n),e},removeMenuItem:function(t){var n=p(t);return f.removeMenuItem(n),e},setTrailingDivider:function(t,n){var i=p(t);return n?i.classList.add("cy-context-menus-divider"):i.classList.remove("cy-context-menus-divider"),e},insertBeforeMenuItem:function(t,n){var i=y(t),o=p(n);return f.insertMenuItem(i,{before:o}),e},moveToSubmenu:function(t){var n=arguments.length>1&&void 0!==arguments[1]?arguments[1]:null,i=p(t);if(null===n)f.moveToSubmenu(i);else if("string"==typeof n){var o=p(n.toString());f.moveToSubmenu(i,o)}else void 0!==n.coreAsWell||void 0!==n.selector?f.moveToSubmenu(i,null,n):console.warn("options neither has coreAsWell nor selector property but it is an object. Are you sure that this is what you want to do?");return e},moveBeforeOtherMenuItem:function(t,n){var i=p(t),o=p(n);return f.moveBefore(i,o),e},disableMenuItem:function(t){return p(t).disable(),e},enableMenuItem:function(t){return p(t).enable(),e},hideMenuItem:function(t){return p(t).hide(),e},showMenuItem:function(t){return p(t).display(),e},destroy:function(){return v(),e}}}(this)}}])}));
+(function webpackUniversalModuleDefinition(root, factory) {
+	if(typeof exports === 'object' && typeof module === 'object')
+		module.exports = factory();
+	else if(typeof define === 'function' && define.amd)
+		define([], factory);
+	else if(typeof exports === 'object')
+		exports["cytoscapeContextMenus"] = factory();
+	else
+		root["cytoscapeContextMenus"] = factory();
+})(window, function() {
+return /******/ (function(modules) { // webpackBootstrap
+/******/ 	// The module cache
+/******/ 	var installedModules = {};
+/******/
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/
+/******/ 		// Check if module is in cache
+/******/ 		if(installedModules[moduleId]) {
+/******/ 			return installedModules[moduleId].exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = installedModules[moduleId] = {
+/******/ 			i: moduleId,
+/******/ 			l: false,
+/******/ 			exports: {}
+/******/ 		};
+/******/
+/******/ 		// Execute the module function
+/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/
+/******/ 		// Flag the module as loaded
+/******/ 		module.l = true;
+/******/
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/
+/******/
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = modules;
+/******/
+/******/ 	// expose the module cache
+/******/ 	__webpack_require__.c = installedModules;
+/******/
+/******/ 	// define getter function for harmony exports
+/******/ 	__webpack_require__.d = function(exports, name, getter) {
+/******/ 		if(!__webpack_require__.o(exports, name)) {
+/******/ 			Object.defineProperty(exports, name, { enumerable: true, get: getter });
+/******/ 		}
+/******/ 	};
+/******/
+/******/ 	// define __esModule on exports
+/******/ 	__webpack_require__.r = function(exports) {
+/******/ 		if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 			Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 		}
+/******/ 		Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 	};
+/******/
+/******/ 	// create a fake namespace object
+/******/ 	// mode & 1: value is a module id, require it
+/******/ 	// mode & 2: merge all properties of value into the ns
+/******/ 	// mode & 4: return value when already ns object
+/******/ 	// mode & 8|1: behave like require
+/******/ 	__webpack_require__.t = function(value, mode) {
+/******/ 		if(mode & 1) value = __webpack_require__(value);
+/******/ 		if(mode & 8) return value;
+/******/ 		if((mode & 4) && typeof value === 'object' && value && value.__esModule) return value;
+/******/ 		var ns = Object.create(null);
+/******/ 		__webpack_require__.r(ns);
+/******/ 		Object.defineProperty(ns, 'default', { enumerable: true, value: value });
+/******/ 		if(mode & 2 && typeof value != 'string') for(var key in value) __webpack_require__.d(ns, key, function(key) { return value[key]; }.bind(null, key));
+/******/ 		return ns;
+/******/ 	};
+/******/
+/******/ 	// getDefaultExport function for compatibility with non-harmony modules
+/******/ 	__webpack_require__.n = function(module) {
+/******/ 		var getter = module && module.__esModule ?
+/******/ 			function getDefault() { return module['default']; } :
+/******/ 			function getModuleExports() { return module; };
+/******/ 		__webpack_require__.d(getter, 'a', getter);
+/******/ 		return getter;
+/******/ 	};
+/******/
+/******/ 	// Object.prototype.hasOwnProperty.call
+/******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
+/******/
+/******/ 	// __webpack_public_path__
+/******/ 	__webpack_require__.p = "";
+/******/
+/******/
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(__webpack_require__.s = 0);
+/******/ })
+/************************************************************************/
+/******/ ([
+/* 0 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// We have to use CommonJS here https://stackoverflow.com/questions/33505992/babel-6-changes-how-it-exports-default
+var _require = __webpack_require__(1),
+    contextMenus = _require.contextMenus;
+
+var register = function register(cytoscape) {
+  if (!cytoscape) {
+    return;
+  } // can't register if cytoscape unspecified
+
+
+  cytoscape('core', 'contextMenus', contextMenus);
+}; // @ts-ignore
+
+
+if (typeof cytoscape !== 'undefined') {
+  // Register for plain javascript
+  // @ts-ignore
+  register(cytoscape);
+}
+
+module.exports = register;
+
+/***/ }),
+/* 1 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+// ESM COMPAT FLAG
+__webpack_require__.r(__webpack_exports__);
+
+// EXPORTS
+__webpack_require__.d(__webpack_exports__, "contextMenus", function() { return /* binding */ contextMenus; });
+
+// CONCATENATED MODULE: ./src/utils.js
+function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+// Utility functions that are not directly related with the extension
+function getOffset(el) {
+  var rect = el.getBoundingClientRect();
+  return {
+    top: rect.top,
+    left: rect.left
+  };
+}
+function matches(el, selector) {
+  return (el.matches || el.matchesSelector || el.msMatchesSelector || el.mozMatchesSelector || el.webkitMatchesSelector || el.oMatchesSelector).call(el, selector);
+}
+function isElementHidden(elem) {
+  return elem.offsetWidth <= 0 && elem.offsetHeight <= 0 || elem.style && elem.style.display || getComputedStyle(elem)['display'];
+}
+function isElementVisible(elem) {
+  return !isElementHidden(elem);
+} // Merge default options with the ones coming from parameter
+
+function extend(defaults, options) {
+  var obj = {};
+
+  for (var i in defaults) {
+    obj[i] = defaults[i];
+  }
+
+  for (var _i in options) {
+    // Arrays should be merged
+    if (obj[_i] instanceof Array) {
+      obj[_i] = obj[_i].concat(options[_i]);
+    } else {
+      obj[_i] = options[_i];
+    }
+  }
+
+  return obj;
+} // Get string representation of css classes
+
+function getClassStr(classes) {
+  var str = '';
+
+  for (var i = 0; i < classes.length; i++) {
+    var className = classes[i];
+    str += className;
+
+    if (i !== classes.length - 1) {
+      str += ' ';
+    }
+  }
+
+  return str;
+}
+function preventDefaultContextTap() {
+  var contextMenuAreas = document.getElementsByClassName('cy-context-menus-cxt-menu');
+
+  var _iterator = _createForOfIteratorHelper(contextMenuAreas),
+      _step;
+
+  try {
+    for (_iterator.s(); !(_step = _iterator.n()).done;) {
+      var cxtMenuArea = _step.value;
+      cxtMenuArea.addEventListener('contextmenu', function (e) {
+        return e.preventDefault();
+      });
+    }
+  } catch (err) {
+    _iterator.e(err);
+  } finally {
+    _iterator.f();
+  }
+}
+/**
+ * https://stackoverflow.com/a/38057647/12045421
+ * 
+ * @param { Element } element 
+ * @param { string } attribute
+ * @param { boolean } boolValue 
+ */
+
+function setBooleanAttribute(element, attribute, boolValue) {
+  if (boolValue) {
+    element.setAttribute(attribute, '');
+  } else {
+    element.removeAttribute(attribute);
+  }
+}
+/**
+ * Returns true if the first parameter is inside the element
+ * @param {*} param0 
+ * @param { HTMLElement } element 
+ */
+
+function isIn(_ref, element) {
+  var x = _ref.x,
+      y = _ref.y;
+  var rect = element.getBoundingClientRect();
+  return x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom;
+}
+/**
+ * Get the dimensions from a hidden element
+ * @param { HTMLElement } element
+ */
+
+function getDimensionsHidden(element) {
+  // Temporarily show the element
+  element.style.opacity = "0";
+  element.style.display = "block";
+  var rect = element.getBoundingClientRect(); // Hide back after getting the dimensions
+
+  element.style.opacity = "1";
+  element.style.display = "none";
+  return rect;
+}
+// CONCATENATED MODULE: ./src/constants.js
+var CXT_MENU_CSS_CLASS = 'cy-context-menus-cxt-menu';
+var MENUITEM_CSS_CLASS = 'cy-context-menus-cxt-menuitem';
+var DIVIDER_CSS_CLASS = 'cy-context-menus-divider';
+var INDICATOR_CSS_CLASS = 'cy-context-menus-submenu-indicator';
+var DEFAULT_OPTS = {
+  // Customize event to bring up the context menu
+  // Possible options https://js.cytoscape.org/#events/user-input-device-events
+  evtType: 'cxttap',
+  // List of initial menu items
+  menuItems: [
+    /*
+    {
+      id: 'remove',
+      content: 'remove',
+      tooltipText: 'remove',
+      selector: 'node, edge',
+      onClickFunction: function () {
+        console.log('remove element');
+      },
+      hasTrailingDivider: true
+    },
+    {
+      id: 'hide',
+      content: 'hide',
+      tooltipText: 'remove',
+      selector: 'node, edge',
+      onClickFunction: function () {
+        console.log('hide element');
+      },
+      disabled: true
+    }*/
+  ],
+  // css classes that menu items will have
+  menuItemClasses: [MENUITEM_CSS_CLASS],
+  // css classes that context menu will have
+  contextMenuClasses: [CXT_MENU_CSS_CLASS],
+  submenuIndicator: {
+    src: 'assets/submenu-indicator-default.svg',
+    width: 12,
+    height: 12
+  }
+};
+// CONCATENATED MODULE: ./src/context-menu.js
+function context_menu_createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = context_menu_unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
+
+function context_menu_unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return context_menu_arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return context_menu_arrayLikeToArray(o, minLen); }
+
+function context_menu_arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _get(target, property, receiver) { if (typeof Reflect !== "undefined" && Reflect.get) { _get = Reflect.get; } else { _get = function _get(target, property, receiver) { var base = _superPropBase(target, property); if (!base) return; var desc = Object.getOwnPropertyDescriptor(base, property); if (desc.get) { return desc.get.call(receiver); } return desc.value; }; } return _get(target, property, receiver || target); }
+
+function _superPropBase(object, property) { while (!Object.prototype.hasOwnProperty.call(object, property)) { object = _getPrototypeOf(object); if (object === null) break; } return object; }
+
+function _wrapNativeSuper(Class) { var _cache = typeof Map === "function" ? new Map() : undefined; _wrapNativeSuper = function _wrapNativeSuper(Class) { if (Class === null || !_isNativeFunction(Class)) return Class; if (typeof Class !== "function") { throw new TypeError("Super expression must either be null or a function"); } if (typeof _cache !== "undefined") { if (_cache.has(Class)) return _cache.get(Class); _cache.set(Class, Wrapper); } function Wrapper() { return _construct(Class, arguments, _getPrototypeOf(this).constructor); } Wrapper.prototype = Object.create(Class.prototype, { constructor: { value: Wrapper, enumerable: false, writable: true, configurable: true } }); return _setPrototypeOf(Wrapper, Class); }; return _wrapNativeSuper(Class); }
+
+function _construct(Parent, args, Class) { if (_isNativeReflectConstruct()) { _construct = Reflect.construct; } else { _construct = function _construct(Parent, args, Class) { var a = [null]; a.push.apply(a, args); var Constructor = Function.bind.apply(Parent, a); var instance = new Constructor(); if (Class) _setPrototypeOf(instance, Class.prototype); return instance; }; } return _construct.apply(null, arguments); }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+function _isNativeFunction(fn) { return Function.toString.call(fn).indexOf("[native code]") !== -1; }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+
+ // TODO: add submenu property
+
+var context_menu_MenuItem = /*#__PURE__*/function (_HTMLButtonElement) {
+  _inherits(MenuItem, _HTMLButtonElement);
+
+  var _super = _createSuper(MenuItem);
+
+  /**
+   * @param {{ 
+   *      id: string; 
+   *      tooltipText?: string;
+   *      disabled?: boolean; 
+   *      image?: { 
+   *          src: string; 
+   *          width: number; 
+   *          height: number; 
+   *          y: string; 
+   *          x: string; 
+   *      }; 
+   *      content: string; 
+   *      selector: string; 
+   *      show?: boolean; 
+   *      submenu?: Array;
+   *      coreAsWell?: boolean;
+   *      onClickFunction?: any;
+   *      hasTrailingDivider?: boolean;
+   * }} params
+   * @param { * } onMenuItemClick 
+   * passed so that submenu items can have this
+   * called when the menu item is clicked
+   */
+  function MenuItem(params, onMenuItemClick, scratchpad) {
+    var _thisSuper, _thisSuper2, _thisSuper3, _thisSuper4, _this;
+
+    _classCallCheck(this, MenuItem);
+
+    _this = _super.call(this);
+
+    _get((_thisSuper = _assertThisInitialized(_this), _getPrototypeOf(MenuItem.prototype)), "setAttribute", _thisSuper).call(_thisSuper, 'id', params.id);
+
+    var className = _this._getMenuItemClassStr(scratchpad['cxtMenuItemClasses'], params.hasTrailingDivider);
+
+    _get((_thisSuper2 = _assertThisInitialized(_this), _getPrototypeOf(MenuItem.prototype)), "setAttribute", _thisSuper2).call(_thisSuper2, 'class', className);
+
+    if (_typeof(params.tooltipText) !== undefined) {
+      _get((_thisSuper3 = _assertThisInitialized(_this), _getPrototypeOf(MenuItem.prototype)), "setAttribute", _thisSuper3).call(_thisSuper3, 'title', params.tooltipText);
+    }
+
+    if (params.disabled) {
+      setBooleanAttribute(_assertThisInitialized(_this), 'disabled', true);
+    }
+
+    if (params.image) {
+      var img = document.createElement('img');
+      img.src = params.image.src;
+      img.width = params.image.width;
+      img.height = params.image.height;
+      img.style.position = 'absolute';
+      img.style.top = params.image.y + 'px';
+      img.style.left = params.image.x + 'px';
+
+      _get((_thisSuper4 = _assertThisInitialized(_this), _getPrototypeOf(MenuItem.prototype)), "appendChild", _thisSuper4).call(_thisSuper4, img);
+    }
+
+    _this.innerHTML += params.content;
+    _this.onMenuItemClick = onMenuItemClick;
+    _this.data = {};
+    _this.clickFns = [];
+    _this.selector = params.selector;
+    _this.show = params.show || true;
+    _this.coreAsWell = params.coreAsWell || false;
+    _this.scratchpad = scratchpad;
+
+    if (typeof params.onClickFunction === 'undefined' && typeof params.submenu === 'undefined') {
+      throw new Error("A menu item must either have click function or a submenu or both");
+    }
+
+    _this.onClickFunction = params.onClickFunction; // Create the submenu if neccessary
+
+    if (params.submenu instanceof Array) {
+      _this._createSubmenu(params.submenu);
+    }
+
+    return _this;
+  }
+
+  _createClass(MenuItem, [{
+    key: "bindOnClickFunction",
+    value: function bindOnClickFunction(onClickFn) {
+      this.clickFns.push(onClickFn);
+
+      _get(_getPrototypeOf(MenuItem.prototype), "addEventListener", this).call(this, 'click', onClickFn);
+    }
+  }, {
+    key: "unbindOnClickFunctions",
+    value: function unbindOnClickFunctions() {
+      var _iterator = context_menu_createForOfIteratorHelper(this.clickFns),
+          _step;
+
+      try {
+        for (_iterator.s(); !(_step = _iterator.n()).done;) {
+          var onClickFn = _step.value;
+
+          _get(_getPrototypeOf(MenuItem.prototype), "removeEventListener", this).call(this, 'click', onClickFn);
+        }
+      } catch (err) {
+        _iterator.e(err);
+      } finally {
+        _iterator.f();
+      }
+
+      this.clickFns = [];
+    }
+  }, {
+    key: "enable",
+    value: function enable() {
+      setBooleanAttribute(this, 'disabled', false);
+
+      if (this.hasSubmenu()) {
+        this.addEventListener('mouseenter', this.mouseEnterHandler);
+      }
+    }
+  }, {
+    key: "disable",
+    value: function disable() {
+      setBooleanAttribute(this, 'disabled', true);
+
+      if (this.hasSubmenu()) {
+        this.removeEventListener('mouseenter', this.mouseEnterHandler);
+      }
+    }
+  }, {
+    key: "hide",
+    value: function hide() {
+      this.show = false;
+      this.style.display = 'none';
+    }
+  }, {
+    key: "hasSubmenu",
+    value: function hasSubmenu() {
+      return this.submenu instanceof MenuItemList;
+    }
+  }, {
+    key: "appendSubmenuItem",
+    value: function appendSubmenuItem(menuItem) {
+      var before = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+
+      if (!this.hasSubmenu()) {
+        this._createSubmenu();
+      }
+
+      this.submenu.appendMenuItem(menuItem, before);
+    }
+  }, {
+    key: "isClickable",
+    value: function isClickable() {
+      return this.onClickFunction !== undefined;
+    }
+  }, {
+    key: "display",
+    value: function display() {
+      this.show = true;
+      this.style.display = 'block';
+    }
+    /**
+     * Removes the submenu if exists
+     */
+
+  }, {
+    key: "removeSubmenu",
+    value: function removeSubmenu() {
+      if (this.hasSubmenu()) {
+        this.submenu.removeAllMenuItems();
+        this.detachSubmenu();
+      }
+    }
+  }, {
+    key: "detachSubmenu",
+    value: function detachSubmenu() {
+      if (this.hasSubmenu()) {
+        this.removeChild(this.submenu);
+        this.removeChild(this.indicator);
+        this.removeEventListener('mouseenter', this.mouseEnterHandler);
+        this.removeEventListener('mouseleave', this.mouseLeaveHandler);
+        this.submenu = undefined;
+        this.indicator = undefined;
+      }
+    }
+  }, {
+    key: "_onMouseEnter",
+    value: function _onMouseEnter(_event) {
+      var rect = this.getBoundingClientRect();
+      var submenuRect = getDimensionsHidden(this.submenu);
+      var exceedsRight = rect.right + submenuRect.width > window.innerWidth;
+      var exceedsBottom = rect.top + submenuRect.height > window.innerHeight; // Adjusts the position of the submenu 
+
+      if (!exceedsRight && !exceedsBottom) {
+        this.submenu.style.left = this.clientWidth + "px";
+        this.submenu.style.top = "0px";
+        this.submenu.style.right = "auto";
+        this.submenu.style.bottom = "auto";
+      } else if (exceedsRight && !exceedsBottom) {
+        this.submenu.style.right = this.clientWidth + "px";
+        this.submenu.style.top = "0px";
+        this.submenu.style.left = "auto";
+        this.submenu.style.bottom = "auto";
+      } else if (exceedsRight && exceedsBottom) {
+        this.submenu.style.right = this.clientWidth + "px";
+        this.submenu.style.bottom = "0px";
+        this.submenu.style.top = "auto";
+        this.submenu.style.left = "auto";
+      } else {
+        this.submenu.style.left = this.clientWidth + "px";
+        this.submenu.style.bottom = "0px";
+        this.submenu.style.right = "auto";
+        this.submenu.style.top = "auto";
+      }
+
+      this.submenu.display();
+    }
+  }, {
+    key: "_onMouseLeave",
+    value: function _onMouseLeave(event) {
+      var pos = {
+        x: event.clientX,
+        y: event.clientY
+      }; // Hide if mouse is not passed to the submenu
+
+      if (!isIn(pos, this.submenu)) {
+        this.submenu.hide();
+      }
+    }
+  }, {
+    key: "_createSubmenu",
+    value: function _createSubmenu() {
+      var items = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+      // We generate another indicator for each
+      this.indicator = this.scratchpad['submenuIndicatorGen']();
+      this.submenu = new MenuItemList(this.onMenuItemClick, this.scratchpad);
+      this.appendChild(this.indicator);
+      this.appendChild(this.submenu);
+
+      var _iterator2 = context_menu_createForOfIteratorHelper(items),
+          _step2;
+
+      try {
+        for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
+          var item = _step2.value;
+          var menuItem = new MenuItem(item, this.onMenuItemClick, this.scratchpad);
+          this.submenu.appendMenuItem(menuItem);
+        }
+      } catch (err) {
+        _iterator2.e(err);
+      } finally {
+        _iterator2.f();
+      }
+
+      this.mouseEnterHandler = this._onMouseEnter.bind(this);
+      this.mouseLeaveHandler = this._onMouseLeave.bind(this); // submenu should be visible when mouse is over
+
+      this.addEventListener('mouseenter', this.mouseEnterHandler);
+      this.addEventListener('mouseleave', this.mouseLeaveHandler);
+    } // TODO: can be static
+
+  }, {
+    key: "_getMenuItemClassStr",
+    value: function _getMenuItemClassStr(classStr, hasTrailingDivider) {
+      return hasTrailingDivider ? classStr + ' ' + DIVIDER_CSS_CLASS : classStr;
+    }
+  }], [{
+    key: "define",
+    value: function define() {
+      customElements.define('ctx-menu-item', MenuItem, {
+        "extends": 'button'
+      });
+    }
+  }]);
+
+  return MenuItem;
+}( /*#__PURE__*/_wrapNativeSuper(HTMLButtonElement));
+var MenuItemList = /*#__PURE__*/function (_HTMLDivElement) {
+  _inherits(MenuItemList, _HTMLDivElement);
+
+  var _super2 = _createSuper(MenuItemList);
+
+  function MenuItemList(onMenuItemClick, scratchpad) {
+    var _thisSuper5, _this2;
+
+    _classCallCheck(this, MenuItemList);
+
+    _this2 = _super2.call(this);
+
+    _get((_thisSuper5 = _assertThisInitialized(_this2), _getPrototypeOf(MenuItemList.prototype)), "setAttribute", _thisSuper5).call(_thisSuper5, 'class', scratchpad['cxtMenuClasses']);
+
+    _this2.style.position = 'absolute';
+    _this2.onMenuItemClick = onMenuItemClick;
+    _this2.scratchpad = scratchpad;
+    return _this2;
+  }
+
+  _createClass(MenuItemList, [{
+    key: "hide",
+    value: function hide() {
+      this.hideMenuItemSubmenus();
+      this.style.display = 'none';
+    }
+  }, {
+    key: "display",
+    value: function display() {
+      this.style.display = 'block';
+    }
+    /**
+     * Hides all menu items
+     */
+
+  }, {
+    key: "hideMenuItems",
+    value: function hideMenuItems() {
+      var _iterator3 = context_menu_createForOfIteratorHelper(this.children),
+          _step3;
+
+      try {
+        for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
+          var item = _step3.value;
+
+          if (item instanceof HTMLElement) {
+            item.style.display = 'none';
+          } else {
+            console.warn("".concat(item, " is not a HTMLElement"));
+          }
+        }
+      } catch (err) {
+        _iterator3.e(err);
+      } finally {
+        _iterator3.f();
+      }
+    }
+  }, {
+    key: "hideMenuItemSubmenus",
+    value: function hideMenuItemSubmenus() {
+      var _iterator4 = context_menu_createForOfIteratorHelper(this.children),
+          _step4;
+
+      try {
+        for (_iterator4.s(); !(_step4 = _iterator4.n()).done;) {
+          var menuItem = _step4.value;
+
+          if (menuItem instanceof context_menu_MenuItem) {
+            if (menuItem.submenu) {
+              menuItem.submenu.hide();
+            }
+          }
+        }
+      } catch (err) {
+        _iterator4.e(err);
+      } finally {
+        _iterator4.f();
+      }
+    }
+    /**
+     * @param { MenuItem } menuItem
+     * @param { Element? } before 
+     * If before is specified menuItem is inserted before this element instead of at the end \
+     * By default appends at the end of the this
+     */
+
+  }, {
+    key: "appendMenuItem",
+    value: function appendMenuItem(menuItem) {
+      var before = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+
+      if (typeof before !== 'undefined') {
+        if (before.parentNode === this) {
+          this.insertBefore(menuItem, before);
+        } else {
+          throw new Error("The item with id='".concat(before.id, "' is not a child of the context menu"));
+        }
+      } else {
+        this.appendChild(menuItem);
+      }
+
+      if (menuItem.isClickable()) {
+        this._performBindings(menuItem);
+      }
+    }
+    /**
+     * Removes any menuItem that is any children of the context menu
+     * Returns true if child is found and removed, false otherwise
+     * @param { MenuItem } menuItem 
+     */
+
+    /* removeMenuItem(menuItem) {
+        if (this._removeImmediateMenuItem(menuItem)) {
+            return true;
+        } else {
+            for (let child of this.children) {
+                if (child instanceof MenuItem && child.hasSubmenu()) {
+                    if (child.submenu.removeMenuItem(menuItem)) {
+                        return true;
+                    }
+                }
+            }            
+            // throw new Error(`The item with id='${menuItem.id}' is not a child of the context menu`);
+            return false;
+        }
+    } */
+
+    /**
+     * Moves a menuItem before another
+     * @param { MenuItem } menuItem 
+     * @param { MenuItem } before 
+     */
+
+  }, {
+    key: "moveBefore",
+    value: function moveBefore(menuItem, before) {
+      if (menuItem.parentNode !== this) {
+        throw new Error("The item with id='".concat(menuItem.id, "' is not a child of context menu"));
+      }
+
+      if (before.parentNode !== this) {
+        throw new Error("The item with id='".concat(before.id, "' is not a child of context menu"));
+      }
+
+      this.removeChild(menuItem);
+      this.insertBefore(menuItem, before);
+    }
+  }, {
+    key: "removeAllMenuItems",
+    value: function removeAllMenuItems() {
+      // https://stackoverflow.com/a/3955238/12045421
+      while (this.firstChild) {
+        var child = this.lastChild;
+
+        if (child instanceof context_menu_MenuItem) {
+          this._removeImmediateMenuItem(child);
+        } else {
+          console.warn("Found non menu item in the context menu: ", child); // Remove it as well
+
+          this.removeChild(child);
+        }
+      }
+    }
+    /**
+     * Removes if the `menuItem` is direct child of the parent
+     * @param { MenuItem } menuItem 
+     */
+
+  }, {
+    key: "_removeImmediateMenuItem",
+    value: function _removeImmediateMenuItem(menuItem) {
+      if (this._detachImmediateMenuItem(menuItem)) {
+        menuItem.detachSubmenu();
+        menuItem.unbindOnClickFunctions();
+      } else {
+        throw new Error("menu item(id=".concat(menuItem.id, ") is not in the context menu"));
+      }
+    }
+    /**
+     * Detaches `menuItem` from `this` doesn't destroy it
+     * @param { MenuItem } menuItem
+     * @returns { boolean }
+     */
+
+  }, {
+    key: "_detachImmediateMenuItem",
+    value: function _detachImmediateMenuItem(menuItem) {
+      if (menuItem.parentNode === this) {
+        this.removeChild(menuItem);
+
+        if (this.children.length <= 0) {
+          var parent = this.parentNode;
+
+          if (parent instanceof context_menu_MenuItem) {
+            parent.detachSubmenu();
+          }
+        }
+
+        return true;
+      } else {
+        return false;
+      }
+    }
+    /**
+     * @param { MenuItem } menuItem
+     */
+
+  }, {
+    key: "_performBindings",
+    value: function _performBindings(menuItem) {
+      var callback = this._bindOnClick(menuItem.onClickFunction);
+
+      menuItem.bindOnClickFunction(callback);
+      menuItem.bindOnClickFunction(this.onMenuItemClick);
+    }
+  }, {
+    key: "_bindOnClick",
+    value: function _bindOnClick(onClickFn) {
+      var _this3 = this;
+
+      return function () {
+        var event = _this3.scratchpad['currentCyEvent'];
+        onClickFn(event);
+      };
+    }
+  }], [{
+    key: "define",
+    value: function define() {
+      customElements.define('menu-item-list', MenuItemList, {
+        "extends": 'div'
+      });
+    }
+  }]);
+
+  return MenuItemList;
+}( /*#__PURE__*/_wrapNativeSuper(HTMLDivElement));
+var ContextMenu = /*#__PURE__*/function (_MenuItemList) {
+  _inherits(ContextMenu, _MenuItemList);
+
+  var _super3 = _createSuper(ContextMenu);
+
+  function ContextMenu(onMenuItemClick, scratchpad) {
+    var _this4;
+
+    _classCallCheck(this, ContextMenu);
+
+    _this4 = _super3.call(this, onMenuItemClick, scratchpad); // Called when a menu item is clicked
+
+    _this4.onMenuItemClick = function (event) {
+      // So that parent menuItems won't be clicked
+      event.stopPropagation();
+
+      _this4.hide();
+
+      onMenuItemClick();
+    };
+    /* this.addEventListener('mouseleave', (_event) => {
+        this.hideMenuItemSubmenus();
+    }); */
+
+
+    return _this4;
+  }
+  /**
+   * @param { MenuItem } menuItem 
+   */
+
+
+  _createClass(ContextMenu, [{
+    key: "removeMenuItem",
+    value: function removeMenuItem(menuItem) {
+      var parent = menuItem.parentElement;
+
+      if (parent instanceof MenuItemList && this.contains(parent)) {
+        parent._removeImmediateMenuItem(menuItem);
+      }
+    }
+    /**
+     * @param { MenuItem } menuItem
+     * @param { Element? } before 
+     */
+
+  }, {
+    key: "appendMenuItem",
+    value: function appendMenuItem(menuItem) {
+      var before = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+      this.ensureDoesntContain(menuItem.id);
+
+      _get(_getPrototypeOf(ContextMenu.prototype), "appendMenuItem", this).call(this, menuItem, before);
+    }
+    /**
+     * Inserts the menu item to the context menu \
+     * If before is specified, item is inserted before the 'before' inside the same submenu \
+     * The parent argument is ignored if before is specified because parent can be inferred from the before argument \
+     * If parent is specified, item is inserted into the submenu of specified parent
+     * @param { MenuItem } menuItem 
+     * @param {{ before?: MenuItem, parent?: MenuItem }} param1
+     */
+
+  }, {
+    key: "insertMenuItem",
+    value: function insertMenuItem(menuItem) {
+      var _ref = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
+          before = _ref.before,
+          parent = _ref.parent;
+
+      this.ensureDoesntContain(menuItem.id);
+
+      if (typeof before !== 'undefined') {
+        if (this.contains(before)) {
+          var _parent = before.parentNode;
+
+          if (_parent instanceof MenuItemList) {
+            _parent.appendMenuItem(menuItem, before);
+          } else {
+            throw new Error("Parent of before(id=".concat(before.id, ") is not a submenu"));
+          }
+        } else {
+          throw new Error("before(id=".concat(before.id, ") is not in the context menu"));
+        }
+      } else if (typeof parent !== 'undefined') {
+        if (this.contains(parent)) {
+          parent.appendSubmenuItem(menuItem);
+        } else {
+          throw new Error("parent(id=".concat(parent.id, ") is not a descendant of the context menu"));
+        }
+      } else {
+        this.appendMenuItem(menuItem);
+      }
+    }
+    /**
+     * @param { MenuItem } menuItem 
+     * @param { MenuItem } before 
+     */
+
+  }, {
+    key: "moveBefore",
+    value: function moveBefore(menuItem, before) {
+      var parent = menuItem.parentElement;
+
+      if (this.contains(parent)) {
+        if (this.contains(before)) {
+          parent.removeChild(menuItem);
+          this.insertMenuItem(menuItem, {
+            before: before
+          });
+        } else {
+          throw new Error("before(id=".concat(before.id, ") is not in the context menu"));
+        }
+      } else {
+        throw new Error("parent(id=".concat(parent.id, ") is not in the contex menu"));
+      }
+    }
+    /**
+     * @param { MenuItem } menuItem 
+     * @param { MenuItem } parent
+     * @param { { selector?: string, coreAsWell: boolean } } options
+     */
+
+  }, {
+    key: "moveToSubmenu",
+    value: function moveToSubmenu(menuItem) {
+      var parent = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+      var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+      var oldParent = menuItem.parentElement;
+
+      if (oldParent instanceof MenuItemList) {
+        if (this.contains(oldParent)) {
+          // Assuming parameters are always correct since this is an internal function
+          if (parent !== null) {
+            if (this.contains(parent)) {
+              oldParent._detachImmediateMenuItem(menuItem);
+
+              parent.appendSubmenuItem(menuItem);
+            } else {
+              throw new Error("parent(id=".concat(parent.id, ") is not in the context menu"));
+            }
+          } else {
+            if (options !== null) {
+              menuItem.selector = options.selector;
+              menuItem.coreAsWell = options.coreAsWell;
+            }
+
+            oldParent._detachImmediateMenuItem(menuItem);
+
+            this.appendMenuItem(menuItem);
+          }
+        } else {
+          throw new Error("parent of the menu item(id=".concat(oldParent.id, ") is not in the context menu"));
+        }
+      } else {
+        throw new Error("current parent(id=".concat(oldParent.id, ") is not a submenu"));
+      }
+    }
+  }, {
+    key: "ensureDoesntContain",
+    value: function ensureDoesntContain(id) {
+      var elem = document.getElementById(id);
+
+      if (typeof elem !== 'undefined' && this.contains(elem)) {
+        throw new Error("There is already an element with id=".concat(id, " in the context menu"));
+      }
+    }
+  }], [{
+    key: "define",
+    value: function define() {
+      customElements.define('ctx-menu', ContextMenu, {
+        "extends": 'div'
+      });
+    }
+  }]);
+
+  return ContextMenu;
+}(MenuItemList);
+// CONCATENATED MODULE: ./src/cytoscape-context-menus.js
+function cytoscape_context_menus_createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = cytoscape_context_menus_unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
+
+function cytoscape_context_menus_unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return cytoscape_context_menus_arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return cytoscape_context_menus_arrayLikeToArray(o, minLen); }
+
+function cytoscape_context_menus_arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+
+
+
+function contextMenus(opts) {
+  var cy = this; // Initilize scratch pad
+
+  if (!cy.scratch('cycontextmenus')) {
+    cy.scratch('cycontextmenus', {});
+  }
+
+  var getScratchProp = function getScratchProp(propname) {
+    return cy.scratch('cycontextmenus')[propname];
+  };
+
+  var setScratchProp = function setScratchProp(propname, value) {
+    return cy.scratch('cycontextmenus')[propname] = value;
+  };
+
+  var hasScratchProp = function hasScratchProp(propname) {
+    return typeof cy.scratch('cycontextmenus')[propname] !== 'undefined';
+  };
+
+  var options = getScratchProp('options');
+  /** @type { ContextMenu } */
+
+  var cxtMenu = getScratchProp('cxtMenu');
+  /**
+   * Right click event
+   */
+
+  var bindOnCxttap = function bindOnCxttap() {
+    // TODO: move this to ContextMenu, just do the binding here
+    var onCxttap = function onCxttap(event) {
+      setScratchProp('currentCyEvent', event);
+      adjustCxtMenu(event); // adjust the position of context menu
+
+      var target = event.target || event.cyTarget; // Check for each menuItem, if show is true, show the menuItem
+
+      var _iterator = cytoscape_context_menus_createForOfIteratorHelper(cxtMenu.children),
+          _step;
+
+      try {
+        for (_iterator.s(); !(_step = _iterator.n()).done;) {
+          var menuItem = _step.value;
+
+          if (menuItem instanceof context_menu_MenuItem) {
+            var shouldDisplay = target === cy ? // If user clicked in cy area then show core items
+            menuItem.coreAsWell : // If selector of the item matches then show
+            target.is(menuItem.selector); // User clicked on empty area and menuItem is core
+
+            if (shouldDisplay && menuItem.show) {
+              cxtMenu.display(); // anyVisibleChild indicates if there is any visible child of context menu if not do not show the context menu
+
+              setScratchProp('anyVisibleChild', true); // there is visible child
+
+              menuItem.display();
+            }
+          }
+        }
+      } catch (err) {
+        _iterator.e(err);
+      } finally {
+        _iterator.f();
+      }
+
+      if (!getScratchProp('anyVisibleChild') && isElementVisible(cxtMenu)) {
+        cxtMenu.hide();
+      }
+    };
+
+    cy.on(options.evtType, onCxttap);
+    setScratchProp('onCxttap', onCxttap);
+  };
+
+  var bindCyEvents = function bindCyEvents() {
+    var eventCyTapStart = function eventCyTapStart() {
+      cxtMenu.hide();
+      setScratchProp('cxtMenuPosition', undefined);
+      setScratchProp('currentCyEvent', undefined);
+    };
+
+    cy.on('tapstart', eventCyTapStart);
+    setScratchProp('eventCyTapStart', eventCyTapStart);
+
+    var eventCyZoom = function eventCyZoom() {
+      cxtMenu.hide();
+    };
+
+    cy.on('zoom', eventCyZoom);
+    setScratchProp('onZoom', eventCyZoom);
+  };
+
+  var bindOnClick = function bindOnClick() {
+    var onClick = function onClick() {
+      cxtMenu.hide();
+      setScratchProp('cxtMenuPosition', undefined);
+    };
+
+    document.body.addEventListener('click', onClick);
+    setScratchProp('hideOnNonCyClick', onClick);
+  }; // Adjusts context menu if necessary
+
+
+  var adjustCxtMenu = function adjustCxtMenu(event) {
+    var container = cy.container();
+    var currentCxtMenuPosition = getScratchProp('cxtMenuPosition');
+    var cyPos = event.position || event.cyPosition;
+
+    if (currentCxtMenuPosition != cyPos) {
+      cxtMenu.hideMenuItems();
+      setScratchProp('anyVisibleChild', false); // we hide all children there is no visible child remaining
+
+      setScratchProp('cxtMenuPosition', cyPos);
+      var containerPos = getOffset(container);
+      var renderedPos = event.renderedPosition || event.cyRenderedPosition;
+      var borderWidth = getComputedStyle(container)['border-width'];
+      var borderThickness = parseInt(borderWidth.replace("px", "")) || 0;
+
+      if (borderThickness > 0) {
+        containerPos.top += borderThickness;
+        containerPos.left += borderThickness;
+      }
+
+      var containerHeight = container.clientHeight;
+      var containerWidth = container.clientWidth;
+      var horizontalSplit = containerHeight / 2;
+      var verticalSplit = containerWidth / 2;
+      var windowHeight = window.innerHeight;
+      var windowWidth = window.innerWidth; //When user clicks on bottom-left part of window
+
+      if (renderedPos.y > horizontalSplit && renderedPos.x <= verticalSplit) {
+        cxtMenu.style.left = renderedPos.x + containerPos.left + 'px';
+        cxtMenu.style.bottom = windowHeight - (containerPos.top + renderedPos.y) + 'px';
+        cxtMenu.style.right = "auto";
+        cxtMenu.style.top = "auto";
+      } else if (renderedPos.y > horizontalSplit && renderedPos.x > verticalSplit) {
+        cxtMenu.style.right = windowWidth - (containerPos.left + renderedPos.x) + 'px';
+        cxtMenu.style.bottom = windowHeight - (containerPos.top + renderedPos.y) + 'px';
+        cxtMenu.style.left = "auto";
+        cxtMenu.style.top = "auto";
+      } else if (renderedPos.y <= horizontalSplit && renderedPos.x <= verticalSplit) {
+        cxtMenu.style.left = renderedPos.x + containerPos.left + 'px';
+        cxtMenu.style.top = renderedPos.y + containerPos.top + 'px';
+        cxtMenu.style.right = "auto";
+        cxtMenu.style.bottom = "auto";
+      } else {
+        cxtMenu.style.right = windowWidth - (renderedPos.x + containerPos.left) + 'px';
+        cxtMenu.style.top = renderedPos.y + containerPos.top + 'px';
+        cxtMenu.style.left = "auto";
+        cxtMenu.style.bottom = "auto";
+      }
+    }
+  };
+
+  var createAndAppendMenuItemComponent = function createAndAppendMenuItemComponent(opts) {
+    var parentID = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+    // Create and append menu item
+    var menuItemComponent = createMenuItemComponent(opts);
+
+    if (typeof parentID !== 'undefined') {
+      var parent = asMenuItem(parentID);
+      cxtMenu.insertMenuItem(menuItemComponent, {
+        parent: parent
+      });
+    } else {
+      cxtMenu.insertMenuItem(menuItemComponent);
+    }
+  }; //insertComponentBeforeExistingItem(component, existingItemID)
+
+
+  var createAndAppendMenuItemComponents = function createAndAppendMenuItemComponents(optionsArr) {
+    var parentID = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+
+    for (var i = 0; i < optionsArr.length; i++) {
+      createAndAppendMenuItemComponent(optionsArr[i], parentID);
+    }
+  }; // Creates a menu item as an html component
+
+
+  var createMenuItemComponent = function createMenuItemComponent(opts) {
+    var scratchpad = cy.scratch('cycontextmenus');
+    return new context_menu_MenuItem(opts, cxtMenu.onMenuItemClick, scratchpad);
+  };
+
+  var destroyCxtMenu = function destroyCxtMenu() {
+    if (!getScratchProp('active')) {
+      return;
+    }
+
+    cxtMenu.removeAllMenuItems();
+    cy.off('tapstart', getScratchProp('eventCyTapStart'));
+    cy.off(options.evtType, getScratchProp('onCxttap'));
+    cy.off('zoom', getScratchProp('onZoom'));
+    document.body.removeEventListener('click', getScratchProp('hideOnNonCyClick'));
+    cxtMenu.parentNode.removeChild(cxtMenu);
+    cxtMenu = undefined;
+    setScratchProp('cxtMenu', undefined);
+    setScratchProp('active', false);
+    setScratchProp('anyVisibleChild', false);
+    setScratchProp('onCxttap', undefined);
+    setScratchProp('onZoom', undefined);
+    setScratchProp('hideOnNonCyClick', undefined);
+  };
+
+  var makeSubmenuIndicator = function makeSubmenuIndicator(props) {
+    var elem = document.createElement('img');
+    elem.src = props.src;
+    elem.width = props.width;
+    elem.height = props.height;
+    elem.classList.add(INDICATOR_CSS_CLASS);
+    return elem;
+  };
+  /**
+   * @param { string } menuItemID 
+   */
+
+
+  var asMenuItem = function asMenuItem(menuItemID) {
+    var menuItem = document.getElementById(menuItemID);
+
+    if (menuItem instanceof context_menu_MenuItem) {
+      return menuItem;
+    } else {
+      throw new Error("The item with id=".concat(menuItemID, " is not a menu item"));
+    }
+  }; // Get an extension instance to enable users to access extension methods
+
+
+  var getInstance = function getInstance(cy) {
+    var instance = {
+      // Returns whether the extension is active
+      isActive: function isActive() {
+        return getScratchProp('active');
+      },
+      // Appends given menu item to the menu items list.
+      appendMenuItem: function appendMenuItem(item) {
+        var parentID = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+        createAndAppendMenuItemComponent(item, parentID);
+        return cy;
+      },
+      // Appends menu items in the given list to the menu items list.
+      appendMenuItems: function appendMenuItems(items) {
+        var parentID = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+        createAndAppendMenuItemComponents(items, parentID);
+        return cy;
+      },
+      // Removes the menu item with given ID.
+      removeMenuItem: function removeMenuItem(itemID) {
+        var item = asMenuItem(itemID);
+        cxtMenu.removeMenuItem(item);
+        return cy;
+      },
+      // Sets whether the menuItem with given ID will have a following divider.
+      setTrailingDivider: function setTrailingDivider(itemID, status) {
+        var menuItem = asMenuItem(itemID);
+
+        if (status) {
+          menuItem.classList.add(DIVIDER_CSS_CLASS);
+        } else {
+          menuItem.classList.remove(DIVIDER_CSS_CLASS);
+        }
+
+        return cy;
+      },
+      // Inserts given item before the existingitem.
+      insertBeforeMenuItem: function insertBeforeMenuItem(item, existingItemID) {
+        var menuItemComponent = createMenuItemComponent(item);
+        var existingItem = asMenuItem(existingItemID);
+        cxtMenu.insertMenuItem(menuItemComponent, {
+          before: existingItem
+        });
+        return cy;
+      },
+      // Moves the item to the submenu of the parent with the given ID
+      moveToSubmenu: function moveToSubmenu(itemID) {
+        var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+        var item = asMenuItem(itemID);
+
+        if (options === null) {
+          cxtMenu.moveToSubmenu(item);
+        } else if (typeof options === 'string') {
+          // options is parentID
+          var parent = asMenuItem(options.toString());
+          cxtMenu.moveToSubmenu(item, parent);
+        } else if (typeof options.coreAsWell !== 'undefined' || typeof options.selector !== 'undefined') {
+          cxtMenu.moveToSubmenu(item, null, options);
+        } else {
+          console.warn('options neither has coreAsWell nor selector property but it is an object. Are you sure that this is what you want to do?');
+        }
+
+        return cy;
+      },
+      // Moves the item with given ID before the existingitem.
+      moveBeforeOtherMenuItem: function moveBeforeOtherMenuItem(itemID, existingItemID) {
+        var item = asMenuItem(itemID);
+        var before = asMenuItem(existingItemID);
+        cxtMenu.moveBefore(item, before);
+        return cy;
+      },
+      // Disables the menu item with given ID.
+      disableMenuItem: function disableMenuItem(itemID) {
+        var menuItem = asMenuItem(itemID);
+        menuItem.disable();
+        return cy;
+      },
+      // Enables the menu item with given ID.
+      enableMenuItem: function enableMenuItem(itemID) {
+        var menuItem = asMenuItem(itemID);
+        menuItem.enable();
+        return cy;
+      },
+      // Disables the menu item with given ID.
+      hideMenuItem: function hideMenuItem(itemID) {
+        var menuItem = asMenuItem(itemID);
+        menuItem.hide();
+        return cy;
+      },
+      // Enables the menu item with given ID.
+      showMenuItem: function showMenuItem(itemID) {
+        var menuItem = asMenuItem(itemID);
+        menuItem.display();
+        return cy;
+      },
+      // Destroys the extension instance
+      destroy: function destroy() {
+        destroyCxtMenu();
+        return cy;
+      }
+    };
+    return instance;
+  };
+
+  if (opts !== 'get') {
+    // https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_custom_elements
+    context_menu_MenuItem.define();
+    MenuItemList.define();
+    ContextMenu.define(); // merge the options with default ones
+
+    options = extend(DEFAULT_OPTS, opts);
+    setScratchProp('options', options); // Clear old context menu if needed
+
+    if (getScratchProp('active')) {
+      destroyCxtMenu();
+    }
+
+    setScratchProp('active', true);
+    setScratchProp('submenuIndicatorGen', makeSubmenuIndicator.bind(undefined, options.submenuIndicator)); // Create cxtMenu and append it to body
+
+    var cxtMenuClasses = getClassStr(options.contextMenuClasses);
+    setScratchProp('cxtMenuClasses', cxtMenuClasses);
+
+    var onMenuItemClick = function onMenuItemClick() {
+      return setScratchProp('cxtMenuPosition', undefined);
+    };
+
+    var scratchpad = cy.scratch('cycontextmenus');
+    cxtMenu = new ContextMenu(onMenuItemClick, scratchpad);
+    setScratchProp('cxtMenu', cxtMenu);
+    document.body.appendChild(cxtMenu);
+    setScratchProp('cxtMenuItemClasses', getClassStr(options.menuItemClasses));
+    var menuItems = options.menuItems;
+    createAndAppendMenuItemComponents(menuItems);
+    bindOnCxttap();
+    bindCyEvents();
+    bindOnClick();
+    preventDefaultContextTap();
+  }
+
+  return getInstance(this);
+}
+
+/***/ })
+/******/ ]);
+});

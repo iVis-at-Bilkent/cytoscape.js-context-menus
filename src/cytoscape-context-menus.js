@@ -63,7 +63,7 @@ export function contextMenus(opts) {
     setScratchProp('onCxttap', onCxttap);
   };
 
-  let bindCyEvents = (hideOnZoom) => {
+  let bindCyEvents = () => {
 
     let eventCyTapStart = () => {
       cxtMenu.hide();
@@ -74,14 +74,22 @@ export function contextMenus(opts) {
     cy.on('tapstart', eventCyTapStart);
     setScratchProp('eventCyTapStart', eventCyTapStart);
 
-    if (hideOnZoom) {
-      let eventCyZoom = () => {
-        cxtMenu.hide();
-      };
+    let eventCyZoom = () => {
+      cxtMenu.hide();
+    };
 
-      cy.on('zoom', eventCyZoom);
-      setScratchProp('onZoom', eventCyZoom);
-    }
+    cy.on('zoom', eventCyZoom);
+    setScratchProp('onZoom', eventCyZoom);
+  };
+
+  let bindOnClick = () => {
+    let onClick = () => {
+      cxtMenu.hide();
+      setScratchProp('cxtMenuPosition', undefined);
+    };
+
+    document.body.addEventListener('click', onClick);
+    setScratchProp('hideOnNonCyClick', onClick);
   };
 
   // Adjusts context menu if necessary
@@ -171,24 +179,18 @@ export function contextMenus(opts) {
 
     cy.off('tapstart', getScratchProp('eventCyTapStart'));
     cy.off(options.evtType, getScratchProp('onCxttap'));
+    cy.off('zoom', getScratchProp('onZoom'));
+    document.body.removeEventListener('click', getScratchProp('hideOnNonCyClick'));
     
-    if (hasScratchProp('onZoom')) {
-      cy.off('zoom', getScratchProp('onZoom'));
-      setScratchProp('onZoom', undefined);
-    }
-
-    if (hasScratchProp('hideOnNonCyClick')) {
-      document.body.removeEventListener('click', getScratchProp('hideOnNonCyClick'));
-      setScratchProp('hideOnNonCyClick', undefined);
-    }
-
     cxtMenu.parentNode.removeChild(cxtMenu);
     cxtMenu = undefined;
-
+    
     setScratchProp('cxtMenu', undefined);
     setScratchProp('active', false);
     setScratchProp('anyVisibleChild', false);
     setScratchProp('onCxttap', undefined);
+    setScratchProp('onZoom', undefined);
+    setScratchProp('hideOnNonCyClick', undefined);
   };
 
   let makeSubmenuIndicator = (props) => {
@@ -357,17 +359,8 @@ export function contextMenus(opts) {
     createAndAppendMenuItemComponents(menuItems);
 
     bindOnCxttap();
-    bindCyEvents(options.hideOnZoom);
-
-    if (options.hideOnNonCyClick) {
-      let onClick = () => {
-        cxtMenu.hide();
-        setScratchProp('cxtMenuPosition', undefined);
-      };
-
-      document.body.addEventListener('click', onClick);
-      setScratchProp('hideOnNonCyClick', onClick);
-    }
+    bindCyEvents();
+    bindOnClick();
 
     utils.preventDefaultContextTap();
   }

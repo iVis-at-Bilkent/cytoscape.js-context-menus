@@ -39,7 +39,5 @@ export const DEFAULT_OPTS = {
     contextMenuClasses: [
       CXT_MENU_CSS_CLASS,
     ],
-    submenuIndicator: { src: 'assets/submenu-indicator-default.svg', width: 12, height: 12 },
-    hideOnZoom: false,
-    hideOnNonCyClick: true,
+    submenuIndicator: { src: 'assets/submenu-indicator-default.svg', width: 12, height: 12 }
 };
