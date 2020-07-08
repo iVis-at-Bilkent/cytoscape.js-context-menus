@@ -123,8 +123,10 @@ var options = {
     ],
     // Indicates that the menu item has a submenu. If not provided default one will be used
     submenuIndicator: { src: 'assets/submenu-indicator-default.svg', width: 12, height: 12 },
-    // Whether to hide or not when zoomed. False by default.
-    hideOnZoom: true,
+    // Hide when zoomed in cytoscape area. `false` by default.
+    hideOnZoom: false,
+    // Hide when a left click occurs on the document body. `true` by default.
+    hideOnNonCyClick: true,
 };
 ```
 
@@ -185,7 +187,7 @@ var instance = cy.contextMenus(options);
 
 ### Other API
 
-#### ```cy.contextMenus('get')```
+#### `cy.contextMenus('get')`
 * Returns the existing instance to the extension
 
 ## Publishing instructions

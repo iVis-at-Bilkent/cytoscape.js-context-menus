@@ -15,6 +15,9 @@ export function contextMenus(opts) {
 
   let setScratchProp = (propname, value) => 
     cy.scratch('cycontextmenus')[propname] = value;
+
+  let hasScratchProp = (propname) =>
+    typeof cy.scratch('cycontextmenus')[propname] !== 'undefined';
   
   let options = getScratchProp('options');
   /** @type { ContextMenu } */
@@ -71,11 +74,11 @@ export function contextMenus(opts) {
     cy.on('tapstart', eventCyTapStart);
     setScratchProp('eventCyTapStart', eventCyTapStart);
 
-    let eventCyZoom = () => {
-      cxtMenu.hide();
-    };
-
     if (hideOnZoom) {
+      let eventCyZoom = () => {
+        cxtMenu.hide();
+      };
+
       cy.on('zoom', eventCyZoom);
       setScratchProp('onZoom', eventCyZoom);
     }
@@ -167,11 +170,21 @@ export function contextMenus(opts) {
     cxtMenu.removeAllMenuItems();
 
     cy.off('tapstart', getScratchProp('eventCyTapStart'));
-    cy.off('zoom', getScratchProp('onZoom'));
     cy.off(options.evtType, getScratchProp('onCxttap'));
+    
+    if (hasScratchProp('onZoom')) {
+      cy.off('zoom', getScratchProp('onZoom'));
+      setScratchProp('onZoom', undefined);
+    }
+
+    if (hasScratchProp('hideOnNonCyClick')) {
+      document.body.removeEventListener('click', getScratchProp('hideOnNonCyClick'));
+      setScratchProp('hideOnNonCyClick', undefined);
+    }
 
     cxtMenu.parentNode.removeChild(cxtMenu);
     cxtMenu = undefined;
+
     setScratchProp('cxtMenu', undefined);
     setScratchProp('active', false);
     setScratchProp('anyVisibleChild', false);
@@ -345,6 +358,17 @@ export function contextMenus(opts) {
 
     bindOnCxttap();
     bindCyEvents(options.hideOnZoom);
+
+    if (options.hideOnNonCyClick) {
+      let onClick = () => {
+        cxtMenu.hide();
+        setScratchProp('cxtMenuPosition', undefined);
+      };
+
+      document.body.addEventListener('click', onClick);
+      setScratchProp('hideOnNonCyClick', onClick);
+    }
+
     utils.preventDefaultContextTap();
   }
   
