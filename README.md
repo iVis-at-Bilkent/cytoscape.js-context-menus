@@ -14,7 +14,10 @@ U. Dogrusoz , A. Karacelik, I. Safarli, H. Balci, L. Dervishi, and M.C. Siper, "
 
 ## Demo
 
-Click [here](https://raw.githack.com/iVis-at-Bilkent/cytoscape.js-context-menus/unstable/demo.html) (simple) or [here](https://raw.githack.com/iVis-at-Bilkent/cytoscape.js-context-menus/unstable/demo-customized.html) (customized) or [here](https://raw.githack.com/iVis-at-Bilkent/cytoscape.js-context-menus/unstable/demo-show-hide-menuitem.html) (with different menu items) for demos
+* [Simple demo](https://raw.githack.com/iVis-at-Bilkent/cytoscape.js-context-menus/unstable/demo.html)
+* [Customized context menus](https://raw.githack.com/iVis-at-Bilkent/cytoscape.js-context-menus/unstable/demo-customized.html) 
+* [With different menu items](https://raw.githack.com/iVis-at-Bilkent/cytoscape.js-context-menus/unstable/demo-show-hide-menuitem.html)
+* [With submenus](https://raw.githack.com/iVis-at-Bilkent/cytoscape.js-context-menus/unstable/demo-submenu.html)
 
 ## Dependencies
 
@@ -69,6 +72,7 @@ var options = {
     // Possible options https://js.cytoscape.org/#events/user-input-device-events
     evtType: 'cxttap',
     // List of initial menu items
+    // A menu item must have either onClickFunction or submenu or both
     menuItems: [/*
       {
         id: 'remove', // ID of menu item
@@ -85,6 +89,7 @@ var options = {
         show: false, // Whether the item will be shown or not
         hasTrailingDivider: true, // Whether the item will have a trailing divider
         coreAsWell: false // Whether core instance have this item on cxttap
+        submenu: [] // Shows the listed menuItems as a submenu for this item. An item must have either submenu or onClickFunction or both.
       },
       {
         id: 'hide',
@@ -119,45 +124,65 @@ var options = {
 };
 ```
 
+**Note:** `selector` and `coreAsWell` options are ignored for the items that are inside a submenu. Their visiblity depends on their root parent's visibility. 
+
 ## API
 
-```js
-var instance = cy.contextMenus( options );
-```
-
-An instance has a number of functions available:
+### Instance API
 
 ```js
-instance.isActive(); // Returns whether the extension is active.
-
-instance.appendMenuItem(item); // Appends given menu item to the menu items list.
-
-instance.appendMenuItems(items); // Appends menu items in the given list to the menu items list.
-
-instance.removeMenuItem(itemID); // Removes the menu item with given ID.
-
-instance.setTrailingDivider(itemID, status); // Sets whether the menuItem with given ID will have a following divider.
-
-instance.insertBeforeMenuItem(item, existingItemID); // Inserts given item before the existingitem.
-
-instance.moveBeforeOtherMenuItem(itemID, existingItemID); // Moves the item with given ID before the existingitem.
-
-instance.disableMenuItem(itemID); // Disables the menu item with given ID.
-
-instance.enableMenuItem(itemID); // Enables the menu item with given ID.
-
-instance.showMenuItem(itemID); // Shows the menu item with given ID.
-
-instance.hideMenuItem(itemID); // Hides the menu item with given ID.
-
-instance.destroy(); // Destroys the extension instance
+var instance = cy.contextMenus(options);
 ```
 
-You can also get an existing instance:
+#### `instance.isActive()`
+* Returns whether the extension is active.
 
-```js
-cy.contextMenus('get');
-```
+#### `instance.appendMenuItem(item, parentID = undefined)`
+* Appends given menu item to the menu items list.
+* If parentID is specified, the item is inserted to the submenu of the item with parentID. 
+* If the parent has no submenu then it will automatically be created. 
+* If not specified item will be inserted to the root of the contextmenu
+
+#### `instance.appendMenuItems(items, parentID = undefined)`
+* Same with above but takes an array of items
+
+#### `instance.removeMenuItem(itemID)`
+* Removes the menu item with given ID and its submenu along with
+
+#### `instance.setTrailingDivider(itemID, status)`
+* Sets whether the menuItem with given ID will have a following divider
+
+#### `instance.insertBeforeMenuItem(item, existingItemID)`
+* Inserts given item before the existingitem
+
+#### `instance.moveToSubmenu(itemID, options = null)`
+* Moves the item with given ID to the submenu of the parent with the given ID or to root with the specified options
+* If `options` is a `string`, then it is the id of the parent
+* If `options` is a `{ selector?: string, coreAsWell?: boolean }`, then old properties are overwritten by them and the menu item is moved to the root. If it doesn't have either properties item is **not moved**.
+* If `options` is null or not provided, then it is just moved to the root  
+
+#### `instance.moveBeforeOtherMenuItem(itemID, existingItemID)`
+* Inserts the `item` before the `existingItem` and moves it to the submenu that contains the `existingItem`
+
+#### `instance.disableMenuItem(itemID)`
+* Disables the menu item with given ID.
+
+#### `instance.enableMenuItem(itemID)`
+* Enables the menu item with given ID.
+
+#### `instance.showMenuItem(itemID)`
+* Shows the menu item with given ID.
+
+#### `instance.hideMenuItem(itemID)`
+* Hides the menu item with given ID.
+
+#### `instance.destroy()`
+* Destroys the extension instance
+
+### Other API
+
+#### ```cy.contextMenus('get')```
+* Returns the existing instance to the extension
 
 ## Publishing instructions
 

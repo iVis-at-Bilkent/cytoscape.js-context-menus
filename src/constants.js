@@ -1,3 +1,8 @@
+export const CXT_MENU_CSS_CLASS = 'cy-context-menus-cxt-menu';
+export const MENUITEM_CSS_CLASS = 'cy-context-menus-cxt-menuitem';
+export const DIVIDER_CSS_CLASS = 'cy-context-menus-divider';
+export const INDICATOR_CSS_CLASS = 'cy-context-menus-submenu-indicator';
+
 export const DEFAULT_OPTS = {
     // Customize event to bring up the context menu
     // Possible options https://js.cytoscape.org/#events/user-input-device-events
@@ -28,13 +33,11 @@ export const DEFAULT_OPTS = {
     ],
     // css classes that menu items will have
     menuItemClasses: [
-      // add class names to this list
+      MENUITEM_CSS_CLASS,
     ],
     // css classes that context menu will have
     contextMenuClasses: [
-      // add class names to this list
-    ]
+      CXT_MENU_CSS_CLASS,
+    ],
+    submenuIndicator: { src: 'assets/submenu-indicator-default.svg', width: 12, height: 12 }
 };
-
-export const MENUITEM_CSS_CLASS = 'cy-context-menus-cxt-menuitem';
-export const DIVIDER_CSS_CLASS = 'cy-context-menus-divider';

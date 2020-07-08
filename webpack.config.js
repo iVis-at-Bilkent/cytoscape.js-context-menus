@@ -16,10 +16,10 @@ module.exports = {
         library: camelcase(pkg.name),
         libraryTarget: 'umd',
     },
-    mode: PROD ? 'production' : 'development',
+    mode: 'production',
     // devtool: PROD ? false : 'inline-source-map',
     optimization: {
-        minimize: false,
+        minimize: PROD ? true: false,
     },
     module: {
         rules: [

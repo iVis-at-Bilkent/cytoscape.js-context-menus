@@ -1,5 +1,6 @@
 import * as utils from './utils.js';
-import { DEFAULT_OPTS, MENUITEM_CSS_CLASS, DIVIDER_CSS_CLASS } from './constants.js';
+import { DEFAULT_OPTS, DIVIDER_CSS_CLASS, INDICATOR_CSS_CLASS } from './constants.js';
+import { MenuItem, ContextMenu, MenuItemList } from './context-menu.js';
 
 export function contextMenus(opts) {
   let cy = this;
@@ -16,102 +17,59 @@ export function contextMenus(opts) {
     cy.scratch('cycontextmenus')[propname] = value;
   
   let options = getScratchProp('options');
+  /** @type { ContextMenu } */
   let cxtMenu = getScratchProp('cxtMenu');
 
-  // Get string representation of css classes
-  let getMenuItemClassStr = (classes, hasTrailingDivider) => {
-    let str = utils.getClassStr(classes);
+  /**
+   * Right click event
+   */
+  let bindOnCxttap = () => {
 
-    str += ' ' + MENUITEM_CSS_CLASS;
-
-    if (hasTrailingDivider) {
-      str += ' ' + DIVIDER_CSS_CLASS;
-    }
-
-    return str;
-  };
-
-  let displayComponent = (component) => {
-    component.style.display = 'block';
-  };
-
-  let hideComponent = (component) => {
-    component.style.display = 'none';
-  };
-
-  let hideMenuItemComponents = () => {
-    let items = cxtMenu.children;
-    for (let item of items) {
-      item.style.display = 'none';
-    }
-  };
-
-  let bindOnClickFunction = (component, onClickFcn) => {        
-    let callOnClickFn = () => { 
-      onClickFcn(getScratchProp('currentCyEvent')); 
-    };
-    component.addEventListener('click', callOnClickFn);
-
-    component.data['call-on-click-function'] = callOnClickFn;
-  }
-
-  let bindCyCxttap = (component, selector, coreAsWell) => {
-    let _cxtfcn = (event) => {
+    // TODO: move this to ContextMenu, just do the binding here
+    let onCxttap = (event) => {
       setScratchProp('currentCyEvent', event);
       adjustCxtMenu(event); // adjust the position of context menu
-      if (component.data['show']) {
-        if (!utils.isElementVisible(cxtMenu)) {
-          displayComponent(cxtMenu);
-        }
-        // anyVisibleChild indicates if there is any visible child of context menu if not do not show the context menu
-        setScratchProp('anyVisibleChild', true);// there is visible child
-        displayComponent(component); // display the component
+      
+      let target = event.target || event.cyTarget;
+
+      // Check for each menuItem, if show is true, show the menuItem
+      for (let menuItem of cxtMenu.children) {
+          if (menuItem instanceof MenuItem) {
+              let shouldDisplay = (target === cy) ? 
+                  // If user clicked in cy area then show core items
+                  menuItem.coreAsWell :
+                  // If selector of the item matches then show
+                  target.is(menuItem.selector);
+              // User clicked on empty area and menuItem is core
+              if (shouldDisplay && menuItem.show) {
+                cxtMenu.display();
+
+                // anyVisibleChild indicates if there is any visible child of context menu if not do not show the context menu
+                setScratchProp('anyVisibleChild', true); // there is visible child
+                menuItem.display();
+              }
+          }
       }
 
-      // If there is no visible element hide the context menu as well(If it is visible)
       if (!getScratchProp('anyVisibleChild') && utils.isElementVisible(cxtMenu)) {
-        hideComponent(cxtMenu);
+        cxtMenu.hide();
       }
     };
 
-    let cxtfcn;
-    let cxtCoreFcn;
-    if (coreAsWell) {
-      cy.on(options.evtType, cxtCoreFcn = (event) => {
-        let target = event.target || event.cyTarget;
-        if (target != cy) {
-          return;
-        }
-
-        _cxtfcn(event);
-      });
-    }
-
-    if (selector) {
-      cy.on(options.evtType, selector, cxtfcn = (event) => {
-        _cxtfcn(event);
-      });
-    }
-
-    // Bind the event to menu item to be able to remove it back
-    component.data['cy-context-menus-cxtfcn'] = cxtfcn;
-    component.data['cy-context-menus-cxtcorefcn'] = cxtCoreFcn; 
+    cy.on(options.evtType, onCxttap);
+    setScratchProp('onCxttap', onCxttap);
   };
 
   let bindCyEvents = () => {
+
     let eventCyTapStart = () => {
-      hideComponent(cxtMenu);
+      cxtMenu.hide();
       setScratchProp('cxtMenuPosition', undefined);
       setScratchProp('currentCyEvent', undefined);
     };
     
-    setScratchProp('eventCyTapStart', eventCyTapStart);
     cy.on('tapstart', eventCyTapStart);
-  };
-
-  let performBindings = (component, onClickFcn, selector, coreAsWell) => {
-    bindOnClickFunction(component, onClickFcn);
-    bindCyCxttap(component, selector, coreAsWell);
+    setScratchProp('eventCyTapStart', eventCyTapStart);
   };
 
   // Adjusts context menu if necessary
@@ -121,7 +79,7 @@ export function contextMenus(opts) {
     let cyPos = event.position || event.cyPosition;
 
     if (currentCxtMenuPosition != cyPos) {
-      hideMenuItemComponents();
+      cxtMenu.hideMenuItems();
       setScratchProp('anyVisibleChild', false);// we hide all children there is no visible child remaining
       setScratchProp('cxtMenuPosition', cyPos);
       
@@ -167,90 +125,29 @@ export function contextMenus(opts) {
     }
   };
 
-  let createAndAppendMenuItemComponents = (menuItems) => {
-    for (let i = 0; i < menuItems.length; i++) {
-      createAndAppendMenuItemComponent(menuItems[i]);
-    }
-  };
-
-  let createAndAppendMenuItemComponent = (menuItem) => {
+  let createAndAppendMenuItemComponent = (opts, parentID = undefined) => {
     // Create and append menu item
-    let menuItemComponent = createMenuItemComponent(menuItem);
-    appendComponentToCxtMenu(menuItemComponent);
+    let menuItemComponent = createMenuItemComponent(opts);
 
-    performBindings(menuItemComponent, menuItem.onClickFunction, menuItem.selector, menuItem.coreAsWell);
+    if (typeof parentID !== 'undefined') {
+      let parent = asMenuItem(parentID);
+
+      cxtMenu.insertMenuItem(menuItemComponent, { parent });
+    } else {
+      cxtMenu.insertMenuItem(menuItemComponent);
+    }    
   };//insertComponentBeforeExistingItem(component, existingItemID)
 
-  let createAndInsertMenuItemComponentBeforeExistingComponent = (menuItem, existingComponentID) => {
-    // Create and insert menu item
-    let menuItemComponent = createMenuItemComponent(menuItem);
-    insertComponentBeforeExistingItem(menuItemComponent, existingComponentID);
-
-    performBindings(menuItemComponent, menuItem.onClickFunction, menuItem.selector, menuItem.coreAsWell);
-  };
-
-  // create cxtMenu and append it to body
-  let createAndAppendCxtMenuComponent = () => {
-    let cxtMenu = document.createElement('div');
-    let classes = utils.getClassStr(options.contextMenuClasses);
-
-    cxtMenu.setAttribute('class', classes);
-    cxtMenu.style.position = 'absolute'; // So that left, right, etc. css attributes would work
-    cxtMenu.classList.add('cy-context-menus-cxt-menu');
-    setScratchProp('cxtMenu', cxtMenu);
-
-    document.body.appendChild(cxtMenu);
-    return cxtMenu;
+  let createAndAppendMenuItemComponents = (optionsArr, parentID = undefined) => {
+    for (let i = 0; i < optionsArr.length; i++) {
+      createAndAppendMenuItemComponent(optionsArr[i], parentID);
+    }
   };
 
   // Creates a menu item as an html component
-  let createMenuItemComponent = (item) => {
-    let classStr = getMenuItemClassStr(options.menuItemClasses, item.hasTrailingDivider);
-    let itemEl = document.createElement('button');
-    itemEl.setAttribute('id', item.id);
-    itemEl.setAttribute('class', classStr);
-
-    if (item.tooltipText) {
-      itemEl.setAttribute('title', item.tooltipText);
-    }
-
-    if (item.disabled) {
-      utils.setBooleanAttribute(itemEl, 'disabled', true);
-    }
-
-    if (item.image) {
-      let img = document.createElement('img');
-      img.src = item.image.src;
-      img.width = item.image.width;
-      img.height = item.image.height;
-      img.style.position = 'absolute';
-      img.style.top = item.image.y + 'px';
-      img.style.left = item.image.x + 'px';
-      
-      itemEl.appendChild(img);
-    }
-
-    itemEl.innerHTML += item.content;
-
-    itemEl['data'] = {
-      selector: item.selector,
-      'on-click-function': item.onClickFunction,
-      show: item.show || true,
-    };
-
-    return itemEl;
-  };
-
-  // Appends the given component to cxtMenu
-  let appendComponentToCxtMenu = (component) => {
-    cxtMenu.appendChild(component);
-    bindMenuItemClickFunction(component);
-  };
-
-  // Insert the given component to cxtMenu just before the existing item with given ID
-  let insertComponentBeforeExistingItem = (component, existingItemID) => {
-    let existingItem = document.getElementById(existingItemID);
-    existingItem.parentNode.insertBefore(component, existingItem);
+  let createMenuItemComponent = (opts) => {
+    let scratchpad = cy.scratch('cycontextmenus');
+    return new MenuItem(opts, cxtMenu.onMenuItemClick, scratchpad);
   };
 
   let destroyCxtMenu = () => {
@@ -258,88 +155,38 @@ export function contextMenus(opts) {
       return;
     }
 
-    removeAndUnbindMenuItems();
+    cxtMenu.removeAllMenuItems();
 
     cy.off('tapstart', getScratchProp('eventCyTapStart'));
+    cy.off(options.evtType, getScratchProp('onCxttap'));
 
     cxtMenu.parentNode.removeChild(cxtMenu);
     cxtMenu = undefined;
-    setScratchProp(cxtMenu, undefined);
+    setScratchProp('cxtMenu', undefined);
     setScratchProp('active', false);
     setScratchProp('anyVisibleChild', false);
+    setScratchProp('onCxttap', undefined);
   };
 
-  let removeAndUnbindMenuItems = () => {
-    for (let child of cxtMenu.children) {
-      removeAndUnbindMenuItem(child.getAttribute('id'));
-    }        
+  let makeSubmenuIndicator = (props) => {
+    let elem = document.createElement('img');
+    elem.src = props.src;
+    elem.width = props.width;
+    elem.height = props.height;
+    elem.classList.add(INDICATOR_CSS_CLASS);
+
+    return elem;
   };
 
-  let removeAndUnbindMenuItem = (itemID) => {
-    let component = typeof itemID === 'string' ? document.getElementById(itemID) : itemID;
-    let cxtfcn = component.data['cy-context-menus-cxtfcn'];
-    let selector = component.data['selector'];
-    let callOnClickFcn = component.data['call-on-click-function'];
-    let hideCxtMenuFn = component.data['hide-cxt-menu-fn'];
-    let cxtCoreFcn = component.data['cy-context-menus-cxtcorefcn'];
-    
-    if (cxtfcn) {
-      cy.off(options.evtType, selector, cxtfcn);
-    }
-
-    if (cxtCoreFcn) {
-      cy.off(options.evtType, cxtCoreFcn);
-    }
-
-    if (callOnClickFcn) {
-      component.removeEventListener('click', callOnClickFcn);
-      component.removeEventListener('click', hideCxtMenuFn);
-    }
-
-    component.parentNode.removeChild(component);
-  };
-
-  let moveBeforeOtherMenuItemComponent = (componentID, existingComponentID) => {
-    if (componentID === existingComponentID) {
-      return;
-    }
-
-    let component = document.getElementById(componentID);
-    component.parentNode.removeChild(component);
-    let existingComponent = document.getElementById(existingComponentID);
-
-    existingComponent.parentNode.insertBefore(component, existingComponent);
-  };
-
-  let bindMenuItemClickFunction = (component) => {
-    let hideCxtMenu = () => {
-      hideComponent(cxtMenu);
-      setScratchProp('cxtMenuPosition', undefined);
-    };
-    component.data['hide-cxt-menu-fn'] = hideCxtMenu;
-
-    component.addEventListener('click', hideCxtMenu); 
-  };
-
-  // this sets disabled to true
-  let disableComponent = (componentID) => {
-    let elem = document.getElementById(componentID);
-    utils.setBooleanAttribute(elem, 'disabled', true);
-  };
-
-  // this sets disabled to false by removing
-  let enableComponent = (componentID) => {
-    let elem = document.getElementById(componentID);
-    utils.setBooleanAttribute(elem, 'disabled', false);
-  };
-
-  let setTrailingDivider = (componentID, status) => {
-    let component = document.getElementById(componentID);
-
-    if (status) {
-      component.classList.add(DIVIDER_CSS_CLASS);
+  /**
+   * @param { string } menuItemID 
+   */
+  let asMenuItem = (menuItemID) => {
+    let menuItem = document.getElementById(menuItemID);
+    if (menuItem instanceof MenuItem) {
+      return menuItem;
     } else {
-      component.classList.remove(DIVIDER_CSS_CLASS);
+      throw new Error(`The item with id=${menuItemID} is not a menu item`);
     }
   };
 
@@ -351,61 +198,93 @@ export function contextMenus(opts) {
         return getScratchProp('active');
       },
       // Appends given menu item to the menu items list.
-      appendMenuItem: function(item) {
-        createAndAppendMenuItemComponent(item);
+      appendMenuItem: function(item, parentID = undefined) {
+        createAndAppendMenuItemComponent(item, parentID);
         return cy;
       },
       // Appends menu items in the given list to the menu items list.
-      appendMenuItems: function(items) {
-        createAndAppendMenuItemComponents(items);
+      appendMenuItems: function(items, parentID = undefined) {
+        createAndAppendMenuItemComponents(items, parentID);
         return cy;
       },
       // Removes the menu item with given ID.
       removeMenuItem: function(itemID) {
-        removeAndUnbindMenuItem(itemID);
+        let item = asMenuItem(itemID);
+
+        cxtMenu.removeMenuItem(item);
         return cy;
       },
       // Sets whether the menuItem with given ID will have a following divider.
       setTrailingDivider: function(itemID, status) {
-        setTrailingDivider(itemID, status);
+        let menuItem = asMenuItem(itemID);
+
+        if (status) {
+          menuItem.classList.add(DIVIDER_CSS_CLASS);
+        } else {
+          menuItem.classList.remove(DIVIDER_CSS_CLASS);
+        }
         return cy;
       },
       // Inserts given item before the existingitem.
       insertBeforeMenuItem: function(item, existingItemID) {
-        createAndInsertMenuItemComponentBeforeExistingComponent(item, existingItemID);
+        let menuItemComponent = createMenuItemComponent(item);
+        let existingItem = asMenuItem(existingItemID);
+
+        cxtMenu.insertMenuItem(menuItemComponent, { before: existingItem });
+        return cy;
+      },
+      // Moves the item to the submenu of the parent with the given ID
+      moveToSubmenu: function(itemID, options = null) {
+        let item = asMenuItem(itemID);
+
+        if (options === null) {
+          cxtMenu.moveToSubmenu(item);
+        } else if (typeof options === 'string') {
+          // options is parentID
+          let parent = asMenuItem(options.toString());
+          cxtMenu.moveToSubmenu(item, parent);
+        } else if (typeof options.coreAsWell !== 'undefined' || typeof options.selector !== 'undefined') {
+          cxtMenu.moveToSubmenu(item, null, options);
+        } else {
+          console.warn('options neither has coreAsWell nor selector property but it is an object. Are you sure that this is what you want to do?');
+        }
+
         return cy;
       },
       // Moves the item with given ID before the existingitem.
       moveBeforeOtherMenuItem: function(itemID, existingItemID) {
-        moveBeforeOtherMenuItemComponent(itemID, existingItemID);
+        let item = asMenuItem(itemID);
+        let before = asMenuItem(existingItemID);
+
+        cxtMenu.moveBefore(item, before);
         return cy;
       },
       // Disables the menu item with given ID.
       disableMenuItem: function(itemID) {
-        disableComponent(itemID);
+        let menuItem = asMenuItem(itemID);
+
+        menuItem.disable();
         return cy;
       },
       // Enables the menu item with given ID.
       enableMenuItem: function(itemID) {
-        enableComponent(itemID);
+        let menuItem = asMenuItem(itemID);
+        
+        menuItem.enable();
         return cy;
       },
       // Disables the menu item with given ID.
       hideMenuItem: function(itemID) {
-        let item = document.getElementById(itemID);
-        if (item) {
-          item['data']['show'] = false;
-          hideComponent(item);
-        }
+        let menuItem = asMenuItem(itemID);
+
+        menuItem.hide();
         return cy;
       },
       // Enables the menu item with given ID.
       showMenuItem: function(itemID) {
-        let item = document.getElementById(itemID);
-        if (item) {
-          item['data']['show'] = true;
-          displayComponent(item);
-        }
+        let menuItem = asMenuItem(itemID);
+        
+        menuItem.display();
         return cy;
       },
       // Destroys the extension instance
@@ -419,6 +298,11 @@ export function contextMenus(opts) {
   };
 
   if ( opts !== 'get' ) {
+    // https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_custom_elements
+    MenuItem.define();
+    MenuItemList.define();
+    ContextMenu.define();
+
     // merge the options with default ones
     options = utils.extend(DEFAULT_OPTS, opts);
     setScratchProp('options', options);
@@ -430,11 +314,26 @@ export function contextMenus(opts) {
 
     setScratchProp('active', true);
 
-    cxtMenu = createAndAppendCxtMenuComponent();
+    setScratchProp('submenuIndicatorGen', makeSubmenuIndicator.bind(undefined, options.submenuIndicator));
 
+    // Create cxtMenu and append it to body
+    let cxtMenuClasses = utils.getClassStr(options.contextMenuClasses);
+    setScratchProp('cxtMenuClasses', cxtMenuClasses);
+
+    let onMenuItemClick = 
+      () => setScratchProp('cxtMenuPosition', undefined);
+      
+    let scratchpad = cy.scratch('cycontextmenus');
+    cxtMenu = new ContextMenu(onMenuItemClick, scratchpad);
+
+    setScratchProp('cxtMenu', cxtMenu);
+    document.body.appendChild(cxtMenu);
+
+    setScratchProp('cxtMenuItemClasses', utils.getClassStr(options.menuItemClasses));
     let menuItems = options.menuItems;
     createAndAppendMenuItemComponents(menuItems);
 
+    bindOnCxttap();
     bindCyEvents();
     utils.preventDefaultContextTap();
   }
