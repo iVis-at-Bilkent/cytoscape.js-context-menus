@@ -82,14 +82,19 @@ export function contextMenus(opts) {
     setScratchProp('onZoom', eventCyZoom);
   };
 
-  let bindOnClick = () => {
-    let onClick = () => {
-      cxtMenu.hide();
-      setScratchProp('cxtMenuPosition', undefined);
+  // Hide callbacks outside the cytoscape canvas
+  let bindHideCallbacks = () => {
+    let onClick = (event) => {
+      let cyContainer = cy.container();
+      // Hide only if click is outside of the Cytoscape area
+      if (!cyContainer.contains(event.target)) {
+        cxtMenu.hide();
+        setScratchProp('cxtMenuPosition', undefined);
+      }
     };
 
-    document.body.addEventListener('click', onClick);
-    setScratchProp('hideOnNonCyClick', onClick);
+    document.body.addEventListener('mousedown', onClick);
+    setScratchProp('hideOnNonCyClick', onClick);    
   };
 
   // Adjusts context menu if necessary
@@ -360,7 +365,7 @@ export function contextMenus(opts) {
 
     bindOnCxttap();
     bindCyEvents();
-    bindOnClick();
+    bindHideCallbacks();
 
     utils.preventDefaultContextTap();
   }

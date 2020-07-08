@@ -249,13 +249,18 @@ export class MenuItemList extends HTMLDivElement {
     }
 
     hide() {
-        this.hideMenuItemSubmenus();
-
-        this.style.display = 'none';
+        if (this.isVisible()) {
+            this.hideSubmenus();
+            this.style.display = 'none';
+        }
     }
 
     display() {
         this.style.display = 'block';
+    }
+
+    isVisible() {
+        return this.style.display !== 'none';
     }
 
     /**
@@ -271,7 +276,7 @@ export class MenuItemList extends HTMLDivElement {
         }
     }
 
-    hideMenuItemSubmenus() {
+    hideSubmenus() {
         for (let menuItem of this.children) {
             if (menuItem instanceof MenuItem) {
                 if (menuItem.submenu) {
