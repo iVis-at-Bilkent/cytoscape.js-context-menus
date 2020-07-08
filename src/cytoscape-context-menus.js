@@ -74,12 +74,12 @@ export function contextMenus(opts) {
     cy.on('tapstart', eventCyTapStart);
     setScratchProp('eventCyTapStart', eventCyTapStart);
 
-    let eventCyZoom = () => {
+    let eventCyViewport = () => {
       cxtMenu.hide();
     };
 
-    cy.on('zoom', eventCyZoom);
-    setScratchProp('onZoom', eventCyZoom);
+    cy.on('viewport', eventCyViewport);
+    setScratchProp('onViewport', eventCyViewport);
   };
 
   // Hide callbacks outside the cytoscape canvas
@@ -184,7 +184,7 @@ export function contextMenus(opts) {
 
     cy.off('tapstart', getScratchProp('eventCyTapStart'));
     cy.off(options.evtType, getScratchProp('onCxttap'));
-    cy.off('zoom', getScratchProp('onZoom'));
+    cy.off('viewport', getScratchProp('onViewport'));
     document.body.removeEventListener('click', getScratchProp('hideOnNonCyClick'));
     
     cxtMenu.parentNode.removeChild(cxtMenu);
@@ -194,7 +194,7 @@ export function contextMenus(opts) {
     setScratchProp('active', false);
     setScratchProp('anyVisibleChild', false);
     setScratchProp('onCxttap', undefined);
-    setScratchProp('onZoom', undefined);
+    setScratchProp('onViewport', undefined);
     setScratchProp('hideOnNonCyClick', undefined);
   };
 
