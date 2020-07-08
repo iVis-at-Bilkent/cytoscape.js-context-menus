@@ -114,3 +114,17 @@ export function getDimensionsHidden(element) {
 
   return rect;
 }
+
+/**
+ * Defines a new custom html element
+ * https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_custom_elements
+ * @param { string } name 
+ * @param { * } klass
+ * @param { string } extendsType 
+ */
+export function defineCustomElement(name, klass, extendsType) {
+  // We have to check otherwise it throws an exception if already added
+  if (typeof customElements.get(name) === 'undefined') {
+    customElements.define(name, klass, { extends: extendsType })
+  }
+}
