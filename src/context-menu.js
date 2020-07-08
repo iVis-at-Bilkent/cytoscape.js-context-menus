@@ -1,4 +1,4 @@
-import { setBooleanAttribute, getClassStr, isIn, getDimensionsHidden } from './utils';
+import { setBooleanAttribute, getClassStr, isIn, getDimensionsHidden, defineCustomElement } from './utils';
 import { DIVIDER_CSS_CLASS } from './constants';
 
 // TODO: add submenu property
@@ -232,7 +232,7 @@ export class MenuItem extends HTMLButtonElement {
     };  
 
     static define() {
-        customElements.define('ctx-menu-item', MenuItem, { extends: 'button' });
+        defineCustomElement('ctx-menu-item', MenuItem, 'button');
     }
 }
 
@@ -412,7 +412,7 @@ export class MenuItemList extends HTMLDivElement {
     }
 
     static define() {
-        customElements.define('menu-item-list', MenuItemList, { extends: 'div' });
+        defineCustomElement('menu-item-list', MenuItemList, 'div');
     }
 }
 
@@ -549,6 +549,6 @@ export class ContextMenu extends MenuItemList {
     }
 
     static define() {
-        customElements.define('ctx-menu', ContextMenu, { extends: 'div' });
+        defineCustomElement('ctx-menu', ContextMenu, 'div');
     }
 }
