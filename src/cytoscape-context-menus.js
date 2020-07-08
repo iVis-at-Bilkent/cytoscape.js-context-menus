@@ -86,8 +86,8 @@ export function contextMenus(opts) {
   let bindHideCallbacks = () => {
     let onClick = (event) => {
       let cyContainer = cy.container();
-      // Hide only if click is outside of the Cytoscape area
-      if (!cyContainer.contains(event.target)) {
+      // Hide only if click is outside of the Cytoscape area and the context menu
+      if (!cyContainer.contains(event.target) && !cxtMenu.contains(event.target)) {
         cxtMenu.hide();
         setScratchProp('cxtMenuPosition', undefined);
       }
