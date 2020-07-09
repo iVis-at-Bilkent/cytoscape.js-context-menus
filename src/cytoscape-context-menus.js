@@ -93,7 +93,7 @@ export function contextMenus(opts) {
       }
     };
 
-    document.body.addEventListener('mouseup', onClick);
+    document.addEventListener('mouseup', onClick);
     setScratchProp('hideOnNonCyClick', onClick);    
   };
 
