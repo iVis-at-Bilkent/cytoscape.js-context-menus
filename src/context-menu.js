@@ -39,10 +39,8 @@ export class MenuItem extends HTMLButtonElement {
         let className = this._getMenuItemClassStr(scratchpad['cxtMenuItemClasses'], params.hasTrailingDivider);
 
         super.setAttribute('class', className);
-
-        if (typeof params.tooltipText !== undefined) {
-            super.setAttribute('title', params.tooltipText);
-        }
+        
+        super.setAttribute('title', params.tooltipText ?? "");
 
         if (params.disabled) {
             setBooleanAttribute(this, 'disabled', true);
@@ -67,7 +65,7 @@ export class MenuItem extends HTMLButtonElement {
         this.data = {};
         this.clickFns = [];
         this.selector = params.selector;
-        this.show = params.show || true;
+        this.show = (typeof params.show === 'undefined') || params.show;
         this.coreAsWell = params.coreAsWell || false;
         this.scratchpad = scratchpad;
 
