@@ -15,6 +15,9 @@ export function contextMenus(opts) {
 
   let setScratchProp = (propname, value) => 
     cy.scratch('cycontextmenus')[propname] = value;
+
+  let hasScratchProp = (propname) =>
+    typeof cy.scratch('cycontextmenus')[propname] !== 'undefined';
   
   let options = getScratchProp('options');
   /** @type { ContextMenu } */
@@ -70,6 +73,28 @@ export function contextMenus(opts) {
     
     cy.on('tapstart', eventCyTapStart);
     setScratchProp('eventCyTapStart', eventCyTapStart);
+
+    let eventCyViewport = () => {
+      cxtMenu.hide();
+    };
+
+    cy.on('viewport', eventCyViewport);
+    setScratchProp('onViewport', eventCyViewport);
+  };
+
+  // Hide callbacks outside the cytoscape canvas
+  let bindHideCallbacks = () => {
+    let onClick = (event) => {
+      let cyContainer = cy.container();
+      // Hide only if click is outside of the Cytoscape area and the context menu
+      if (!cyContainer.contains(event.target) && !cxtMenu.contains(event.target)) {
+        cxtMenu.hide();
+        setScratchProp('cxtMenuPosition', undefined);
+      }
+    };
+
+    document.addEventListener('mouseup', onClick);
+    setScratchProp('hideOnNonCyClick', onClick);    
   };
 
   // Adjusts context menu if necessary
@@ -159,13 +184,18 @@ export function contextMenus(opts) {
 
     cy.off('tapstart', getScratchProp('eventCyTapStart'));
     cy.off(options.evtType, getScratchProp('onCxttap'));
-
+    cy.off('viewport', getScratchProp('onViewport'));
+    document.body.removeEventListener('mouseup', getScratchProp('hideOnNonCyClick'));
+    
     cxtMenu.parentNode.removeChild(cxtMenu);
     cxtMenu = undefined;
+    
     setScratchProp('cxtMenu', undefined);
     setScratchProp('active', false);
     setScratchProp('anyVisibleChild', false);
     setScratchProp('onCxttap', undefined);
+    setScratchProp('onViewport', undefined);
+    setScratchProp('hideOnNonCyClick', undefined);
   };
 
   let makeSubmenuIndicator = (props) => {
@@ -335,6 +365,8 @@ export function contextMenus(opts) {
 
     bindOnCxttap();
     bindCyEvents();
+    bindHideCallbacks();
+
     utils.preventDefaultContextTap();
   }
   
