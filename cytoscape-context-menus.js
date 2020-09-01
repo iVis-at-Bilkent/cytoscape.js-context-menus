@@ -3,9 +3,9 @@
   var $ = typeof jQuery === typeof undefined ? null : jQuery;
 
   var register = function( cytoscape, $ ){
-    
+
     if( !cytoscape ){ return; } // can't register if cytoscape unspecified
-    
+
     var defaults = {
       // Customize event to bring up the context menu
       // Possible options https://js.cytoscape.org/#events/user-input-device-events
@@ -41,25 +41,27 @@
       // css classes that context menu will have
       contextMenuClasses: [
         // add class names to this list
-      ]
+      ],
+      // set to true to put context menu inside cytoscape container
+      inCyContainer: false
     };
-    
+
     var eventCyTapStart; // The event to be binded on tap start
-    
+
     // To initialize with options.
     cytoscape('core', 'contextMenus', function (opts) {
       var cy = this;
-      
+
       // Initilize scratch pad
       if (!cy.scratch('cycontextmenus')) {
         cy.scratch('cycontextmenus', {});
       }
-      
+
       var options = getScratchProp('options');
       var $cxtMenu = getScratchProp('cxtMenu');
       var menuItemCSSClass = 'cy-context-menus-cxt-menuitem';
       var dividerCSSClass = 'cy-context-menus-divider';
-      
+
       // Merge default options with the ones coming from parameter
       function extend(defaults, options) {
         var obj = {};
@@ -78,7 +80,7 @@
       function getScratchProp(propname) {
         return cy.scratch('cycontextmenus')[propname];
       };
-      
+
       function setScratchProp(propname, value) {
         cy.scratch('cycontextmenus')[propname] = value;
       };
@@ -136,7 +138,7 @@
           onClickFcn(getScratchProp('currentCyEvent'));
         });
 
-        $component.data('call-on-click-function', callOnClickFcn); 
+        $component.data('call-on-click-function', callOnClickFcn);
       }
 
       function bindCyCxttap($component, selector, coreAsWell) {
@@ -162,7 +164,7 @@
         var cxtfcn;
         var cxtCoreFcn;
         if(coreAsWell) {
-          
+
           cy.on(options.evtType, cxtCoreFcn = function(event) {
             var target = event.target || event.cyTarget;
             if( target != cy ) {
@@ -185,7 +187,10 @@
       }
 
       function bindCyEvents() {
-        cy.on('tapstart', eventCyTapStart = function(){
+        cy.on('tapstart', eventCyTapStart = function(event) {
+          if ($(event.originalEvent.target).hasClass(menuItemCSSClass)) {
+            return false;
+          }
           hideComponent($cxtMenu);
           setScratchProp('cxtMenuPosition', undefined);
           setScratchProp('currentCyEvent', undefined);
@@ -215,7 +220,7 @@
             containerPos.top += borderThickness;
             containerPos.left += borderThickness;
           }
-          
+
           // var left = containerPos.left + renderedPos.x;
           // var top = containerPos.top + renderedPos.y;
           //$cxtMenu.css('left', left);
@@ -223,36 +228,41 @@
 
 
           var containerHeight = $(cy.container()).innerHeight();
-          var containerWidth =  $(cy.container()).innerWidth();       
+          var containerWidth =  $(cy.container()).innerWidth();
 
           var horizontalSplit = containerHeight/2 ;
           var verticalSplit = containerWidth/2 ;
           var windowHeight = $(window).height();
-          var windowWidth = $(window).width();          
-          
-                    
+          var windowWidth = $(window).width();
+
+          var bottom = (options.inCyContainer ? containerHeight : windowHeight - containerPos.top) - renderedPos.y;
+          var left = (options.inCyContainer ? 0 : containerPos.left) + renderedPos.x;
+          var right = (options.inCyContainer ? containerWidth : windowWidth - containerPos.left) - renderedPos.x;
+          var top = (options.inCyContainer ? 0 : containerPos.top) + renderedPos.y;
+
+
               //When user click on bottom-left part of window
               if(renderedPos.y > horizontalSplit && renderedPos.x <= verticalSplit) {
-                $cxtMenu.css("left", renderedPos.x + containerPos.left);
-                $cxtMenu.css("bottom", windowHeight - (containerPos.top + renderedPos.y));
+                $cxtMenu.css("left", left);
+                $cxtMenu.css("bottom", bottom);
                 $cxtMenu.css("right", "auto");
                 $cxtMenu.css("top", "auto");
               } else if(renderedPos.y > horizontalSplit && renderedPos.x > verticalSplit) {
                 //When user click on bottom-right part of window
-               $cxtMenu.css("right", windowWidth - (containerPos.left+ renderedPos.x));
-               $cxtMenu.css("bottom", windowHeight - (containerPos.top + renderedPos.y));
+               $cxtMenu.css("right", right);
+               $cxtMenu.css("bottom", bottom);
                $cxtMenu.css("left", "auto");
                $cxtMenu.css("top", "auto");
               } else if(renderedPos.y <= horizontalSplit && renderedPos.x <= verticalSplit) {
                 //When user click on top-left part of window
-               $cxtMenu.css("left", renderedPos.x + containerPos.left);
-               $cxtMenu.css("top", renderedPos.y + containerPos.top);
+               $cxtMenu.css("left", left);
+               $cxtMenu.css("top", top);
                $cxtMenu.css("right", "auto");
                $cxtMenu.css("bottom", "auto");
               } else {
                  //When user click on top-right part of window
-               $cxtMenu.css("right", windowWidth - (renderedPos.x + containerPos.left));
-               $cxtMenu.css("top", renderedPos.y + containerPos.top);
+               $cxtMenu.css("right", right);
+               $cxtMenu.css("top", top);
                $cxtMenu.css("left", "auto");
                $cxtMenu.css("bottom", "auto");
               }
@@ -281,7 +291,7 @@
         performBindings($menuItemComponent, menuItem.onClickFunction, menuItem.selector, menuItem.coreAsWell);
       }
 
-      // create cxtMenu and append it to body
+      // create cxtMenu and append it to container
       function createAndAppendCxtMenuComponent() {
         var classes = getClassStr(options.contextMenuClasses);
 //        classes += ' cy-context-menus-cxt-menu';
@@ -289,7 +299,7 @@
         $cxtMenu.addClass('cy-context-menus-cxt-menu');
         setScratchProp('cxtMenu', $cxtMenu);
 
-        $('body').append($cxtMenu);
+        $(options.inCyContainer ? cy.container() : 'body').append($cxtMenu);
         return $cxtMenu;
       }
 
@@ -316,9 +326,9 @@
 
         var $menuItemComponent = $(itemStr);
 
-        $menuItemComponent.data('selector', item.selector); 
+        $menuItemComponent.data('selector', item.selector);
         $menuItemComponent.data('on-click-function', item.onClickFunction);
-        $menuItemComponent.data('show', (typeof(item.show) === 'undefined' || item.show));  
+        $menuItemComponent.data('show', (typeof(item.show) === 'undefined' || item.show));
         return $menuItemComponent;
       }
 
@@ -364,7 +374,7 @@
         var selector = $component.data('selector');
         var callOnClickFcn = $component.data('call-on-click-function');
         var cxtCoreFcn = $component.data('cy-context-menus-cxtcorefcn');
-       
+
         if(cxtfcn) {
           cy.off(options.evtType, selector, cxtfcn);
         }
@@ -505,7 +515,7 @@
         bindCyEvents();
         preventDefaultContextTap();
       }
-      
+
       return getInstance(this);
     });
   };
