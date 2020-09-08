@@ -2,28 +2,34 @@ import { setBooleanAttribute, getClassStr, isIn, getDimensionsHidden, defineCust
 import { DIVIDER_CSS_CLASS } from './constants';
 
 // TODO: add submenu property
+
+function stopEvent(event) {
+  event.preventDefault();
+  event.stopPropagation();
+}
+
 export class MenuItem extends HTMLButtonElement {
     /**
-     * @param {{ 
-     *      id: string; 
+     * @param {{
+     *      id: string;
      *      tooltipText?: string;
-     *      disabled?: boolean; 
-     *      image?: { 
-     *          src: string; 
-     *          width: number; 
-     *          height: number; 
-     *          y: string; 
-     *          x: string; 
-     *      }; 
-     *      content: string; 
-     *      selector: string; 
-     *      show?: boolean; 
+     *      disabled?: boolean;
+     *      image?: {
+     *          src: string;
+     *          width: number;
+     *          height: number;
+     *          y: string;
+     *          x: string;
+     *      };
+     *      content: string;
+     *      selector: string;
+     *      show?: boolean;
      *      submenu?: Array;
      *      coreAsWell?: boolean;
      *      onClickFunction?: any;
      *      hasTrailingDivider?: boolean;
      * }} params
-     * @param { * } onMenuItemClick 
+     * @param { * } onMenuItemClick
      * passed so that submenu items can have this
      * called when the menu item is clicked
      */
@@ -39,13 +45,13 @@ export class MenuItem extends HTMLButtonElement {
         let className = this._getMenuItemClassStr(scratchpad['cxtMenuItemClasses'], params.hasTrailingDivider);
 
         super.setAttribute('class', className);
-        
+
         super.setAttribute('title', params.tooltipText ?? "");
 
         if (params.disabled) {
             setBooleanAttribute(this, 'disabled', true);
         }
-        
+
         if (params.image) {
             let img = document.createElement('img');
             img.src = params.image.src;
@@ -54,7 +60,7 @@ export class MenuItem extends HTMLButtonElement {
             img.style.position = 'absolute';
             img.style.top = params.image.y + 'px';
             img.style.left = params.image.x + 'px';
-            
+
             super.appendChild(img);
         }
 
@@ -69,7 +75,7 @@ export class MenuItem extends HTMLButtonElement {
         this.coreAsWell = params.coreAsWell || false;
         this.scratchpad = scratchpad;
 
-        if (typeof params.onClickFunction === 'undefined' && 
+        if (typeof params.onClickFunction === 'undefined' &&
             typeof params.submenu === 'undefined') {
 
             throw new Error("A menu item must either have click function or a submenu or both");
@@ -81,6 +87,11 @@ export class MenuItem extends HTMLButtonElement {
         if (params.submenu instanceof Array) {
             this._createSubmenu(params.submenu);
         }
+
+        super.addEventListener('mousedown', stopEvent);
+        super.addEventListener('mouseup', stopEvent);
+        super.addEventListener('touchstart', stopEvent);
+        super.addEventListener('touchend', stopEvent);
     }
 
     bindOnClickFunction(onClickFn) {
@@ -123,7 +134,7 @@ export class MenuItem extends HTMLButtonElement {
 
     appendSubmenuItem(menuItem, before = undefined) {
         if (!this.hasSubmenu()) {
-            this._createSubmenu();    
+            this._createSubmenu();
         }
         this.submenu.appendMenuItem(menuItem, before)
     }
@@ -165,7 +176,7 @@ export class MenuItem extends HTMLButtonElement {
         let exceedsRight = (rect.right + submenuRect.width) > window.innerWidth;
         let exceedsBottom = (rect.top + submenuRect.height) > window.innerHeight;
 
-        // Adjusts the position of the submenu 
+        // Adjusts the position of the submenu
         if (!exceedsRight && !exceedsBottom) {
             this.submenu.style.left = this.clientWidth + "px";
             this.submenu.style.top = "0px";
@@ -186,7 +197,7 @@ export class MenuItem extends HTMLButtonElement {
             this.submenu.style.bottom = "0px";
             this.submenu.style.right = "auto";
             this.submenu.style.top = "auto";
-        }                
+        }
 
         this.submenu.display();
     }
@@ -227,7 +238,7 @@ export class MenuItem extends HTMLButtonElement {
         return hasTrailingDivider ?
             classStr + ' ' + DIVIDER_CSS_CLASS :
             classStr;
-    };  
+    };
 
     static define() {
         defineCustomElement('ctx-menu-item', MenuItem, 'button');
@@ -286,7 +297,7 @@ export class MenuItemList extends HTMLDivElement {
 
     /**
      * @param { MenuItem } menuItem
-     * @param { Element? } before 
+     * @param { Element? } before
      * If before is specified menuItem is inserted before this element instead of at the end \
      * By default appends at the end of the this
      */
@@ -309,7 +320,7 @@ export class MenuItemList extends HTMLDivElement {
     /**
      * Removes any menuItem that is any children of the context menu
      * Returns true if child is found and removed, false otherwise
-     * @param { MenuItem } menuItem 
+     * @param { MenuItem } menuItem
      */
     /* removeMenuItem(menuItem) {
         if (this._removeImmediateMenuItem(menuItem)) {
@@ -321,7 +332,7 @@ export class MenuItemList extends HTMLDivElement {
                         return true;
                     }
                 }
-            }            
+            }
             // throw new Error(`The item with id='${menuItem.id}' is not a child of the context menu`);
             return false;
         }
@@ -329,8 +340,8 @@ export class MenuItemList extends HTMLDivElement {
 
     /**
      * Moves a menuItem before another
-     * @param { MenuItem } menuItem 
-     * @param { MenuItem } before 
+     * @param { MenuItem } menuItem
+     * @param { MenuItem } before
      */
     moveBefore(menuItem, before) {
         if (menuItem.parentNode !== this) {
@@ -344,7 +355,7 @@ export class MenuItemList extends HTMLDivElement {
         this.insertBefore(menuItem, before);
     }
 
-    removeAllMenuItems() {        
+    removeAllMenuItems() {
         // https://stackoverflow.com/a/3955238/12045421
         while (this.firstChild) {
             let child = this.lastChild;
@@ -360,7 +371,7 @@ export class MenuItemList extends HTMLDivElement {
 
     /**
      * Removes if the `menuItem` is direct child of the parent
-     * @param { MenuItem } menuItem 
+     * @param { MenuItem } menuItem
      */
     _removeImmediateMenuItem(menuItem) {
         if (this._detachImmediateMenuItem(menuItem)) {
@@ -404,7 +415,7 @@ export class MenuItemList extends HTMLDivElement {
 
     _bindOnClick(onClickFn) {
         return () => {
-            let event = this.scratchpad['currentCyEvent']; 
+            let event = this.scratchpad['currentCyEvent'];
             onClickFn(event);
         };
     }
@@ -422,7 +433,7 @@ export class ContextMenu extends MenuItemList {
         // Called when a menu item is clicked
         this.onMenuItemClick = (event) => {
             // So that parent menuItems won't be clicked
-            event.stopPropagation();
+            stopEvent(event);
             this.hide();
             onMenuItemClick();
         };
@@ -433,7 +444,7 @@ export class ContextMenu extends MenuItemList {
     }
 
     /**
-     * @param { MenuItem } menuItem 
+     * @param { MenuItem } menuItem
      */
     removeMenuItem(menuItem) {
         let parent = menuItem.parentElement;
@@ -445,7 +456,7 @@ export class ContextMenu extends MenuItemList {
 
     /**
      * @param { MenuItem } menuItem
-     * @param { Element? } before 
+     * @param { Element? } before
      */
     appendMenuItem(menuItem, before = undefined) {
         this.ensureDoesntContain(menuItem.id);
@@ -458,7 +469,7 @@ export class ContextMenu extends MenuItemList {
      * If before is specified, item is inserted before the 'before' inside the same submenu \
      * The parent argument is ignored if before is specified because parent can be inferred from the before argument \
      * If parent is specified, item is inserted into the submenu of specified parent
-     * @param { MenuItem } menuItem 
+     * @param { MenuItem } menuItem
      * @param {{ before?: MenuItem, parent?: MenuItem }} param1
      */
     insertMenuItem(menuItem, { before, parent } = {}) {
@@ -487,8 +498,8 @@ export class ContextMenu extends MenuItemList {
     }
 
     /**
-     * @param { MenuItem } menuItem 
-     * @param { MenuItem } before 
+     * @param { MenuItem } menuItem
+     * @param { MenuItem } before
      */
     moveBefore(menuItem, before) {
         let parent = menuItem.parentElement;
@@ -505,7 +516,7 @@ export class ContextMenu extends MenuItemList {
     }
 
     /**
-     * @param { MenuItem } menuItem 
+     * @param { MenuItem } menuItem
      * @param { MenuItem } parent
      * @param { { selector?: string, coreAsWell: boolean } } options
      */
@@ -526,7 +537,7 @@ export class ContextMenu extends MenuItemList {
                         menuItem.selector = options.selector;
                         menuItem.coreAsWell = options.coreAsWell;
                     }
-                    
+
                     oldParent._detachImmediateMenuItem(menuItem);
                     this.appendMenuItem(menuItem);
                 }
