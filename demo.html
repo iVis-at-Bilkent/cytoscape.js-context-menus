@@ -87,7 +87,34 @@
               {data: {source: 'k', target: 'g'}},
             ]
           },
+        }).on('cxttap', function(event) {
+          if (allSelected('node')) {
+            contextMenu.hideMenuItem('select-all-nodes');
+            contextMenu.showMenuItem('unselect-all-nodes');
+          }
+          else {
+            contextMenu.hideMenuItem('unselect-all-nodes');
+            contextMenu.showMenuItem('select-all-nodes');
+          }
+          if (allSelected('edge')) {
+            contextMenu.hideMenuItem('select-all-edges');
+            contextMenu.showMenuItem('unselect-all-edges');
+          }
+          else {
+            contextMenu.hideMenuItem('unselect-all-edges');
+            contextMenu.showMenuItem('select-all-edges');
+          }
         });
+
+        var allSelected = function (type) {
+          if (type == 'node') {
+            return cy.nodes().length == cy.nodes(':selected').length;
+          }
+          else if (type == 'edge') {
+            return cy.edges().length == cy.edges(':selected').length;
+          }
+          return false;
+        }
 
         var selectAllOfTheSameType = function (type) {
           if (type == 'node') {
