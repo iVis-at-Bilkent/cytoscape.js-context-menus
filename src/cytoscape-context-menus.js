@@ -4,21 +4,21 @@ import { MenuItem, ContextMenu, MenuItemList } from './context-menu.js';
 
 export function contextMenus(opts) {
   let cy = this;
-  
+
   // Initilize scratch pad
   if (!cy.scratch('cycontextmenus')) {
     cy.scratch('cycontextmenus', {});
   }
 
-  let getScratchProp = (propname) => 
+  let getScratchProp = (propname) =>
     cy.scratch('cycontextmenus')[propname];
 
-  let setScratchProp = (propname, value) => 
+  let setScratchProp = (propname, value) =>
     cy.scratch('cycontextmenus')[propname] = value;
 
   let hasScratchProp = (propname) =>
     typeof cy.scratch('cycontextmenus')[propname] !== 'undefined';
-  
+
   let options = getScratchProp('options');
   /** @type { ContextMenu } */
   let cxtMenu = getScratchProp('cxtMenu');
@@ -32,13 +32,13 @@ export function contextMenus(opts) {
     let onCxttap = (event) => {
       setScratchProp('currentCyEvent', event);
       adjustCxtMenu(event); // adjust the position of context menu
-      
+
       let target = event.target || event.cyTarget;
 
       // Check for each menuItem, if show is true, show the menuItem
       for (let menuItem of cxtMenu.children) {
           if (menuItem instanceof MenuItem) {
-              let shouldDisplay = (target === cy) ? 
+              let shouldDisplay = (target === cy) ?
                   // If user clicked in cy area then show core items
                   menuItem.coreAsWell :
                   // If selector of the item matches then show
@@ -65,12 +65,15 @@ export function contextMenus(opts) {
 
   let bindCyEvents = () => {
 
-    let eventCyTapStart = () => {
+    let eventCyTapStart = event => {
+      if (cxtMenu.contains(event.originalEvent.target)) {
+        return false;
+      }
       cxtMenu.hide();
       setScratchProp('cxtMenuPosition', undefined);
       setScratchProp('currentCyEvent', undefined);
     };
-    
+
     cy.on('tapstart', eventCyTapStart);
     setScratchProp('eventCyTapStart', eventCyTapStart);
 
@@ -94,7 +97,7 @@ export function contextMenus(opts) {
     };
 
     document.addEventListener('mouseup', onClick);
-    setScratchProp('hideOnNonCyClick', onClick);    
+    setScratchProp('hideOnNonCyClick', onClick);
   };
 
   // Adjusts context menu if necessary
@@ -107,7 +110,7 @@ export function contextMenus(opts) {
       cxtMenu.hideMenuItems();
       setScratchProp('anyVisibleChild', false);// we hide all children there is no visible child remaining
       setScratchProp('cxtMenuPosition', cyPos);
-      
+
       let containerPos = utils.getOffset(container);
       let renderedPos = event.renderedPosition || event.cyRenderedPosition;
 
@@ -118,32 +121,30 @@ export function contextMenus(opts) {
         containerPos.left += borderThickness;
       }
       let containerHeight = container.clientHeight;
-      let containerWidth = container.clientWidth; 
+      let containerWidth = container.clientWidth;
 
       let horizontalSplit = containerHeight / 2;
-      let verticalSplit = containerWidth / 2;    
-      let windowHeight = window.innerHeight;
-      let windowWidth = window.innerWidth;        
-                
+      let verticalSplit = containerWidth / 2;
+
       //When user clicks on bottom-left part of window
       if (renderedPos.y > horizontalSplit && renderedPos.x <= verticalSplit) {
-        cxtMenu.style.left = (renderedPos.x + containerPos.left) + 'px';
-        cxtMenu.style.bottom = (windowHeight - (containerPos.top + renderedPos.y)) + 'px';
+        cxtMenu.style.left = renderedPos.x + 'px';
+        cxtMenu.style.bottom = (containerHeight - renderedPos.y) + 'px';
         cxtMenu.style.right = "auto";
         cxtMenu.style.top = "auto";
       } else if (renderedPos.y > horizontalSplit && renderedPos.x > verticalSplit) {
-        cxtMenu.style.right = (windowWidth - (containerPos.left+ renderedPos.x)) + 'px';
-        cxtMenu.style.bottom = (windowHeight - (containerPos.top + renderedPos.y)) + 'px';
+        cxtMenu.style.right = (containerWidth - renderedPos.x) + 'px';
+        cxtMenu.style.bottom = (containerHeight - renderedPos.y) + 'px';
         cxtMenu.style.left = "auto";
         cxtMenu.style.top = "auto";
       } else if (renderedPos.y <= horizontalSplit && renderedPos.x <= verticalSplit) {
-        cxtMenu.style.left = (renderedPos.x + containerPos.left) + 'px';
-        cxtMenu.style.top = (renderedPos.y + containerPos.top) + 'px';
+        cxtMenu.style.left = renderedPos.x + 'px';
+        cxtMenu.style.top = renderedPos.y + 'px';
         cxtMenu.style.right = "auto";
         cxtMenu.style.bottom = "auto";
-      } else {            
-        cxtMenu.style.right = (windowWidth - (renderedPos.x + containerPos.left)) + 'px';
-        cxtMenu.style.top = (renderedPos.y + containerPos.top) + 'px';
+      } else {
+        cxtMenu.style.right = (containerWidth - renderedPos.x) + 'px';
+        cxtMenu.style.top = renderedPos.y + 'px';
         cxtMenu.style.left = "auto";
         cxtMenu.style.bottom = "auto";
       }
@@ -160,7 +161,7 @@ export function contextMenus(opts) {
       cxtMenu.insertMenuItem(menuItemComponent, { parent });
     } else {
       cxtMenu.insertMenuItem(menuItemComponent);
-    }    
+    }
   };//insertComponentBeforeExistingItem(component, existingItemID)
 
   let createAndAppendMenuItemComponents = (optionsArr, parentID = undefined) => {
@@ -186,10 +187,10 @@ export function contextMenus(opts) {
     cy.off(options.evtType, getScratchProp('onCxttap'));
     cy.off('viewport', getScratchProp('onViewport'));
     document.body.removeEventListener('mouseup', getScratchProp('hideOnNonCyClick'));
-    
+
     cxtMenu.parentNode.removeChild(cxtMenu);
     cxtMenu = undefined;
-    
+
     setScratchProp('cxtMenu', undefined);
     setScratchProp('active', false);
     setScratchProp('anyVisibleChild', false);
@@ -209,7 +210,7 @@ export function contextMenus(opts) {
   };
 
   /**
-   * @param { string } menuItemID 
+   * @param { string } menuItemID
    */
   let asMenuItem = (menuItemID) => {
     let menuItem = document.getElementById(menuItemID);
@@ -299,7 +300,7 @@ export function contextMenus(opts) {
       // Enables the menu item with given ID.
       enableMenuItem: function(itemID) {
         let menuItem = asMenuItem(itemID);
-        
+
         menuItem.enable();
         return cy;
       },
@@ -313,7 +314,7 @@ export function contextMenus(opts) {
       // Enables the menu item with given ID.
       showMenuItem: function(itemID) {
         let menuItem = asMenuItem(itemID);
-        
+
         menuItem.display();
         return cy;
       },
@@ -350,14 +351,15 @@ export function contextMenus(opts) {
     let cxtMenuClasses = utils.getClassStr(options.contextMenuClasses);
     setScratchProp('cxtMenuClasses', cxtMenuClasses);
 
-    let onMenuItemClick = 
+    let onMenuItemClick =
       () => setScratchProp('cxtMenuPosition', undefined);
-      
+
     let scratchpad = cy.scratch('cycontextmenus');
     cxtMenu = new ContextMenu(onMenuItemClick, scratchpad);
 
     setScratchProp('cxtMenu', cxtMenu);
-    document.body.appendChild(cxtMenu);
+    //document.body.appendChild(cxtMenu);
+    cy.container().appendChild(cxtMenu);
 
     setScratchProp('cxtMenuItemClasses', utils.getClassStr(options.menuItemClasses));
     let menuItems = options.menuItems;
@@ -369,6 +371,6 @@ export function contextMenus(opts) {
 
     utils.preventDefaultContextTap();
   }
-  
+
   return getInstance(this);
 }
