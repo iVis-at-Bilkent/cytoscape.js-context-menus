@@ -183,6 +183,11 @@ var instance = cy.contextMenus(options);
 #### `cy.contextMenus('get')`
 * Returns the existing instance to the extension
 
+## Build targets
+
+* `npm run build` : Build `./src/**` into `cytoscape-edge-editing.js` in production environment and minimize the file.
+* `npm run build:dev` :  Build `./src/**` into `cytoscape-edge-editing.js` in development environment without minimizing the file.
+
 ## Publishing instructions
 
 This project is set up to automatically be published to npm and bower.  To publish:
