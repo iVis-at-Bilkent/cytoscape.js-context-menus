@@ -71,6 +71,7 @@ export class MenuItem extends HTMLButtonElement {
         this.data = {};
         this.clickFns = [];
         this.selector = params.selector;
+        this.hasTrailingDivider = params.hasTrailingDivider;
         this.show = (typeof params.show === 'undefined') || params.show;
         this.coreAsWell = params.coreAsWell || false;
         this.scratchpad = scratchpad;
@@ -128,6 +129,17 @@ export class MenuItem extends HTMLButtonElement {
         this.style.display = 'none';
     }
 
+    getHasTrailingDivider() {
+        // may be undefined so use this way
+        return this.hasTrailingDivider ? true : false;
+    }
+    /**
+     * @param {boolean} status 
+     */
+    setHasTrailingDivider(status) {
+        this.hasTrailingDivider = status;
+    }
+
     hasSubmenu() {
         return this.submenu instanceof MenuItemList;
     }
@@ -146,6 +158,13 @@ export class MenuItem extends HTMLButtonElement {
     display() {
         this.show = true;
         this.style.display = 'block';
+    }
+
+    /**
+     * Returns true if this menu item is currently visible
+     */
+    isVisible() {
+        return this.show === true && this.style.display !== 'none';
     }
 
     /**
@@ -200,6 +219,29 @@ export class MenuItem extends HTMLButtonElement {
         }
 
         this.submenu.display();
+
+        // Remove trailing divider from last visible menu item if it has it.
+        // For other visible items, add divider if the associated menu item
+        // should have divider, i.e, it was last item at some point and
+        // the divider was removed but it should be there when the item
+        // is not last
+
+        const visibleItems = Array.from(this.submenu.children).filter(item => {
+            if (item instanceof MenuItem)
+              return item.isVisible();
+          });
+          const length = visibleItems.length;
+          visibleItems.forEach((item, index) => {
+            if (!(item instanceof MenuItem))
+              return;
+    
+            if (index < length - 1 && item.getHasTrailingDivider()) {
+              item.classList.add(DIVIDER_CSS_CLASS);
+            }
+            else if (item.getHasTrailingDivider()) {
+              item.classList.remove(DIVIDER_CSS_CLASS);
+            };
+        });
     }
 
     _onMouseLeave(event) {
