@@ -209,7 +209,7 @@ export function contextMenus(opts) {
     cy.off('tapstart', getScratchProp('eventCyTapStart'));
     cy.off(options.evtType, getScratchProp('onCxttap'));
     cy.off('viewport', getScratchProp('onViewport'));
-    document.body.removeEventListener('mouseup', getScratchProp('hideOnNonCyClick'));
+    document.removeEventListener('mouseup', getScratchProp('hideOnNonCyClick'));
 
     cxtMenu.parentNode.removeChild(cxtMenu);
     cxtMenu = undefined;
