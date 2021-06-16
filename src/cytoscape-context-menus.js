@@ -54,6 +54,29 @@ export function contextMenus(opts) {
           }
       }
 
+      // Remove trailing divider from last visible menu item if it has it.
+      // For other visible items, add divider if the associated menu item
+      // should have divider, i.e, it was last item at some point and
+      // the divider was removed but it should be there when the item
+      // is not last
+
+      const visibleItems = Array.from(cxtMenu.children).filter(item => {
+        if (item instanceof MenuItem)
+          return item.isVisible();
+      });
+      const length = visibleItems.length;
+      visibleItems.forEach((item, index) => {
+        if (!(item instanceof MenuItem))
+          return;
+
+        if (index < length - 1 && item.getHasTrailingDivider()) {
+          item.classList.add(DIVIDER_CSS_CLASS);
+        }
+        else if (item.getHasTrailingDivider()) {
+          item.classList.remove(DIVIDER_CSS_CLASS);
+        };
+      });
+
       if (!getScratchProp('anyVisibleChild') && utils.isElementVisible(cxtMenu)) {
         cxtMenu.hide();
       }
@@ -186,7 +209,7 @@ export function contextMenus(opts) {
     cy.off('tapstart', getScratchProp('eventCyTapStart'));
     cy.off(options.evtType, getScratchProp('onCxttap'));
     cy.off('viewport', getScratchProp('onViewport'));
-    document.body.removeEventListener('mouseup', getScratchProp('hideOnNonCyClick'));
+    document.removeEventListener('mouseup', getScratchProp('hideOnNonCyClick'));
 
     cxtMenu.parentNode.removeChild(cxtMenu);
     cxtMenu = undefined;
@@ -248,7 +271,8 @@ export function contextMenus(opts) {
       // Sets whether the menuItem with given ID will have a following divider.
       setTrailingDivider: function(itemID, status) {
         let menuItem = asMenuItem(itemID);
-
+        menuItem.setHasTrailingDivider(status);
+        
         if (status) {
           menuItem.classList.add(DIVIDER_CSS_CLASS);
         } else {
