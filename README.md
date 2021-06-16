@@ -14,7 +14,11 @@ U. Dogrusoz , A. Karacelik, I. Safarli, H. Balci, L. Dervishi, and M.C. Siper, "
 
 ## Demo
 
-Click [here](https://raw.githack.com/iVis-at-Bilkent/cytoscape.js-context-menus/unstable/demo.html) (simple) or [here](https://raw.githack.com/iVis-at-Bilkent/cytoscape.js-context-menus/unstable/demo-customized.html) (customized) for demos
+Here are demos: **simple** and **customized**, respectively:
+<p align="center">
+<a href="https://raw.githack.com/iVis-at-Bilkent/cytoscape.js-context-menus/unstable/demo.html" title="Simple"><img src="https://www.cs.bilkent.edu.tr/~ivis/images/demo1.png" height=42px></a> &emsp;
+<a href="https://raw.githack.com/iVis-at-Bilkent/cytoscape.js-context-menus/unstable/demo-customized.html" title="Customized"><img src="https://www.cs.bilkent.edu.tr/~ivis/images/demo2.png" height=42px></a>
+</p>
 
 ## Dependencies
 
@@ -201,4 +205,7 @@ This project is set up to automatically be published to npm and bower.  To publi
 
 ## Team
 
-  * [Metin Can Siper](https://github.com/metincansiper), [Onur Şahin](https://github.com/onsah), [Hasan Balcı](https://github.com/hasanbalci) and [Ugur Dogrusoz](https://github.com/ugurdogrusoz) of [i-Vis at Bilkent University](http://www.cs.bilkent.edu.tr/~ivis)
+  * [Hasan Balcı](https://github.com/hasanbalci), [Ugur Dogrusoz](https://github.com/ugurdogrusoz) of [i-Vis at Bilkent University](http://www.cs.bilkent.edu.tr/~ivis)
+
+### Alumni
+  * [Metin Can Siper](https://github.com/metincansiper) and [Onur Sahin](https://github.com/onsah)
