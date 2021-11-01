@@ -244,6 +244,21 @@ export function contextMenus(opts) {
     }
   };
 
+  let setParentVisibilityFromItems = () => {
+    let b = false;
+    for (let menuItem of cxtMenu.children) {
+      if (menuItem instanceof MenuItem && menuItem.show && menuItem.style.display != 'none') {
+        b = true;
+        break;
+      }
+    }
+    if (b) {
+      cxtMenu.display();
+    } else {
+      cxtMenu.hide();
+    }
+  };
+
   // Get an extension instance to enable users to access extension methods
   let getInstance = (cy) => {
     let instance = {
@@ -331,15 +346,15 @@ export function contextMenus(opts) {
       // Disables the menu item with given ID.
       hideMenuItem: function(itemID) {
         let menuItem = asMenuItem(itemID);
-
         menuItem.hide();
+        setParentVisibilityFromItems();
         return cy;
       },
       // Enables the menu item with given ID.
       showMenuItem: function(itemID) {
         let menuItem = asMenuItem(itemID);
-
         menuItem.display();
+        setParentVisibilityFromItems();
         return cy;
       },
       // Destroys the extension instance
