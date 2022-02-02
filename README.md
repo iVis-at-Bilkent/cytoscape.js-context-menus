@@ -182,6 +182,9 @@ var instance = cy.contextMenus(options);
 #### `instance.destroy()`
 * Destroys the extension instance
 
+#### `instance.getOptions()`
+* Returns the used options
+
 ### Other API
 
 #### `cy.contextMenus('get')`

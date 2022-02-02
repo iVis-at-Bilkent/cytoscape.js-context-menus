@@ -361,6 +361,11 @@ export function contextMenus(opts) {
       destroy: function() {
         destroyCxtMenu();
         return cy;
+      },
+      // Returns the used options
+      getOptions: function() {
+        // use `extend` to create a deep copy of options
+        return utils.extend(DEFAULT_OPTS, options);
       }
     };
 
