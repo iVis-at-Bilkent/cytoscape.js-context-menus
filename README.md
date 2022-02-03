@@ -182,6 +182,9 @@ var instance = cy.contextMenus(options);
 #### `instance.destroy()`
 * Destroys the extension instance
 
+#### `instance.swapItems(x, y)`
+* Changes the order of items. `x` and `y` are id of context menu items to be swapped
+
 #### `instance.getOptions()`
 * Returns the used options
 
