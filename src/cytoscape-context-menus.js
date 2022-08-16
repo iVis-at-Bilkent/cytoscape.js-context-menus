@@ -38,11 +38,12 @@ export function contextMenus(opts) {
       // Check for each menuItem, if show is true, show the menuItem
       for (let menuItem of cxtMenu.children) {
           if (menuItem instanceof MenuItem) {
+              const is = typeof target.is === 'function' ? (selector) => target.is(selector) : () => false;
               let shouldDisplay = (target === cy) ?
                   // If user clicked in cy area then show core items
                   menuItem.coreAsWell :
                   // If selector of the item matches then show
-                  target.is(menuItem.selector);
+                  is(menuItem.selector);
               // User clicked on empty area and menuItem is core
               if (shouldDisplay && menuItem.show) {
                 cxtMenu.display();
