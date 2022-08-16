@@ -19,7 +19,7 @@ export function matches(el, selector) {
 
 export function isElementHidden(elem) {
     return elem.offsetWidth <= 0 && elem.offsetHeight <= 0 ||
-        ((elem.style && elem.style.display) || getComputedStyle(elem)['display']);
+        ((elem.style && elem.style.display === 'none') || getComputedStyle(elem)['display'] === 'none');
 }
 
 export function isElementVisible(elem) {
