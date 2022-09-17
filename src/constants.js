@@ -7,6 +7,8 @@ export const DEFAULT_OPTS = {
     // Customize event to bring up the context menu
     // Possible options https://js.cytoscape.org/#events/user-input-device-events
     evtType: 'cxttap',
+    // determines when a submenu opens: 'hover' or 'click' 
+    submenuEvtType: 'hover', 
     // List of initial menu items
     menuItems: [
       /*
