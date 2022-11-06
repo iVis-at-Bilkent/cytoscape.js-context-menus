@@ -112,7 +112,12 @@ export class MenuItem extends HTMLButtonElement {
         setBooleanAttribute(this, 'disabled', false);
 
         if (this.hasSubmenu()) {
-            this.addEventListener('mouseenter', this.mouseEnterHandler);
+            if (this.scratchpad.options.submenuEvtType === 'click') {
+                this.addEventListener('mousedown', this.mouseEnterHandler);
+             } else {
+                 this.addEventListener('mouseenter', this.mouseEnterHandler);
+              
+             }
         }
     }
 
@@ -120,7 +125,11 @@ export class MenuItem extends HTMLButtonElement {
         setBooleanAttribute(this, 'disabled', true);
 
         if (this.hasSubmenu()) {
-            this.removeEventListener('mouseenter', this.mouseEnterHandler);
+            if (this.scratchpad.options.submenuEvtType === 'click') {
+                this.removeEventListener('mousedown', this.mouseEnterHandler);
+             } else {
+                this.removeEventListener('mouseenter', this.mouseEnterHandler);
+             }
         }
     }
 
@@ -181,7 +190,13 @@ export class MenuItem extends HTMLButtonElement {
         if (this.hasSubmenu()) {
             this.removeChild(this.submenu);
             this.removeChild(this.indicator);
-            this.removeEventListener('mouseenter', this.mouseEnterHandler);
+            
+            if (this.scratchpad.options.submenuEvtType === 'click') {
+                this.removeEventListener('mousedown', this.mouseEnterHandler);
+             } else {
+                this.removeEventListener('mouseenter', this.mouseEnterHandler);
+             }
+
             this.removeEventListener('mouseleave', this.mouseLeaveHandler);
             this.submenu = undefined;
             this.indicator = undefined;
@@ -217,9 +232,7 @@ export class MenuItem extends HTMLButtonElement {
             this.submenu.style.right = "auto";
             this.submenu.style.top = "auto";
         }
-
-        this.submenu.display();
-
+    
         // Remove trailing divider from last visible menu item if it has it.
         // For other visible items, add divider if the associated menu item
         // should have divider, i.e, it was last item at some point and
@@ -242,6 +255,23 @@ export class MenuItem extends HTMLButtonElement {
               item.classList.remove(DIVIDER_CSS_CLASS);
             };
         });
+
+        // Remove all submenu items
+        if (this.scratchpad.options.submenuEvtType === 'click') {
+            const currentMenuItems = Array.from(this.parentElement.children).filter(item => {
+                if (item instanceof MenuItem)
+                  return item.isVisible();
+            });
+            currentMenuItems.forEach((item, index) => {
+                if (!(item instanceof MenuItem))
+                  return;
+                if (item.hasSubmenu()) {
+                  item.submenu.hide()
+                }
+            })
+        }
+
+        this.submenu.display();
     }
 
     _onMouseLeave(event) {
@@ -270,9 +300,13 @@ export class MenuItem extends HTMLButtonElement {
         this.mouseLeaveHandler = this._onMouseLeave.bind(this);
 
         // submenu should be visible when mouse is over
-        this.addEventListener('mouseenter', this.mouseEnterHandler);
-
-        this.addEventListener('mouseleave', this.mouseLeaveHandler);
+        if (this.scratchpad.options.submenuEvtType === 'click') {
+           this.addEventListener('mousedown', this.mouseEnterHandler);
+        } else {
+            this.addEventListener('mouseenter', this.mouseEnterHandler);
+            
+            this.addEventListener('mouseleave', this.mouseLeaveHandler);
+        }
     }
 
     // TODO: can be static
