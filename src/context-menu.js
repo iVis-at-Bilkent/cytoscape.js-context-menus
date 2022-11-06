@@ -118,7 +118,6 @@ export class MenuItem extends HTMLButtonElement {
                  this.addEventListener('mouseenter', this.mouseEnterHandler);
               
              }
-            
         }
     }
 
