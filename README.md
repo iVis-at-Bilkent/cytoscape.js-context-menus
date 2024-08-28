@@ -16,8 +16,8 @@ U. Dogrusoz , A. Karacelik, I. Safarli, H. Balci, L. Dervishi, and M.C. Siper, "
 
 Here are demos: **simple** and **customized**, respectively:
 <p align="center">
-<a href="https://raw.githack.com/iVis-at-Bilkent/cytoscape.js-context-menus/unstable/demo.html" title="Simple"><img src="https://www.cs.bilkent.edu.tr/~ivis/images/demo1.png" height=42px></a> &emsp;
-<a href="https://raw.githack.com/iVis-at-Bilkent/cytoscape.js-context-menus/unstable/demo-customized.html" title="Customized"><img src="https://www.cs.bilkent.edu.tr/~ivis/images/demo2.png" height=42px></a>
+<a href="https://ivis-at-bilkent.github.io/cytoscape.js-context-menus/demo.html" title="Simple"><img src="https://www.cs.bilkent.edu.tr/~ivis/images/demo1.png" height=42px></a> &emsp;
+<a href="https://ivis-at-bilkent.github.io/cytoscape.js-context-menus/demo-customized.html" title="Customized"><img src="https://www.cs.bilkent.edu.tr/~ivis/images/demo2.png" height=42px></a>
 </p>
 
 ## Dependencies
