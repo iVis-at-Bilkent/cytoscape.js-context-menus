@@ -244,6 +244,21 @@ export function contextMenus(opts) {
     }
   };
 
+  let setParentVisibilityFromItems = () => {
+    let b = false;
+    for (let menuItem of cxtMenu.children) {
+      if (menuItem instanceof MenuItem && menuItem.show && menuItem.style.display != 'none') {
+        b = true;
+        break;
+      }
+    }
+    if (b) {
+      cxtMenu.display();
+    } else {
+      cxtMenu.hide();
+    }
+  };
+
   // Get an extension instance to enable users to access extension methods
   let getInstance = (cy) => {
     let instance = {
@@ -331,21 +346,52 @@ export function contextMenus(opts) {
       // Disables the menu item with given ID.
       hideMenuItem: function(itemID) {
         let menuItem = asMenuItem(itemID);
-
         menuItem.hide();
+        setParentVisibilityFromItems();
         return cy;
       },
       // Enables the menu item with given ID.
       showMenuItem: function(itemID) {
         let menuItem = asMenuItem(itemID);
-
         menuItem.display();
+        setParentVisibilityFromItems();
         return cy;
       },
       // Destroys the extension instance
       destroy: function() {
         destroyCxtMenu();
         return cy;
+      },
+      // Returns the used options
+      getOptions: function() {
+        // use `extend` to create a deep copy of options
+        return utils.extend(DEFAULT_OPTS, options);
+      },
+      // `x` and `y` are id of context menu items to be swapped
+      swapItems: function (x, y) {
+        cxtMenu.ensureContains(x);
+        cxtMenu.ensureContains(y);
+        const i1 = document.getElementById(x);
+        const i2 = document.getElementById(y);
+        const n1 = i1.nextSibling;
+        const n2 = i2.nextSibling;
+        const parent1 = i1.parentNode;
+        const parent2 = i2.parentNode;
+        if (!parent1.isSameNode(parent2)) {
+          throw new Error(`To swap, the items should have the same parent!`);
+        }
+        if (n1 && n1.isSameNode(i2)) {
+          parent1.insertBefore(i2, i1);
+          return;
+        }
+        if (n2 && n2.isSameNode(i1)) {
+          parent1.insertBefore(i1, i2);
+          return;
+        }
+
+        parent1.insertBefore(i2, i1);
+        parent1.insertBefore(i1, n2);
+
       }
     };
 

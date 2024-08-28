@@ -599,6 +599,13 @@ export class ContextMenu extends MenuItemList {
         }
     }
 
+    ensureContains(id) {
+      const e = document.getElementById(id);
+      if (e == undefined || e == null || !this.contains(e)) {
+        throw new Error(`An element with id '${id}' does not exist!`);
+      }
+  }
+
     static define() {
         defineCustomElement('ctx-menu', ContextMenu, 'div');
     }

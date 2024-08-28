@@ -15,6 +15,7 @@ module.exports = {
         filename: pkg.name + '.js',
         library: camelcase(pkg.name),
         libraryTarget: 'umd',
+        globalObject: 'this'
     },
     mode: 'production',
     // devtool: PROD ? false : 'inline-source-map',
